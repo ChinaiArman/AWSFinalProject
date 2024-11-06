@@ -1,0 +1,1 @@
+// test function A, each lambda handler should own folder and dependencies in it
