@@ -5,6 +5,7 @@ dotenv.config();
 import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser"
+import coursesRouter from './api/courses.js';
 
 
 // CONSTANTS
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
     console.log(`[${req.method} Request]\t${req.url}\nDate: ${new Date()}\nParams: ${JSON.stringify(req.query, null, 2)}\nBody: ${JSON.stringify(req.body, null, 2)}\n------------------`)
     next()
 })
+app.use('/api', coursesRouter);
 
 
 // ROUTES
