@@ -15,12 +15,10 @@ import FacultyMyTimetablePage from "./pages/faculty/MyTimetable"
 import FacultyTimeAvailabilityPage from "./pages/faculty/TimeAvailability"
 import "./styles/App.css";
 
-
 const App = () => {
   return (
     <div>
-      <nav>
-      </nav>
+      <nav></nav>
 
       <Routes>
         {/* Public Routes */}
