@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
-import SearchBar from '../../components/SearchBar';
+import React, { useEffect, useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
+import BaseDropdownMenu from "../../components/BaseDropdownMenu";
+import SearchBar from "../../components/SearchBar";
 
-const MyCourses = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Sample data for courses (replace with your actual data source)
-  const courses = [
-    { id: 1, name: 'Math 101' },
-    { id: 2, name: 'History 201' },
-    { id: 3, name: 'Physics 301' },
-    { id: 4, name: 'Biology 101' },
-    { id: 5, name: 'Computer Science 101' },
-  ];
+function MyCourses() {
+  const [courses, setCourses] = useState([]); // Dynamic state for courses
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
 
   // Sidebar menu items for students
   const sidebarItems = [
@@ -24,10 +18,52 @@ const MyCourses = () => {
   ];
 
 
-  // Filter courses based on the search query
-  const filteredCourses = courses.filter((course) =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        // Replace this with your backend API endpoint in the future
+        const data = [
+          {
+            id: 1,
+            name: "Cloud Computing",
+            description: "Introduction to cloud platforms",
+            schedule: "Mon 9:30-10:20",
+            room: "Room A102",
+          },
+          {
+            id: 2,
+            name: "DevOps Fundamentals",
+            description: "CI/CD pipelines and infrastructure as code",
+            schedule: "Tue 10:30-11:20",
+            room: "Room B203",
+          },
+          {
+            id: 3,
+            name: "AI and Machine Learning",
+            description: "Overview of AI and ML techniques",
+            schedule: "Wed 1:00-2:20",
+            room: "Room C304",
+          },
+        ];
+        setCourses(data); // Set courses with example data
+        setFilteredCourses(data); // Initialize filtered courses
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        setCourses([]); // Fallback if fetching fails
+        setFilteredCourses([]);
+      }
+    };
+
+    fetchCourses();
+  }, []); // Runs once when the component loads
+
+  useEffect(() => {
+    // Update filtered courses based on search query
+    const filtered = courses.filter((course) =>
+      course.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  }, [searchQuery, courses]);
 
   return (
     <div className="flex h-screen">
@@ -36,9 +72,9 @@ const MyCourses = () => {
 
       {/* Main Content */}
       <div className="flex-1">
-        <Navbar role="student" />
+        <Navbar role="faculty" />
         <div className="p-4">
-          <h1 className="text-2xl font-bold text-center mb-6">My Courses</h1>
+          <h1 className="text-2xl font-bold mb-4">My Courses</h1>
 
           {/* Search Bar */}
           <SearchBar
@@ -46,25 +82,31 @@ const MyCourses = () => {
             onSearch={setSearchQuery} // Update search query when user types
           />
 
-          {/* Display the filtered list of courses */}
-          <div>
-            {filteredCourses.length > 0 ? (
-              <ul>
-                {filteredCourses.map((course) => (
-                  <li key={course.id} style={{ margin: '10px 0', fontSize: '18px' }}>
-                    {course.name}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No courses found.</p>
-            )}
-          </div>
-
+          {/* Display Courses */}
+          {filteredCourses.length === 0 ? (
+            <p>No courses found.</p>
+          ) : (
+            filteredCourses.map((course) => (
+              <BaseDropdownMenu key={course.id} title={course.name}>
+                <p className="text-gray-700">
+                  <strong>Course Name:</strong> {course.name}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Course Description:</strong> {course.description}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Time:</strong> {course.schedule}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Room:</strong> {course.room}
+                </p>
+              </BaseDropdownMenu>
+            ))
+          )}
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default MyCourses;
