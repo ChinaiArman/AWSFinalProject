@@ -1,10 +1,10 @@
 // IMPORTS
 import { DataTypes } from "sequelize";
-import db from '../config/db_config.js';
+import db_config from '../config/db_config.js';
 
 
 // MODEL DEFINITION
-const Course = db.define('Course', {
+const Course = db_config.define('Course', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,

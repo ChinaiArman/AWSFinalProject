@@ -6,7 +6,7 @@ import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
 
-import db from "./models/index.js";
+import db_config from "./models/index.js";
 
 
 // CONSTANTS

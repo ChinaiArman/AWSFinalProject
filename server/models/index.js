@@ -8,7 +8,7 @@ import Student from "./Student.js";
 import Waitlist from "./Waitlist.js";
 import User from "./User.js";
 
-import db from '../config/db_config.js';
+import db_config from '../config/db_config.js';
 
 // ASSOCIATIONS
 // COURSE
@@ -50,11 +50,11 @@ User.hasOne(Student, { foreignKey: 'user_id', as: 'student' });
 const syncDatabase = async () => {
     try {
         // Step 1: Ensure the connection to the DB is successful
-        await db.authenticate();
+        await db_config.authenticate();
         console.log('Database connection successful.');
 
         // Step 2: Sync models (create tables if they don’t exist)
-        await db.sync({ alter: true });
+        await db_config.sync({ alter: true });
         console.log('Database synced successfully.');
     } catch (error) {
         console.error('Error syncing the database or starting the server:', error);
@@ -65,4 +65,4 @@ syncDatabase();
 
 
 // DEFAULT EXPORT
-export default db;
+export default db_config;
