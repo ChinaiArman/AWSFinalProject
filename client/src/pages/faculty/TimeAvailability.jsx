@@ -34,14 +34,9 @@ function TimeAvailability() {
     return initialAvailability;
   });
 
-  const toggleAvailability = (day, slot) => {
-    setAvailability((prevAvailability) => ({
-      ...prevAvailability,
-      [day]: {
-        ...prevAvailability[day],
-        [slot]: !prevAvailability[day][slot],
-      },
-    }));
+  const handleSave = (newAvailability) => {
+    console.log("Saved Availability:", newAvailability);
+    // Future: Make API call to save availability in the backend
   };
 
   return (
@@ -57,8 +52,8 @@ function TimeAvailability() {
           <ScheduleTable
             days={days}
             timeSlots={timeSlots}
-            availability={availability}
-            toggleAvailability={toggleAvailability}
+            initialAvailability={availability}
+            onSave={handleSave}
           />
         </div>
       </div>
