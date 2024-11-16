@@ -30,6 +30,10 @@ const Faculty = db_config.define('Faculty', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    date_of_birth: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
 }, {
     tableName: 'faculty',
     timestamps: false

@@ -42,8 +42,7 @@ class Database {
         console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
-            role,
-            date_of_birth: dateOfBirth
+            role
         });
         if (role > 0) {
             await Faculty.create({
@@ -51,6 +50,7 @@ class Database {
                 first_name: firstName,
                 last_name: lastName,
                 email,
+                date_of_birth: dateOfBirth,
                 phone_number: phoneNumber
             });
         } else {
@@ -59,6 +59,7 @@ class Database {
                 first_name: firstName,
                 last_name: lastName,
                 email,
+                date_of_birth: dateOfBirth,
                 phone_number: phoneNumber
             });
         }

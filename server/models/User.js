@@ -14,10 +14,6 @@ const User = db_config.define('User', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    date_of_birth: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
 }, {
     tableName: 'users',
     timestamps: false
