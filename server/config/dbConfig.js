@@ -8,7 +8,7 @@ dotenv.config();
 
 
 // SEQUELIZE CONNECTION
-const db_config = new Sequelize(
+const dbConfig = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USERNAME,
     process.env.DB_PASSWORD,
@@ -22,4 +22,4 @@ const db_config = new Sequelize(
 
 
 // EXPORT
-export default db_config;
+export default dbConfig;

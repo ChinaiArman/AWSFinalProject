@@ -7,8 +7,9 @@ import FacultyAvailability from "./FacultyAvailability.js";
 import Student from "./Student.js";
 import Waitlist from "./Waitlist.js";
 import User from "./User.js";
+import Session from "./Session.js";
 
-import db_config from '../config/db_config.js';
+import db_config from '../config/dbConfig.js';
 
 // ASSOCIATIONS
 // COURSE
@@ -44,6 +45,10 @@ Waitlist.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 // USER
 User.hasOne(Faculty, { foreignKey: 'user_id', as: 'faculty' });
 User.hasOne(Student, { foreignKey: 'user_id', as: 'student' });
+User.hasMany(Session, { foreignKey: 'user_id', as: 'session' });
+
+// SESSION
+Session.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 
 // SYNC DATABASE

@@ -4,7 +4,7 @@ import db_config from '../config/dbConfig.js';
 
 
 // MODEL DEFINITION
-const Student = db_config.define('Student', {
+const Session = db_config.define('Session', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -14,27 +14,19 @@ const Student = db_config.define('Student', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    first_name: {
+    session_token: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    last_name: {
-        type: DataTypes.STRING,
+    expires: {
+        type: DataTypes.DATE,
         allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    phone_number: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
+    }
 }, {
-    tableName: 'students',
+    tableName: 'sessions',
     timestamps: false
 });
 
 
 // DEFAULT EXPORT
-export default Student;
+export default Session;
