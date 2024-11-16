@@ -15,7 +15,7 @@ const AdminFacultyDropdown = ({ title = "Default Title" }) => {
       <DropdownButton
         label="DropdownButton"
         onClick={() => console.log('Button clicked! Placeholder action.')}
-        color="red"/>
+        color="red" />
 
       <ScheduleButton
         label="ScheduleButton"
@@ -23,10 +23,11 @@ const AdminFacultyDropdown = ({ title = "Default Title" }) => {
         color="blue" />
 
 
-        <AddButton
-         label="Add Faculty"
-         onClick={() => console.log('Apply clicked')}
-         color="gray" />
+      <AddButton
+        label="Add Faculty"
+        onClick={() => console.log('Apply clicked')}
+        color="gray" />
+
     </div>
   );
 };
