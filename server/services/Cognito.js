@@ -1,5 +1,5 @@
 // IMPORTS
-import { SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand, ForgotPasswordCommand, ConfirmForgotPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 
 // CONSTANTS
@@ -48,6 +48,24 @@ class Cognito {
             Username: email
         };
         return await this.cognito.send(new ConfirmSignUpCommand(params));
+    }
+
+    async forgotPassword(email) {
+        const params = {
+            ClientId: this.ClientId,
+            Username: email
+        };
+        return await this.cognito.send(new ForgotPasswordCommand(params));
+    }
+
+    async resetPassword(email, code, password) {
+        const params = {
+            ClientId: this.ClientId,
+            ConfirmationCode: code,
+            Password: password,
+            Username: email
+        };
+        return await this.cognito.send(new ConfirmForgotPasswordCommand(params));
     }
 }
 

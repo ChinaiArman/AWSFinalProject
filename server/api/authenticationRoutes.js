@@ -57,6 +57,32 @@ authenticationRoutes.post('/logout', async (req, res) => {
     return;
 });
 
+authenticationRoutes.post('/forgotPassword', async (req, res) => {
+    const cognito = req.cognito;
+    const { email } = req.body;
+    try {
+        await cognito.forgotPassword(email);
+        res.status(200).json({ "message": "Password reset code sent successfully" });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
+authenticationRoutes.post('/resetPassword', async (req, res) => {
+    const cognito = req.cognito;
+    const { email, code, password } = req.body;
+    try {
+        await cognito.resetPassword(email, code, password);
+        res.status(200).json({ "message": "Password reset successfully" });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
 
 // EXPORTS
 export default authenticationRoutes;
