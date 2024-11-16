@@ -20,6 +20,12 @@ const AddCourse = () => {
     "4:30-5:20",
   ];
 
+  // State variables to store form data
+  const [courseName, setCourseName] = useState("");
+  const [courseDescription, setCourseDescription] = useState("");
+  const [instructor, setInstructor] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
+  const [seatAvailability, setSeatAvailability] = useState("");
   const [availability, setAvailability] = useState(() => {
     const initialAvailability = {};
     days.forEach((day) => {
@@ -31,6 +37,7 @@ const AddCourse = () => {
     return initialAvailability;
   });
 
+  // Function to toggle availability for a time slot
   const toggleAvailability = (day, slot) => {
     setAvailability((prevAvailability) => ({
       ...prevAvailability,
@@ -41,7 +48,7 @@ const AddCourse = () => {
     }));
   };
 
-  // Sample category options for the dropdown
+  // mock data
   const categoryOptions = [
     { label: "Science", value: "science" },
     { label: "Arts", value: "arts" },
@@ -54,30 +61,73 @@ const AddCourse = () => {
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
 
+  // Handle form submission
+  const handleSave = async () => {
+    const courseData = {
+      courseName,
+      courseDescription,
+      instructor,
+      roomNumber,
+      seatAvailability,
+      availability,
+    };
+
+    try {
+      // replace with api
+      const response = await fetch("/api/course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(courseData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save course data");
+      }
+
+      //reset 
+      setCourseName("");
+      setCourseDescription("");
+      setInstructor("");
+      setRoomNumber("");
+      setSeatAvailability("");
+      setAvailability(() => {
+        const initialAvailability = {};
+        days.forEach((day) => {
+          initialAvailability[day] = {};
+          timeSlots.forEach((slot) => {
+            initialAvailability[day][slot] = false;
+          });
+        });
+        return initialAvailability;
+      });
+
+    } catch (error) {
+      console.error("Error saving course data:", error);
+    }
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <BaseSidebar items={sidebarItems} />
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto ">
+      <div className="flex-1 overflow-y-auto">
 
         <Navbar role="admin" />
         <h1 className="text-2xl font-bold text-center mb-6">Add a new course:</h1>
 
-        {/* <TextField
-          label="Course ID:"
-          onChange={(e) => setCourseID(e.target.value)}
-          placeholder="Enter course ID"
-        /> */}
-
         <TextField
           label="Course Name:"
+          value={courseName}
           onChange={(e) => setCourseName(e.target.value)}
           placeholder="Enter course name"
         />
 
         <TextField
           label="Course Description:"
+          value={courseDescription}
           onChange={(e) => setCourseDescription(e.target.value)}
           placeholder="Enter course description"
         />
@@ -92,19 +142,20 @@ const AddCourse = () => {
         <DropdownList
           label="Assign Instructor:"
           options={categoryOptions}
-          selectedValue=""
+          selectedValue={instructor}
           onChange={(e) => setInstructor(e.target.value)}
         />
 
-        <DropdownList
+        <TextField
           label="Room Number:"
-          options={categoryOptions}
-          selectedValue=""
+          value={roomNumber}
           onChange={(e) => setRoomNumber(e.target.value)}
+          placeholder="Enter a room number"
         />
 
         <TextField
           label="Number of Seats Available:"
+          value={seatAvailability}
           onChange={(e) => setSeatAvailability(e.target.value)}
           placeholder="Enter a number"
         />
@@ -118,11 +169,10 @@ const AddCourse = () => {
 
           <DropdownButton
             label="Save"
-            onClick={() => console.log("Button clicked! Placeholder action.")}
+            onClick={handleSave} // Call handleSave on Save button click
             color="green"
           />
         </div>
-
 
       </div>
     </div>

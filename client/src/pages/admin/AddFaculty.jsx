@@ -5,19 +5,51 @@ import TextField from "../../components/TextField";
 import DropdownButton from "../../components/buttons/DropdownButton";
 
 const AddFaculty = () => {
-
-  // Sample category options for the dropdown
-  const categoryOptions = [
-    { label: "Science", value: "science" },
-    { label: "Arts", value: "arts" },
-    { label: "Technology", value: "technology" },
-  ];
-
+  // State variables to store form data
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+ 
   // Sidebar menu items
   const sidebarItems = [
     { label: "Faculty Management", path: "/admin/faculty-management", onClick: () => (window.location.href = "/admin/faculty-management") },
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
+
+  // Handle form submission
+  const handleSave = async () => {
+    const facultyData = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber
+    };
+
+    try {
+      // replace with api
+      const response = await fetch("/api/faculty", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(facultyData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save faculty data");
+      }
+
+      // reset form fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhoneNumber("");
+
+    } catch (error) {
+      console.error("Error saving faculty data:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -28,23 +60,28 @@ const AddFaculty = () => {
 
         <Navbar role="admin" />
         <h1 className="text-2xl font-bold text-center mb-6">Add a new faculty member:</h1>
+
         <TextField
           label="First Name:"
+          value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           placeholder="Enter first name"
         />
         <TextField
           label="Last Name:"
+          value={lastName}
           onChange={(e) => setLastName(e.target.value)}
           placeholder="Enter last name"
         />
         <TextField
           label="Email:"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter instructor email address"
         />
         <TextField
           label="Phone Number:"
+          value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Enter instructor phone number"
         />
@@ -58,12 +95,10 @@ const AddFaculty = () => {
 
           <DropdownButton
             label="Save"
-            onClick={() => console.log("Button clicked! Placeholder action.")}
+            onClick={handleSave} 
             color="green"
           />
         </div>
-
-
       </div>
     </div>
   );
