@@ -1,8 +1,9 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function BaseSidebar({ items }) {
   const location = useLocation(); // Get the current route
+  const navigate = useNavigate(); // Navigation handler
 
   return (
     <div className="bg-gray-800 text-white w-64 h-screen">
@@ -12,9 +13,9 @@ function BaseSidebar({ items }) {
           <li
             key={item.label}
             className={`p-4 cursor-pointer ${
-              location.pathname === item.path ? "bg-gray-600 font-bold" : "hover:bg-gray-600"
+              location.pathname === item.path ? "bg-blue-500 font-bold" : "hover:bg-gray-600"
             }`}
-            onClick={item.onClick}
+            onClick={() => navigate(item.path)} // Navigate to the correct path
           >
             {item.label}
           </li>
