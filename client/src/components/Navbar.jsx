@@ -14,11 +14,14 @@ function Navbar() {
         onClick={() => navigate("/faculty/my-courses")}
       >
         <HomeIcon className="mr-2" />
-        <span>Home</span>
+        {/* No "Home" text, just the icon */}
       </div>
 
       {/* Logo */}
-      <div className="text-lg font-bold">Logo</div>
+      <div className="text-lg font-bold flex items-center">
+        {/* Replace this placeholder text with the actual logo or an image */}
+        <span>Logo</span>
+      </div>
 
       {/* Profile Icon */}
       <div className="cursor-pointer">
