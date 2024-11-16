@@ -4,6 +4,7 @@ dotenv.config();
 
 import express from "express";
 import cors from 'cors'
+import session from "express-session";
 import bodyParser from "body-parser";
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import { SESClient } from "@aws-sdk/client-ses";
@@ -11,13 +12,20 @@ import { SESClient } from "@aws-sdk/client-ses";
 import Database from "./services/database.js";
 import Cognito from "./services/Cognito.js";
 
-import dbConfig from "./models/index.js";
+import config from "./models/index.js";
+import createSessionConfig from "./config/sessionConfig.js";
 import router from "./api/index.js";
 
 
 // CONSTANTS
 const PORT = process.env.PORT || 5000;
 const app = express();
+const { dbConfig, syncDatabase } = config;
+const sessionConfig = createSessionConfig(dbConfig);
+
+
+// SYNC DATABASE
+syncDatabase();
 
 
 // AWS CONFIG
@@ -37,7 +45,6 @@ const sesClient = new SESClient({
 });
 
 
-
 // SERVICES
 const db = new Database(dbConfig);
 const cognito = new Cognito(cognitoClient);
@@ -47,6 +54,7 @@ const cognito = new Cognito(cognitoClient);
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(session(sessionConfig));
 app.use((req, res, next) => {
     req.db = db;
     req.cognito = cognito;
