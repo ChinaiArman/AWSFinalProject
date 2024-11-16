@@ -83,6 +83,19 @@ class Database {
         })
         
     }
+
+    async getCoursesbyStudentId(studentId) {
+        const courses = await Course.findAll({
+            include: [
+                {
+                    model: Enrollment,
+                    as: 'enrollment',
+                    where: { student_id: studentId }
+                }
+            ]
+        });
+        return courses;
+    }
 }
 
 
