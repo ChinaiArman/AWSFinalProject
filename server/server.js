@@ -14,6 +14,10 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 
+// SERVICES
+// pass db to Database class here probably. Still need to make db class.
+
+
 // MIDDLEWARE
 app.use(cors())
 app.use(bodyParser.json())
