@@ -2,15 +2,7 @@
 import React from "react";
 import ClassBlock from "./ClassBlock";
 
-const MyTimetable = () => {
-  const timetableData = [
-    { day: "Monday", courseName: "Math", startTime: "08:30", endTime: "09:20", color: "#FF5733" },
-    { day: "Monday", courseName: "English", startTime: "09:30", endTime: "12:20", color: "#33B5FF" },
-    { day: "Tuesday", courseName: "Science", startTime: "10:30", endTime: "11:20", color: "#FFC300" },
-    { day: "Wednesday", courseName: "History", startTime: "11:30", endTime: "15:20", color: "#DAF7A6" },
-    { day: "Thursday", courseName: "Art", startTime: "15:30", endTime: "16:20", color: "#8A2BE2" },
-  ];
-
+const Timetable = ({ timetableData }) => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const times = [
     "08:30 - 09:20",
@@ -79,4 +71,4 @@ const MyTimetable = () => {
   );
 };
 
-export default MyTimetable;
+export default Timetable;
