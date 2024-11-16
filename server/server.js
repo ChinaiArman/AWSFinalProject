@@ -54,7 +54,7 @@ const cognito = new Cognito(cognitoClient);
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(session(sessionConfig));
+app.use(sessionConfig);
 app.use((req, res, next) => {
     req.db = db;
     req.cognito = cognito;
@@ -72,6 +72,16 @@ app.get('/', async (req, res) => {
 });
 
 app.use('/api', router);
+
+
+app.get('/set-session', (req, res) => {
+    req.session.userId = 12345; // Storing userId in session
+    res.send('Session data saved!');
+});
+
+app.get('/get-session', (req, res) => {
+    res.send({ sessionData: req.session }); // Retrieving session data
+});
 
 
 // LISTEN

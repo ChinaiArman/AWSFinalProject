@@ -1,6 +1,11 @@
 // IMPORTS
 import session from 'express-session';
 import SequelizeStoreFactory from 'connect-session-sequelize';
+import dotenv from "dotenv";
+
+
+// DOTENV CONFIG
+dotenv.config();
 
 
 // CONSTANTS
