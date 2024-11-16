@@ -23,7 +23,6 @@ authenticationRoutes.post('/register', async (req, res) => {
         res.status(200).json({ "message": "User created successfully" });
         return;
     } catch (error) {
-        console.error(error);
         res.status(400).json({ "error": error.message });
         return;
     }
