@@ -1,34 +1,38 @@
 import React from "react";
-import BaseDropdownMenu from "./BaseDropdownMenu";
-import DropdownButton from "./buttons/DropdownButton";
-import ScheduleButton from "./buttons/ScheduleButton";
-import AddButton from "./buttons/AddButton";
+import BaseDropdownMenu from "./BaseDropdownMenu"; 
+import DropdownButton from "./buttons/DropdownButton"
 
-const AdminFacultyDropdown = ({ title = "Default Title" }) => {
+const AdminFacultyDropdown = ({ name, course, email }) => {
   return (
-    <div className="space-y-4">
-      {/* Use BaseDropdownMenu and pass custom title as a prop */}
-      <BaseDropdownMenu title={title}>
-        {/* Additional content specific to the dropdown */}
-      </BaseDropdownMenu>
+    <BaseDropdownMenu title="Faculty Info">
+      <div className="">
+        {/* Faculty Information */}
+        <div className="mb-4">
+          <p className="font-semibold">Name:</p>
+          <p>{name}</p>
+        </div>
+        <div className="mb-4">
+          <p className="font-semibold">Course:</p>
+          <p>{course}</p>
+        </div>
+        <div className="mb-4">
+          <p className="font-semibold">Email:</p>
+          <p>{email}</p>
+        </div>
 
-      <DropdownButton
-        label="DropdownButton"
-        onClick={() => console.log('Button clicked! Placeholder action.')}
-        color="red" />
-
-      <ScheduleButton
-        label="ScheduleButton"
-        onClick={() => console.log('Apply clicked')}
-        color="blue" />
-
-
-      <AddButton
-        label="Add Faculty"
-        onClick={() => console.log('Apply clicked')}
-        color="gray" />
-
-    </div>
+        {/* Buttons */}
+        <div className="flex justify-center gap-12">
+        <DropdownButton
+            label="Edit"
+            onClick={() => console.log("Button clicked! Placeholder action.")}
+            color="gray"/> 
+        <DropdownButton
+            label="Fire"
+            onClick={() => console.log("Button clicked! Placeholder action.")}
+            color="red"/>
+        </div>
+      </div>
+    </BaseDropdownMenu>
   );
 };
 

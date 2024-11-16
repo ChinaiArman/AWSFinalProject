@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
+import AdminFacultyDropdown from "../../components/AdminFacultyDropdown";
 
 const FacultyManagement = () => {
 
@@ -35,6 +36,7 @@ const FacultyManagement = () => {
           onClick={() => (window.location.href = "/admin/add-faculty")}
           color="gray" />
 
+        <AdminFacultyDropdown title="Santa Claus" />
       </div>
     </div>
   );

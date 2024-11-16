@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-
-const BaseDropdownMenu = ({ title = "Dropdown Title" }) => {
+const BaseDropdownMenu = ({ title = "Dropdown Title", children }) => {
   const [open, setOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -26,14 +25,7 @@ const BaseDropdownMenu = ({ title = "Dropdown Title" }) => {
       </div>
 
       {/* Dropdown Content */}
-      {open && (
-        <div className="px-6 py-3 bg-white">
-          {/* Placeholder for dropdown content */}
-          <p className="text-gray-700 text-md">
-            Example text
-          </p>
-        </div>
-      )}
+      {open && <div className="px-6 py-3 bg-white">{children}</div>}
     </div>
   );
 };
