@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import AuthenticationButton from "../components/AuthenticationButton";
 
 function Verification() {
   const [email, setEmail] = useState(""); // Assuming this comes from Cognito or state
@@ -53,12 +53,7 @@ function Verification() {
               />
             ))}
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded"
-          >
-            Confirm Code
-          </button>
+          <AuthenticationButton label="Confirm Code" type="submit" />
         </form>
       </div>
     </div>
