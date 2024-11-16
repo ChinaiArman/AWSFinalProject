@@ -3,8 +3,16 @@ import { useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-function Navbar() {
+function Navbar({ role }) {
   const navigate = useNavigate();
+
+  // Determine the home route based on the role
+  const getHomeRoute = () => {
+    if (role === "student") return "/student/my-courses";
+    if (role === "faculty") return "/faculty/my-courses";
+    if (role === "admin") return "/admin/faculty-management";
+    return "/"; // Default route if no role is provided
+  };
 
   return (
     <div className="bg-blue-500 text-white p-4 flex items-center justify-between">
@@ -12,7 +20,7 @@ function Navbar() {
       <div className="flex items-center">
         <div
           className="flex items-center cursor-pointer"
-          onClick={() => navigate("/faculty/my-courses")}
+          onClick={() => navigate(getHomeRoute())}
         >
           <HomeIcon className="mr-2" />
         </div>
