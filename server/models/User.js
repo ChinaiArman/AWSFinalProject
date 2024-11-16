@@ -1,6 +1,6 @@
 // IMPORTS
 import { DataTypes } from "sequelize";
-import db from "../services/database.js";
+import db from '../config/db_config.js';
 
 
 // MODEL DEFINITION
@@ -12,6 +12,10 @@ const User = db.define('User', {
     },
     role: {
         type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    date_of_birth: {
+        type: DataTypes.DATE,
         allowNull: false
     },
 }, {

@@ -1,6 +1,6 @@
 // IMPORTS
 import { DataTypes } from "sequelize";
-import db from "../services/database.js";
+import db from '../config/db_config.js';
 
 
 // MODEL DEFINITION

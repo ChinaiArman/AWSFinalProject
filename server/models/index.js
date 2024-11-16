@@ -8,6 +8,7 @@ import Student from "./Student.js";
 import Waitlist from "./Waitlist.js";
 import User from "./User.js";
 
+import db from '../config/db_config.js';
 
 // ASSOCIATIONS
 // COURSE
@@ -43,3 +44,25 @@ Waitlist.belongsTo(Student, { foreignKey: 'student_id', as: 'student' });
 // USER
 User.hasOne(Faculty, { foreignKey: 'user_id', as: 'faculty' });
 User.hasOne(Student, { foreignKey: 'user_id', as: 'student' });
+
+
+// SYNC DATABASE
+const syncDatabase = async () => {
+    try {
+        // Step 1: Ensure the connection to the DB is successful
+        await db.authenticate();
+        console.log('Database connection successful.');
+
+        // Step 2: Sync models (create tables if they don’t exist)
+        await db.sync({ alter: true });
+        console.log('Database synced successfully.');
+    } catch (error) {
+        console.error('Error syncing the database or starting the server:', error);
+    }
+};
+
+syncDatabase();
+
+
+// DEFAULT EXPORT
+export default db;
