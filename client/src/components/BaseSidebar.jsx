@@ -12,7 +12,7 @@ function BaseSidebar({ items }) {
           <li
             key={item.label}
             className={`p-4 cursor-pointer ${
-              location.pathname === item.path ? "bg-gray-600" : "hover:bg-gray-600"
+              location.pathname === item.path ? "bg-gray-600 font-bold" : "hover:bg-gray-600"
             }`}
             onClick={item.onClick}
           >
