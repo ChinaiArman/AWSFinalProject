@@ -11,9 +11,9 @@ authenticationRoutes.post('/login', async (req, res) => {
     const cognito = req.cognito;
     const { email, password } = req.body;
     try {
-        const userId = await cognito.signIn(email, password).then(data => data.AuthenticationResult.AccessToken);
+        const userId = await cognito.signIn(email, password)
         req.session.userId = userId;
-        res.status(200).json({ "message": "User logged in successfully", "user": user });
+        res.status(200).json({ "message": "User logged in successfully" });
         return;
     } catch (error) {
         res.status(400).json({ "error": error.message });
@@ -38,7 +38,7 @@ authenticationRoutes.post('/register', async (req, res) => {
     }
 });
 
-authenticationRoutes.post('verify', async (req, res) => {
+authenticationRoutes.post('/verify', async (req, res) => {
     const cognito = req.cognito;
     const { email, code } = req.body;
     try {
