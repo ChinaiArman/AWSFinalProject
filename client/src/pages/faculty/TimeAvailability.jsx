@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import BaseSidebar from "../../components/BaseSidebar";
+import Navbar from "../../components/Navbar";
 import ScheduleTable from "../../components/ScheduleTable";
 
 function TimeAvailability() {
@@ -15,19 +17,51 @@ function TimeAvailability() {
     "4:30-5:20",
   ];
 
-  const handleSave = (availability) => {
-    console.log("Saved Availability:", availability);
-    // Future: Make API call to save availability in the backend
+  const sidebarItems = [
+    { label: "My Courses", onClick: () => (window.location.href = "/faculty/my-courses") },
+    { label: "My Timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
+    { label: "Time Availability", onClick: () => (window.location.href = "/faculty/time-availability") },
+  ];
+
+  const [availability, setAvailability] = useState(() => {
+    const initialAvailability = {};
+    days.forEach((day) => {
+      initialAvailability[day] = {};
+      timeSlots.forEach((slot) => {
+        initialAvailability[day][slot] = false;
+      });
+    });
+    return initialAvailability;
+  });
+
+  const toggleAvailability = (day, slot) => {
+    setAvailability((prevAvailability) => ({
+      ...prevAvailability,
+      [day]: {
+        ...prevAvailability[day],
+        [slot]: !prevAvailability[day][slot],
+      },
+    }));
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Time Availability</h1>
-      <ScheduleTable
-        days={days}
-        timeSlots={timeSlots}
-        onSave={handleSave} // Pass save handler
-      />
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <BaseSidebar items={sidebarItems} />
+
+      {/* Main Content */}
+      <div className="flex-1">
+        <Navbar />
+        <div className="p-4">
+          <h1 className="text-2xl font-bold mb-4">Time Availability</h1>
+          <ScheduleTable
+            days={days}
+            timeSlots={timeSlots}
+            availability={availability}
+            toggleAvailability={toggleAvailability}
+          />
+        </div>
+      </div>
     </div>
   );
 }
