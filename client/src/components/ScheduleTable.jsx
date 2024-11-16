@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ScheduleButton from "./ScheduleButton";
+import ScheduleButton from "./buttons/ScheduleButton";
 
 function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
   const [availability, setAvailability] = useState(() => {
