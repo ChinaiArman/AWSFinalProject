@@ -38,6 +38,19 @@ authenticationRoutes.post('/register', async (req, res) => {
     }
 });
 
+authenticationRoutes.post('verify', async (req, res) => {
+    const cognito = req.cognito;
+    const { email, code } = req.body;
+    try {
+        await cognito.verify(email, code);
+        res.status(200).json({ "message": "User verified successfully" });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
 authenticationRoutes.post('/logout', async (req, res) => {
     res.status(200).json({ "message": "Logout Page" });
 });

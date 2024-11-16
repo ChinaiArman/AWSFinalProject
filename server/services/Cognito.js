@@ -1,5 +1,5 @@
 // IMPORTS
-import { SignUpCommand, InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 
 // CONSTANTS
@@ -33,6 +33,15 @@ class Cognito {
         const response = await this.cognito.send(new InitiateAuthCommand(params));
         const decodedToken = JSON.parse(Buffer.from(response.AuthenticationResult.IdToken.split('.')[1], 'base64').toString('utf-8'));
         return decodedToken.sub;
+    }
+
+    async verify(email, code) {
+        const params = {
+            ClientId: this.ClientId,
+            ConfirmationCode: code,
+            Username: email
+        };
+        return await this.cognito.send(new ConfirmSignUpCommand(params));
     }
 }
 
