@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import ScheduleButton from "./buttons/ScheduleButton";
 
 function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
+  // State to manage availability
   const [availability, setAvailability] = useState(() => {
     if (Object.keys(initialAvailability).length) {
       return initialAvailability;
     }
 
+    // Default empty availability
     const defaultAvailability = {};
     days.forEach((day) => {
       defaultAvailability[day] = {};
@@ -17,6 +19,21 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
     return defaultAvailability;
   });
 
+  // Reset availability to initial state
+  const handleReset = () => {
+    setAvailability(() => {
+      const resetAvailability = {};
+      days.forEach((day) => {
+        resetAvailability[day] = {};
+        timeSlots.forEach((slot) => {
+          resetAvailability[day][slot] = false;
+        });
+      });
+      return resetAvailability;
+    });
+  };
+
+  // Toggle individual availability cell
   const toggleAvailability = (day, slot) => {
     setAvailability((prevAvailability) => ({
       ...prevAvailability,
@@ -25,17 +42,6 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
         [slot]: !prevAvailability[day][slot],
       },
     }));
-  };
-
-  const handleReset = () => {
-    const resetAvailability = {};
-    days.forEach((day) => {
-      resetAvailability[day] = {};
-      timeSlots.forEach((slot) => {
-        resetAvailability[day][slot] = false;
-      });
-    });
-    setAvailability(resetAvailability);
   };
 
   return (
@@ -70,16 +76,18 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
           ))}
         </tbody>
       </table>
-      <div className="flex mt-4">
-        <ScheduleButton
-          label="Apply"
-          onClick={() => onSave && onSave(availability)}
-          color="blue"
-        />
+      <div className="flex justify-between mt-4">
+        {/* Reset Button on the Left */}
         <ScheduleButton
           label="Reset"
-          onClick={handleReset}
           color="gray"
+          onClick={handleReset}
+        />
+        {/* Apply Button on the Right */}
+        <ScheduleButton
+          label="Apply"
+          color="blue"
+          onClick={() => onSave && onSave(availability)}
         />
       </div>
     </div>
