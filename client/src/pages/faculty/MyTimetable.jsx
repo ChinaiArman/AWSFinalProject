@@ -25,7 +25,7 @@ const MyTimetable = () => {
 
       {/* Main Content */}
       <div className="flex-1">
-        <Navbar />
+        <Navbar role="faculty" />
         <div className="p-4">
           <h1 className="text-2xl font-bold text-center mb-6">Faculty My Timetable</h1>
           <Timetable timetableData={facultyTimetableData} />

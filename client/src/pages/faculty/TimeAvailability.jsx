@@ -51,7 +51,7 @@ function TimeAvailability() {
 
       {/* Main Content */}
       <div className="flex-1">
-        <Navbar />
+        <Navbar role="faculty" />
         <div className="p-4">
           <h1 className="text-2xl font-bold mb-4">Time Availability</h1>
           <ScheduleTable
