@@ -4,7 +4,7 @@ import db from "../services/database.js";
 
 
 // MODEL DEFINITION
-const Course = db.define('Course', {
+const FacultyAvailability = db.define('FacultyAvailability', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -14,31 +14,27 @@ const Course = db.define('Course', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    course_name: {
+    day: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    course_description: {
-        type: DataTypes.STRING,
+    start_time: {
+        type: DataTypes.TIME,
         allowNull: false
     },
-    room_number: {
-        type: DataTypes.STRING,
+    end_time: {
+        type: DataTypes.TIME,
         allowNull: false
     },
-    seats_available: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    total_seats: {
-        type: DataTypes.INTEGER,
+    available: {
+        type: DataTypes.BOOLEAN,
         allowNull: false
     }
 }, {
-    tableName: 'courses',
+    tableName: 'faculty_availabilities',
     timestamps: false
 });
 
 
 // DEFAULT EXPORT
-export default Course;
+export default FacultyAvailability;

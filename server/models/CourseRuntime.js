@@ -4,41 +4,45 @@ import db from "../services/database.js";
 
 
 // MODEL DEFINITION
-const Course = db.define('Course', {
+const CourseRuntime = db.define('CourseRuntime', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
     },
-    faculty_id: {
+    course_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    course_name: {
+    start_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    end_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    start_time: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    end_time: {
+        type: DataTypes.TIME,
+        allowNull: false
+    },
+    days_of_week: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    course_description: {
+    location: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    room_number: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    seats_available: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    total_seats: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    }
 }, {
-    tableName: 'courses',
+    tableName: 'course_runtimes',
     timestamps: false
 });
 
 
 // DEFAULT EXPORT
-export default Course;
+export default CourseRuntime;

@@ -4,41 +4,37 @@ import db from "../services/database.js";
 
 
 // MODEL DEFINITION
-const Course = db.define('Course', {
+const Student = db.define('Student', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
     },
-    faculty_id: {
+    user_id: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    course_name: {
+    first_name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    course_description: {
+    last_name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    room_number: {
+    email: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    seats_available: {
-        type: DataTypes.INTEGER,
+    phone_number: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    total_seats: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    }
 }, {
-    tableName: 'courses',
+    tableName: 'students',
     timestamps: false
 });
 
 
 // DEFAULT EXPORT
-export default Course;
+export default Student;
