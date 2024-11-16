@@ -8,11 +8,11 @@ const FacultyManagement = () => {
 
   // Sample data for faculty (replace with your actual data source)
   const faculties = [
-    { id: 1, name: 'Dr. John Doe' },
-    { id: 2, name: 'Prof. Jane Smith' },
-    { id: 3, name: 'Dr. Alice Johnson' },
-    { id: 4, name: 'Prof. Bob Brown' },
-    { id: 5, name: 'Dr. Charlie Davis' },
+    { name: 'Dr. John Doe' },
+    { name: 'Prof. Jane Smith' },
+    { name: 'Dr. Alice Johnson' },
+    { name: 'Prof. Bob Brown' },
+    { name: 'Dr. Charlie Davis' },
   ];
 
   //sidebar menu items
@@ -36,7 +36,12 @@ const FacultyManagement = () => {
           onClick={() => (window.location.href = "/admin/add-faculty")}
           color="gray" />
 
-        <AdminFacultyDropdown title="Santa Claus" />
+        {/* <AdminFacultyDropdown title="Santa Claus" /> */}
+
+        {faculties.map((faculty, index) => (
+          <AdminFacultyDropdown key={index} title={faculty.name} />
+        ))}
+
       </div>
     </div>
   );

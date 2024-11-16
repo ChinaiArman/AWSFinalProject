@@ -2,8 +2,17 @@ import React, { useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
+import AdminCourseDropdown from "../../components/AdminCourseDropdown";
 
 const CourseManagement = () => {
+
+  // Sample data for courses (replace with your actual data source)
+  const courses = [
+    { name: 'Devops' },
+    { name: 'Serverless' },
+    { name: 'AWS' },
+    { name: 'Azure' },
+  ];
 
   //sidebar menu items
   const sidebarItems = [
@@ -22,10 +31,15 @@ const CourseManagement = () => {
         <Navbar />
 
         <AddButton
-        label="Add Course"
-        onClick={() => (window.location.href = "/admin/add-course")}
-        color="gray" />
+          label="Add Course"
+          onClick={() => (window.location.href = "/admin/add-course")}
+          color="gray" />
 
+        {/* <AdminCourseDropdown title="Devops"/> */}
+
+        {courses.map((faculty, index) => (
+          <AdminCourseDropdown key={index} title={faculty.name} />
+        ))}
 
       </div>
     </div>

@@ -2,9 +2,9 @@ import React from "react";
 import BaseDropdownMenu from "./BaseDropdownMenu"; 
 import DropdownButton from "./buttons/DropdownButton"
 
-const AdminFacultyDropdown = ({ name, course, email }) => {
+const AdminFacultyDropdown = ({ title, name, course, email }) => {
   return (
-    <BaseDropdownMenu title="Faculty Info">
+    <BaseDropdownMenu title={title}>
       <div className="">
         {/* Faculty Information */}
         <div className="mb-4">
@@ -12,7 +12,7 @@ const AdminFacultyDropdown = ({ name, course, email }) => {
           <p>{name}</p>
         </div>
         <div className="mb-4">
-          <p className="font-semibold">Course:</p>
+          <p className="font-semibold">Courses:</p>
           <p>{course}</p>
         </div>
         <div className="mb-4">
