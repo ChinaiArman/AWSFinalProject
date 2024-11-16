@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ScheduleTable from "../../components/ScheduleTable";
 
 function TimeAvailability() {
@@ -15,26 +15,9 @@ function TimeAvailability() {
     "4:30-5:20",
   ];
 
-  // Initialize availability as an object with day and timeSlot keys
-  const [availability, setAvailability] = useState(() => {
-    const initialAvailability = {};
-    days.forEach((day) => {
-      initialAvailability[day] = {};
-      timeSlots.forEach((slot) => {
-        initialAvailability[day][slot] = false;
-      });
-    });
-    return initialAvailability;
-  });
-
-  const toggleAvailability = (day, slot) => {
-    setAvailability((prevAvailability) => ({
-      ...prevAvailability,
-      [day]: {
-        ...prevAvailability[day],
-        [slot]: !prevAvailability[day][slot],
-      },
-    }));
+  const handleSave = (availability) => {
+    console.log("Saved Availability:", availability);
+    // Future: Make API call to save availability in the backend
   };
 
   return (
@@ -43,8 +26,7 @@ function TimeAvailability() {
       <ScheduleTable
         days={days}
         timeSlots={timeSlots}
-        availability={availability}
-        toggleAvailability={toggleAvailability}
+        onSave={handleSave} // Pass save handler
       />
     </div>
   );
