@@ -1,21 +1,13 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthenticationButton from "../components/AuthenticationButton";
 
 function Login() {
-  const navigate = useNavigate();
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    console.log("Login successful");
-    navigate("/faculty/my-courses"); // Redirect to the faculty dashboard
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
-        <form onSubmit={handleLogin}>
+        <form>
           <label className="block mb-2 text-sm font-medium">Email</label>
           <input
             type="email"
