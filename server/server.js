@@ -6,6 +6,7 @@ import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
+import { SESClient } from "@aws-sdk/client-ses";
 
 import Database from "./services/database.js";
 import Cognito from "./services/Cognito.js";
@@ -20,7 +21,14 @@ const app = express();
 
 
 // AWS CONFIG
-const cognitoServiceProvider = new CognitoIdentityProviderClient({
+const cognitoClient = new CognitoIdentityProviderClient({
+    region: "us-west-2",
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_SECRET_KEY
+    }
+});
+const sesClient = new SESClient({
     region: "us-west-2",
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -29,9 +37,10 @@ const cognitoServiceProvider = new CognitoIdentityProviderClient({
 });
 
 
+
 // SERVICES
 const db = new Database(dbConfig);
-const cognito = new Cognito(cognitoServiceProvider);
+const cognito = new Cognito(cognitoClient);
 
 
 // MIDDLEWARE
