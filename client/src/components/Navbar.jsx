@@ -8,19 +8,15 @@ function Navbar() {
 
   return (
     <div className="bg-blue-500 text-white p-4 flex items-center justify-between">
-      {/* Home Icon */}
-      <div
-        className="flex items-center cursor-pointer"
-        onClick={() => navigate("/faculty/my-courses")}
-      >
-        <HomeIcon className="mr-2" />
-        {/* No "Home" text, just the icon */}
-      </div>
-
-      {/* Logo */}
-      <div className="text-lg font-bold flex items-center">
-        {/* Replace this placeholder text with the actual logo or an image */}
-        <span>Logo</span>
+      {/* Home Icon and Logo */}
+      <div className="flex items-center">
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => navigate("/faculty/my-courses")}
+        >
+          <HomeIcon className="mr-2" />
+        </div>
+        <div className="text-lg font-bold">Logo</div>
       </div>
 
       {/* Profile Icon */}
