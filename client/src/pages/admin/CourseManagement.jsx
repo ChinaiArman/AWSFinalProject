@@ -4,9 +4,12 @@ import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import DropdownButton from "../../components/buttons/DropdownButton";
+import ConfirmationPopup from "../../components/ConfirmationPopup"; 
 
 const CourseManagement = () => {
   const [courses, setCourses] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false); 
+  const [courseToDelete, setCourseToDelete] = useState(null); 
 
   // Sidebar menu items
   const sidebarItems = [
@@ -58,35 +61,15 @@ const CourseManagement = () => {
     },
   ];
 
-  // Fetch course data
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        // replace with actual API
-        const response = await fetch("/api/courses");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch course data");
-        }
-
-        // Uncomment and use this in production
-        // const data = await response.json();
-        // setCourses(data);
-
-        setCourses(mockCourses); // Use mock data temporarily
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-        setCourses([]);
-      }
-    };
-
-    fetchCourses();
+    // Set mock courses as initial data
+    setCourses(mockCourses);
   }, []);
 
   // Function to delete a course
   const deleteCourse = async (courseId) => {
     try {
-      // Send DELETE request to the server to delete the course
+      // Send DELETE request to the server to delete the course (mocked here)
       // const response = await fetch(`/api/courses/${courseId}`, {
       //   method: "DELETE",
       // });
@@ -100,11 +83,23 @@ const CourseManagement = () => {
         prevCourses.filter((course) => course.id !== courseId)
       );
 
-      
       console.log(`Course with ID: ${courseId} has been deleted.`);
+      setIsPopupOpen(false); // Close the popup after deletion
     } catch (error) {
       console.error("Error deleting course:", error);
     }
+  };
+
+  // Open confirmation popup and set the course to delete
+  const openDeleteConfirmation = (course) => {
+    setCourseToDelete(course);
+    setIsPopupOpen(true);
+  };
+
+  // Close the confirmation popup without deleting
+  const cancelDelete = () => {
+    setIsPopupOpen(false);
+    setCourseToDelete(null);
   };
 
   return (
@@ -162,7 +157,7 @@ const CourseManagement = () => {
                   />
                   <DropdownButton
                     label="Delete Course"
-                    onClick={() => deleteCourse(course.id)} // Call deleteCourse on click
+                    onClick={() => openDeleteConfirmation(course)} // Open confirmation popup
                     color="red"
                   />
                 </div>
@@ -170,6 +165,15 @@ const CourseManagement = () => {
             </BaseDropdownMenu>
           ))}
       </div>
+
+      {/* Confirmation Popup */}
+      <ConfirmationPopup
+        isOpen={isPopupOpen}
+        title="Delete Course"
+        message={`Are you sure you want to delete the course "${courseToDelete?.name}"?`}
+        onConfirm={() => deleteCourse(courseToDelete?.id)} 
+        onCancel={cancelDelete} 
+      />
     </div>
   );
 };

@@ -4,9 +4,12 @@ import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import DropdownButton from "../../components/buttons/DropdownButton";
+import ConfirmationPopup from "../../components/ConfirmationPopup"; 
 
 const FacultyManagement = () => {
   const [faculties, setFaculties] = useState([]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false); 
+  const [facultyToFire, setFacultyToFire] = useState(null); 
 
   // Sidebar menu items
   const sidebarItems = [
@@ -22,7 +25,7 @@ const FacultyManagement = () => {
     },
   ];
 
-  // Mock data
+  // Mock data for faculties
   const mockData = [
     {
       id: 1,
@@ -44,35 +47,15 @@ const FacultyManagement = () => {
     },
   ];
 
-  // Fetch faculty data
   useEffect(() => {
-    const fetchFaculties = async () => {
-      try {
-        // replace with api
-        const response = await fetch("/api/faculties");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch faculty data");
-        }
-
-        // Uncomment and use this in production
-        // const data = await response.json();
-        // setFaculties(data);
-
-        setFaculties(mockData); // Use mock data temporarily
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setFaculties([]);
-      }
-    };
-
-    fetchFaculties();
+    // Set mock data as initial state
+    setFaculties(mockData);
   }, []);
 
   // Function to fire a faculty member
   const fireFaculty = async (facultyId) => {
     try {
-     
+      // Send DELETE request to the server to fire the faculty (mocked here)
       // const response = await fetch(`/api/faculty/${facultyId}`, {
       //   method: "DELETE",
       // });
@@ -87,9 +70,22 @@ const FacultyManagement = () => {
       );
 
       console.log(`Faculty with ID: ${facultyId} has been fired.`);
+      setIsPopupOpen(false);
     } catch (error) {
       console.error("Error firing faculty:", error);
     }
+  };
+
+  // Open confirmation popup and set the faculty to fire
+  const openFireConfirmation = (faculty) => {
+    setFacultyToFire(faculty);
+    setIsPopupOpen(true);
+  };
+
+  // Close the confirmation popup without firing
+  const cancelFire = () => {
+    setIsPopupOpen(false);
+    setFacultyToFire(null);
   };
 
   return (
@@ -133,7 +129,7 @@ const FacultyManagement = () => {
                   />
                   <DropdownButton
                     label="Fire"
-                    onClick={() => fireFaculty(faculty.id)} // Call fireFaculty on click
+                    onClick={() => openFireConfirmation(faculty)} // Open confirmation popup
                     color="red"
                   />
                 </div>
@@ -141,6 +137,15 @@ const FacultyManagement = () => {
             </BaseDropdownMenu>
           ))}
       </div>
+
+      {/* Confirmation Popup */}
+      <ConfirmationPopup
+        isOpen={isPopupOpen}
+        title="Fire Faculty"
+        message={`Are you sure you want to fire ${facultyToFire?.name}?`}
+        onConfirm={() => fireFaculty(facultyToFire?.id)} // Confirm and fire the faculty
+        onCancel={cancelFire} // Cancel and close the popup
+      />
     </div>
   );
 };
