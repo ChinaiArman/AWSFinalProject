@@ -76,19 +76,21 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
           ))}
         </tbody>
       </table>
-      <div className="flex justify-between mt-4">
-        {/* Reset Button on the Left */}
-        <ScheduleButton
-          label="Reset"
-          color="gray"
-          onClick={handleReset}
-        />
-        {/* Apply Button on the Right */}
-        <ScheduleButton
-          label="Apply"
-          color="blue"
-          onClick={() => onSave && onSave(availability)}
-        />
+      <div className="flex justify-center mt-4">
+        <div className="flex w-1/3 justify-between">
+          {/* Reset Button on the Left */}
+          <ScheduleButton
+            label="Reset"
+            color="gray"
+            onClick={handleReset}
+          />
+          {/* Apply Button on the Right */}
+          <ScheduleButton
+            label="Apply"
+            color="blue"
+            onClick={() => onSave && onSave(availability)}
+          />
+        </div>
       </div>
     </div>
   );
