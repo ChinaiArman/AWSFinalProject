@@ -6,8 +6,7 @@ import db_config from '../config/dbConfig.js';
 // MODEL DEFINITION
 const User = db_config.define('User', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING,
         primaryKey: true
     },
     role: {

@@ -11,7 +11,7 @@ const FacultyAvailability = db_config.define('FacultyAvailability', {
         primaryKey: true
     },
     faculty_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     day: {

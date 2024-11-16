@@ -15,7 +15,7 @@ const Waitlist = db_config.define('Waitlist', {
         allowNull: false,
     },
     student_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     waitlist_date: {
