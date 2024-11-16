@@ -18,3 +18,7 @@ const User = db.define('User', {
     tableName: 'users',
     timestamps: false
 });
+
+
+// DEFAULT EXPORT
+export default User;
