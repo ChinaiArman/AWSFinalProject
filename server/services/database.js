@@ -64,6 +64,25 @@ class Database {
             });
         }
     }
+
+    async getAllCourses() {
+        const courses = await Course.findAll();
+        return courses;
+    }
+
+    async createCourse(courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
+        console.log('Creating course:', courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats);
+        await Course.create({
+            id: courseId,
+            faculty_id: facultyId,
+            course_name: courseName,
+            course_description: courseDescription,
+            room_number: roomNumber,
+            seats_available: seatsAvailable,
+            total_seats: totalSeats
+        })
+        
+    }
 }
 
 
