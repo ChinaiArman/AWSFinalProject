@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AuthenticationButton from "../components/AuthenticationButton";
 
 function Signup() {
   return (
@@ -32,19 +33,14 @@ function Signup() {
             className="border w-full p-2 mb-4 rounded"
           />
           <label className="block mb-2 text-sm font-medium">Date of Birth</label>
-          <input
-            type="date"
-            className="border w-full p-2 mb-4 rounded"
-          />
+          <input type="date" className="border w-full p-2 mb-4 rounded" />
           <label className="block mb-2 text-sm font-medium">Phone Number</label>
           <input
             type="text"
             placeholder="Phone Number"
             className="border w-full p-2 mb-4 rounded"
           />
-          <button className="w-full bg-blue-500 text-white py-2 rounded">
-            Sign Up
-          </button>
+          <AuthenticationButton label="Sign Up" type="submit" />
         </form>
         <div className="mt-4 text-sm text-center">
           <p>
