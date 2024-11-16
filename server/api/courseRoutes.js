@@ -1,6 +1,5 @@
 // IMPORTS
 import express from "express";
-import Course from "../models/Course.js";
 
 
 // CONSTANTS
@@ -9,15 +8,29 @@ const courseRoutes = express.Router();
 
 // ROUTES
 courseRoutes.get('/getAllCourses', async (req, res) => {
-    let courses = await Course.findAll()
-    res.send(courses);
+    const db = req.db;
+    try {
+        const courses = await db.getAllCourses();
+        res.status(200).json({ "courses": courses });
+        return;
+    } catch(error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
 })
 
 courseRoutes.post('/createCourse', async (req, res) => {
-    let course = await Course.create(req.body);
-    res.send(course);
+    const db = req.db;
+    const { faculty_id, course_name, course_description, room_number, seats_available, total_seats } = req.body;
+    try {
+        await db.createCourse(faculty_id, course_name, course_description, room_number, seats_available, total_seats);
+        res.status(200).json({ "message": "Course created successfully" });
+        return;
+    } catch(error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
 })
-
 
 // EXPORTS
 export default courseRoutes;
