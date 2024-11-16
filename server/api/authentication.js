@@ -15,16 +15,23 @@ authenticationRoutes.post('/login', async (req, res) => {
 authenticationRoutes.post('/register', async (req, res) => {
     const db = req.db;
     const cognito = req.cognito;
-    const { email, password } = req.body;
+    const { email, password, role, dateOfBirth, firstName, lastName, phoneNumber } = req.body;
     const user = await db.getUser(email);
     if (user) {
         res.status(400).send("User already exists");
         return;
     }
-    const userId = await cognito.signUp(email, password).then(data => data.UserSub);
-    db.createUser(userId, email);
-    req.session.userId = userId;
-    res.status(200).send("Register Page")
+    try {
+        const userId = await cognito.signUp(email, password).then(data => data.UserSub);
+        db.createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
+        req.session.userId = userId;
+        res.status(200).send("Registration successful");
+        return;
+    } catch (error) {
+        console.error(error);
+        res.status(400).send("Registration failed");
+        return;
+    }
 });
 
 authenticationRoutes.post('/logout', async (req, res) => {

@@ -19,29 +19,48 @@ class Database {
     }
 
     async getUser(email) {
-        try {
-            const user = await User.findOne({
-                where: { email },  // Match the user by email
-                include: [           // Optionally include related models if needed
-                    {
-                        model: Faculty,   // Include Faculty if you need related data
-                        as: 'faculty'
-                    },
-                    {
-                        model: Student,   // Include Student if you need related data
-                        as: 'student'
-                    }
-                ]
+        const user = await User.findOne({
+            include: [
+                {
+                    model: Faculty,
+                    as: 'faculty',
+                    where: { email }, // Search Faculty table for email
+                    required: false, // Optional, since the user might not have a faculty profile
+                },
+                {
+                    model: Student,
+                    as: 'student',
+                    where: { email }, // Search Student table for email
+                    required: false, // Optional, since the user might not have a student profile
+                }
+            ]
+        });
+        return user;
+    }
+
+    async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
+        console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
+        await User.create({
+            id: userId,
+            role,
+            date_of_birth: dateOfBirth
+        });
+        if (role > 0) {
+            await Faculty.create({
+                user_id: userId,
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                phone_number: phoneNumber
             });
-
-            if (!user) {
-                throw new Error(`User with email ${email} not found.`);
-            }
-
-            return user;
-        } catch (error) {
-            console.error(error);
-            throw new Error('Error retrieving user');
+        } else {
+            await Student.create({
+                user_id: userId,
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                phone_number: phoneNumber
+            });
         }
     }
 }

@@ -18,13 +18,7 @@ class Cognito {
             Password: password,
             Username: email
         };
-        try {
-            const data = await this.cognito.send(new SignUpCommand(params));
-            return data;
-        } catch (err) {
-            console.error(err);
-            return err;
-        }
+        return await this.cognito.send(new SignUpCommand(params));
     }
 }
 
