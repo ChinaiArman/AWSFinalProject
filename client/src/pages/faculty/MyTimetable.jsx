@@ -13,9 +13,9 @@ const MyTimetable = () => {
 
   // Sidebar menu items for faculty
   const sidebarItems = [
-    { label: "My Courses", onClick: () => (window.location.href = "/faculty/my-courses") },
-    { label: "My Timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
-    { label: "Time Availability", onClick: () => (window.location.href = "/faculty/time-availability") },
+    { label: "My Courses", path: "/faculty/my-courses", onClick: () => (window.location.href = "/faculty/my-courses") },
+    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
+    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => (window.location.href = "/faculty/time-availability") },
   ];
 
   return (
