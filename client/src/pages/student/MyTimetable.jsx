@@ -12,12 +12,12 @@ const MyTimetable = () => {
     { day: "Thursday", courseName: "Biology", startTime: "15:30", endTime: "16:20", color: "#8A2BE2" },
   ];
 
-  // Sidebar menu items
+  // Sidebar menu items for students
   const sidebarItems = [
-    { label: "My Courses", onClick: () => (window.location.href = "/student/my-courses") },
-    { label: "My Timetable", onClick: () => (window.location.href = "/student/my-timetable") },
-    { label: "Waitlist", onClick: () => (window.location.href = "/student/waitlist") },
-    { label: "Enroll Course", onClick: () => (window.location.href = "/student/enroll-courses") },
+    { label: "My Courses", path: "/student/my-courses", onClick: () => (window.location.href = "/student/my-courses") },
+    { label: "My Timetable", path: "/student/my-timetable", onClick: () => (window.location.href = "/student/my-timetable") },
+    { label: "Waitlist", path: "/student/waitlist", onClick: () => (window.location.href = "/student/waitlist") },
+    { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
   ];
 
   return (
