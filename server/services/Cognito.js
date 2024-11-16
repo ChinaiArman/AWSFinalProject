@@ -16,7 +16,13 @@ class Cognito {
         const params = {
             ClientId: this.ClientId,
             Password: password,
-            Username: email
+            Username: email,
+            UserAttributes: [
+                {
+                    Name: 'email',
+                    Value: email
+                }
+            ]
         };
         return await this.cognito.send(new SignUpCommand(params));
     }
