@@ -6,7 +6,6 @@ import DropdownButton from "../../components/buttons/DropdownButton";
 
 const AddFaculty = () => {
 
-
   // Sample category options for the dropdown
   const categoryOptions = [
     { label: "Science", value: "science" },
