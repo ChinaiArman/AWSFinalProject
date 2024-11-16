@@ -1,13 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/AuthenticationButton";
 
 function Signup() {
+  const navigate = useNavigate();
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    console.log("Sign up successful");
+    navigate("/verification"); // Redirect to verification page
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
-        <form>
+        <form onSubmit={handleSignup}>
           <label className="block mb-2 text-sm font-medium">First Name</label>
           <input
             type="text"

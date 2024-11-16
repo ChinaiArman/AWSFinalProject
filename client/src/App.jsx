@@ -21,6 +21,9 @@ const App = () => {
       <nav></nav>
 
       <Routes>
+        {/* Redirect root to /login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
         {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
