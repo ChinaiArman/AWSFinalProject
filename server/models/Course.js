@@ -11,7 +11,7 @@ const Course = db_config.define('Course', {
         primaryKey: true
     },
     faculty_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     course_name: {

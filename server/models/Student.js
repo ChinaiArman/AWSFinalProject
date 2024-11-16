@@ -6,12 +6,11 @@ import db_config from '../config/dbConfig.js';
 // MODEL DEFINITION
 const Student = db_config.define('Student', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING,
         primaryKey: true
     },
     user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     first_name: {
