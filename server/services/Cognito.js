@@ -1,5 +1,5 @@
 // IMPORTS
-import { SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { SignUpCommand, InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
 
 
 // CONSTANTS
@@ -19,6 +19,20 @@ class Cognito {
             Username: email
         };
         return await this.cognito.send(new SignUpCommand(params));
+    }
+
+    async signIn(email, password) {
+        const params = {
+            AuthFlow: "USER_PASSWORD_AUTH",
+            ClientId: this.ClientId,
+            AuthParameters: {
+                USERNAME: email,
+                PASSWORD: password
+            }
+        };
+        const response = await this.cognito.send(new InitiateAuthCommand(params));
+        const decodedToken = JSON.parse(Buffer.from(response.AuthenticationResult.IdToken.split('.')[1], 'base64').toString('utf-8'));
+        return decodedToken.sub;
     }
 }
 

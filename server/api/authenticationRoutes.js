@@ -8,7 +8,17 @@ const authenticationRoutes = express.Router();
 
 // ROUTES
 authenticationRoutes.post('/login', async (req, res) => {
-    res.status(200).json({ "message": "Login Page" });
+    const cognito = req.cognito;
+    const { email, password } = req.body;
+    try {
+        const userId = await cognito.signIn(email, password).then(data => data.AuthenticationResult.AccessToken);
+        req.session.userId = userId;
+        res.status(200).json({ "message": "User logged in successfully", "user": user });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
 
 });
 
