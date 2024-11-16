@@ -17,8 +17,6 @@ const Timetable = ({ timetableData }) => {
   ];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-center mb-8">My Weekly Timetable</h1>
       <div className="grid grid-cols-6 border border-gray-200">
         {/* Time Column */}
         <div className="relative border-r border-gray-200 bg-gray-200">
@@ -67,7 +65,6 @@ const Timetable = ({ timetableData }) => {
           </div>
         ))}
       </div>
-    </div>
   );
 };
 
