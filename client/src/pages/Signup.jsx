@@ -45,7 +45,8 @@ function Signup() {
         <div className="mt-4 text-sm text-center">
           <p>
             Already a user?{" "}
-            <Link to="/login" className="text-blue-500">
+            {/* Change the Link here */}
+            <Link to="/" className="text-blue-500">
               Login
             </Link>
           </p>
