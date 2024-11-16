@@ -22,9 +22,10 @@ const CourseManagement = () => {
     },
   ];
 
-  // Mock data 
+  // Mock data
   const mockCourses = [
     {
+      id: 1,
       name: "DevOps",
       description: "Learn the principles of DevOps and CI/CD pipelines.",
       instructor: "Dr. John Doe",
@@ -32,6 +33,7 @@ const CourseManagement = () => {
       room: "Room 101",
     },
     {
+      id: 2,
       name: "Serverless",
       description: "An introduction to serverless computing.",
       instructor: "Prof. Jane Smith",
@@ -39,6 +41,7 @@ const CourseManagement = () => {
       room: "Room 202",
     },
     {
+      id: 3,
       name: "AWS",
       description: "Master cloud services with AWS.",
       instructor: "Dr. Alice Johnson",
@@ -46,6 +49,7 @@ const CourseManagement = () => {
       room: "Room 303",
     },
     {
+      id: 4,
       name: "Azure",
       description: "Comprehensive course on Azure cloud solutions.",
       instructor: "Prof. Bob Brown",
@@ -54,20 +58,22 @@ const CourseManagement = () => {
     },
   ];
 
+  // Fetch course data
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        // replace with api
-        const response = await fetch("/api/faculties");
+        // replace with actual API
+        const response = await fetch("/api/courses");
 
         if (!response.ok) {
-          throw new Error("Failed to fetch faculty data");
+          throw new Error("Failed to fetch course data");
         }
 
         // Uncomment and use this in production
         // const data = await response.json();
         // setCourses(data);
-        setCourses(mockCourses);
+
+        setCourses(mockCourses); // Use mock data temporarily
       } catch (err) {
         console.error("Error fetching courses:", err);
         setCourses([]);
@@ -76,6 +82,30 @@ const CourseManagement = () => {
 
     fetchCourses();
   }, []);
+
+  // Function to delete a course
+  const deleteCourse = async (courseId) => {
+    try {
+      // Send DELETE request to the server to delete the course
+      // const response = await fetch(`/api/courses/${courseId}`, {
+      //   method: "DELETE",
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to delete course");
+      // }
+
+      // Remove course from local state
+      setCourses((prevCourses) =>
+        prevCourses.filter((course) => course.id !== courseId)
+      );
+
+      
+      console.log(`Course with ID: ${courseId} has been deleted.`);
+    } catch (error) {
+      console.error("Error deleting course:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -93,8 +123,8 @@ const CourseManagement = () => {
         />
 
         {courses.length > 0 &&
-          courses.map((course, index) => (
-            <BaseDropdownMenu key={index} title={course.name}>
+          courses.map((course) => (
+            <BaseDropdownMenu key={course.id} title={course.name}>
               <div className="px-6 py-3">
                 {/* Course Information */}
                 <div className="mb-4">
@@ -129,6 +159,11 @@ const CourseManagement = () => {
                     label="Create Waitlist"
                     onClick={() => console.log("Waitlist button clicked!")}
                     color="orange"
+                  />
+                  <DropdownButton
+                    label="Delete Course"
+                    onClick={() => deleteCourse(course.id)} // Call deleteCourse on click
+                    color="red"
                   />
                 </div>
               </div>

@@ -25,16 +25,19 @@ const FacultyManagement = () => {
   // Mock data
   const mockData = [
     {
+      id: 1,
       name: "Dr. John Doe",
       course: "Advanced Physics",
       email: "johndoe@example.com",
     },
     {
+      id: 2,
       name: "Prof. Jane Smith",
       course: "Creative Writing",
       email: "janesmith@example.com",
     },
     {
+      id: 3,
       name: "Dr. Alice Johnson",
       course: "Introduction to Chemistry",
       email: "alicejohnson@example.com",
@@ -56,15 +59,38 @@ const FacultyManagement = () => {
         // const data = await response.json();
         // setFaculties(data);
 
-        setFaculties(mockData); 
+        setFaculties(mockData); // Use mock data temporarily
       } catch (error) {
         console.error("Error fetching data:", error);
-        setFaculties([]); 
+        setFaculties([]);
       }
     };
 
     fetchFaculties();
   }, []);
+
+  // Function to fire a faculty member
+  const fireFaculty = async (facultyId) => {
+    try {
+     
+      // const response = await fetch(`/api/faculty/${facultyId}`, {
+      //   method: "DELETE",
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to fire faculty");
+      // }
+
+      // Remove faculty from local state
+      setFaculties((prevFaculties) =>
+        prevFaculties.filter((faculty) => faculty.id !== facultyId)
+      );
+
+      console.log(`Faculty with ID: ${facultyId} has been fired.`);
+    } catch (error) {
+      console.error("Error firing faculty:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -81,38 +107,39 @@ const FacultyManagement = () => {
           color="gray"
         />
 
-        {faculties.length > 0 && faculties.map((faculty, index) => (
-          <BaseDropdownMenu key={index} title={faculty.name}>
-            <div className="px-6 py-3">
-              <div className="mb-4">
-                <p className="font-semibold">Name:</p>
-                <p>{faculty.name}</p>
-              </div>
-              <div className="mb-4">
-                <p className="font-semibold">Courses:</p>
-                <p>{faculty.course}</p>
-              </div>
-              <div className="mb-4">
-                <p className="font-semibold">Email:</p>
-                <p>{faculty.email}</p>
-              </div>
+        {faculties.length > 0 &&
+          faculties.map((faculty) => (
+            <BaseDropdownMenu key={faculty.id} title={faculty.name}>
+              <div className="px-6 py-3">
+                <div className="mb-4">
+                  <p className="font-semibold">Name:</p>
+                  <p>{faculty.name}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Courses:</p>
+                  <p>{faculty.course}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Email:</p>
+                  <p>{faculty.email}</p>
+                </div>
 
-              {/* Buttons */}
-              <div className="flex justify-center gap-12">
-                <DropdownButton
-                  label="Edit"
-                  onClick={() => console.log(`Editing ${faculty.name}`)}
-                  color="gray"
-                />
-                <DropdownButton
-                  label="Fire"
-                  onClick={() => console.log(`Firing ${faculty.name}`)}
-                  color="red"
-                />
+                {/* Buttons */}
+                <div className="flex justify-center gap-12">
+                  <DropdownButton
+                    label="Edit"
+                    onClick={() => console.log(`Editing ${faculty.name}`)}
+                    color="gray"
+                  />
+                  <DropdownButton
+                    label="Fire"
+                    onClick={() => fireFaculty(faculty.id)} // Call fireFaculty on click
+                    color="red"
+                  />
+                </div>
               </div>
-            </div>
-          </BaseDropdownMenu>
-        ))}
+            </BaseDropdownMenu>
+          ))}
       </div>
     </div>
   );
