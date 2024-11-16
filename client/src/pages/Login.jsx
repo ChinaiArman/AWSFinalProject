@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AuthenticationButton from "../components/AuthenticationButton";
 
 function Login() {
   return (
@@ -19,9 +20,7 @@ function Login() {
             placeholder="Password"
             className="border w-full p-2 mb-4 rounded"
           />
-          <button className="w-full bg-blue-500 text-white py-2 rounded">
-            Login
-          </button>
+          <AuthenticationButton label="Login" type="submit" />
         </form>
         <div className="mt-4 text-sm text-center">
           <p>
