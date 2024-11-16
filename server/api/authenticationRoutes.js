@@ -52,7 +52,9 @@ authenticationRoutes.post('/verify', async (req, res) => {
 });
 
 authenticationRoutes.post('/logout', async (req, res) => {
-    res.status(200).json({ "message": "Logout Page" });
+    req.session.destroy();
+    res.status(200).json({ "message": "User logged out successfully" });
+    return;
 });
 
 
