@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AuthenticationButton from "../components/AuthenticationButton";
+import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
 function Login() {
   return (

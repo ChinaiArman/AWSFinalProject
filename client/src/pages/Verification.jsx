@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AuthenticationButton from "../components/AuthenticationButton";
+import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
 function Verification() {
   const [email, setEmail] = useState(""); // Assuming this comes from Cognito or state
