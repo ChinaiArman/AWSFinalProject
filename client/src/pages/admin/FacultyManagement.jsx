@@ -1,7 +1,10 @@
 import React from 'react';
+import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 
 const FacultyManagement = () => {
-  return <h1>Welcome to the Admin Faculty Management Page</h1>;
+  return (<div className="mx-auto" >
+    <BaseDropdownMenu title="Course 1" />
+  </div >);
 };
 
 export default FacultyManagement;
