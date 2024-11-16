@@ -1,7 +1,62 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
-const Signup = () => {
-  return <h1>Welcome to the Signup Page</h1>;
-};
+function Signup() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="p-6 bg-white rounded shadow-md w-96">
+        <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
+        <form>
+          <label className="block mb-2 text-sm font-medium">First Name</label>
+          <input
+            type="text"
+            placeholder="First Name"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <label className="block mb-2 text-sm font-medium">Last Name</label>
+          <input
+            type="text"
+            placeholder="Last Name"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <label className="block mb-2 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            placeholder="Email"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <label className="block mb-2 text-sm font-medium">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <label className="block mb-2 text-sm font-medium">Date of Birth</label>
+          <input
+            type="date"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <label className="block mb-2 text-sm font-medium">Phone Number</label>
+          <input
+            type="text"
+            placeholder="Phone Number"
+            className="border w-full p-2 mb-4 rounded"
+          />
+          <button className="w-full bg-blue-500 text-white py-2 rounded">
+            Sign Up
+          </button>
+        </form>
+        <div className="mt-4 text-sm text-center">
+          <p>
+            Already a user?{" "}
+            <Link to="/login" className="text-blue-500">
+              Login
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default Signup;
