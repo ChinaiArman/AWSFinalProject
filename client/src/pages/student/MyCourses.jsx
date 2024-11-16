@@ -3,11 +3,14 @@ import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import SearchBar from "../../components/SearchBar";
+import ConfirmationPopup from "../../components/ConfirmationPopup";
 
 function MyCourses() {
   const [courses, setCourses] = useState([]); // Dynamic state for courses
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
+  const [courseToDrop, setCourseToDrop] = useState(null); // State to track which course is being dropped
 
   // Sidebar menu items for students
   const sidebarItems = [
@@ -17,11 +20,9 @@ function MyCourses() {
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
   ];
 
-
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        // Replace this with your backend API endpoint in the future
         const data = [
           {
             id: 1,
@@ -65,6 +66,25 @@ function MyCourses() {
     setFilteredCourses(filtered);
   }, [searchQuery, courses]);
 
+  const handleDropClick = (course) => {
+    setCourseToDrop(course);
+    setIsPopupOpen(true);
+  };
+
+  const handleConfirmDrop = () => {
+    const updatedCourses = courses.filter((course) => course.id !== courseToDrop.id);
+    setCourses(updatedCourses);
+    setFilteredCourses(updatedCourses);
+    setIsPopupOpen(false);
+    alert(`Dropped course: ${courseToDrop.name}`);
+    setCourseToDrop(null);
+  };
+
+  const handleCancelDrop = () => {
+    setIsPopupOpen(false);
+    setCourseToDrop(null);
+  };
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -100,9 +120,24 @@ function MyCourses() {
                 <p className="text-gray-700">
                   <strong>Room:</strong> {course.room}
                 </p>
+                <button
+                  onClick={() => handleDropClick(course)}
+                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Drop
+                </button>
               </BaseDropdownMenu>
             ))
           )}
+
+          {/* Confirmation Popup */}
+          <ConfirmationPopup
+            isOpen={isPopupOpen}
+            title="Drop Course"
+            message={`Are you sure you want to drop the course "${courseToDrop?.name}"? This action cannot be undone.`}
+            onConfirm={handleConfirmDrop}
+            onCancel={handleCancelDrop}
+          />
         </div>
       </div>
     </div>
