@@ -1,13 +1,12 @@
 import React, { useState } from "react";
+import ScheduleButton from "./ScheduleButton";
 
 function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
-  // State to manage availability
   const [availability, setAvailability] = useState(() => {
     if (Object.keys(initialAvailability).length) {
       return initialAvailability;
     }
 
-    // Default empty availability
     const defaultAvailability = {};
     days.forEach((day) => {
       defaultAvailability[day] = {};
@@ -26,6 +25,17 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
         [slot]: !prevAvailability[day][slot],
       },
     }));
+  };
+
+  const handleReset = () => {
+    const resetAvailability = {};
+    days.forEach((day) => {
+      resetAvailability[day] = {};
+      timeSlots.forEach((slot) => {
+        resetAvailability[day][slot] = false;
+      });
+    });
+    setAvailability(resetAvailability);
   };
 
   return (
@@ -60,12 +70,18 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
           ))}
         </tbody>
       </table>
-      <button
-        onClick={() => onSave && onSave(availability)}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Save Availability
-      </button>
+      <div className="flex mt-4">
+        <ScheduleButton
+          label="Apply"
+          onClick={() => onSave && onSave(availability)}
+          color="blue"
+        />
+        <ScheduleButton
+          label="Reset"
+          onClick={handleReset}
+          color="gray"
+        />
+      </div>
     </div>
   );
 }
