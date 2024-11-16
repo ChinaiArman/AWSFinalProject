@@ -7,6 +7,7 @@ import cors from 'cors'
 import bodyParser from "body-parser";
 
 import db_config from "./models/index.js";
+import router from "./api/index.js";
 
 
 // CONSTANTS
@@ -32,6 +33,8 @@ app.use((req, res, next) => {
 app.get('/', async (req, res) => {
     res.status(200).send("Hello World!")
 });
+
+app.use('/api', router);
 
 
 // LISTEN
