@@ -27,7 +27,7 @@ const AddFaculty = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto ">
 
-        <Navbar />
+        <Navbar role="admin" />
         <h1 className="text-2xl font-bold text-center mb-6">Add a new faculty member:</h1>
         <TextField
           label="First Name:"

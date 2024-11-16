@@ -28,7 +28,7 @@ const CourseManagement = () => {
 
       {/* Main Content */}
       <div className="flex-1">
-        <Navbar />
+        <Navbar role="admin" />
 
         <AddButton
           label="Add Course"

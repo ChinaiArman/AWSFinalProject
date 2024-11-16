@@ -61,7 +61,7 @@ const AddCourse = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto ">
 
-        <Navbar />
+        <Navbar role="admin" />
         <h1 className="text-2xl font-bold text-center mb-6">Add a new course:</h1>
 
         {/* <TextField
