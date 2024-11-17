@@ -3,13 +3,9 @@ import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
-import DropdownButton from "../../components/buttons/DropdownButton";
-import ConfirmationPopup from "../../components/ConfirmationPopup";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
 
   // Sidebar menu items
   const sidebarItems = [
@@ -62,27 +58,6 @@ const UserManagement = () => {
     fetchAllUsers();
   }, []);
 
-  // Function to delete a user
-  const deleteUser = async (userId) => {
-    try {
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
-      setIsPopupOpen(false);
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
-  };
-
-  // Open confirmation popup
-  const openDeleteConfirmation = (user) => {
-    setUserToDelete(user);
-    setIsPopupOpen(true);
-  };
-
-  // Close the confirmation popup
-  const cancelDelete = () => {
-    setIsPopupOpen(false);
-    setUserToDelete(null);
-  };
 
   return (
     <div className="flex h-screen">
@@ -123,29 +98,11 @@ const UserManagement = () => {
                   <p>{user.is_verified}</p> {/* Add this line to show verification status */}
                 </div>
 
-                {/* Delete Button */}
-                <div className="flex justify-center gap-12">
-                  <DropdownButton
-                    label="Delete User"
-                    onClick={() => openDeleteConfirmation(user)}
-                    color="red"
-                  />
-                </div>
               </div>
             </BaseDropdownMenu>
           ))}
 
-
       </div>
-
-      {/* Confirmation Popup */}
-      <ConfirmationPopup
-        isOpen={isPopupOpen}
-        title="Delete User"
-        message={`Are you sure you want to delete ${userToDelete?.name}?`}
-        onConfirm={() => deleteUser(userToDelete?.id)}
-        onCancel={cancelDelete}
-      />
     </div>
   );
 };
