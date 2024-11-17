@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
@@ -6,6 +6,12 @@ function Verification() {
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [emailError, setEmailError] = useState(false);
+  const [codeError, setCodeError] = useState(false);
+
+  useEffect(() => {
+    document.getElementById("digit-0").focus(); // Focus the first digit on load
+  }, []);
 
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return; // Allow only digits
@@ -14,6 +20,8 @@ function Verification() {
 
     if (value && index < 5) {
       document.getElementById(`digit-${index + 1}`).focus();
+    } else if (!value && index > 0) {
+      document.getElementById(`digit-${index - 1}`).focus();
     }
 
     setCode(updatedCode);
@@ -21,7 +29,16 @@ function Verification() {
 
   const handleCompleteAccount = async (e) => {
     e.preventDefault();
-    const verificationCode = code.join(""); // Combine the 6 boxes into one string
+
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setEmailError(!isValidEmail);
+
+    const verificationCode = code.join("");
+    setCodeError(verificationCode.length !== 6);
+
+    if (!isValidEmail || verificationCode.length !== 6) {
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/verify", {
@@ -29,20 +46,29 @@ function Verification() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: verificationCode }),
       });
+
       if (response.ok) {
         console.log("Verification successful");
-        // Pass email to Password Setup page
         navigate("/password-setup", { state: { isFirstTime: true, email } });
       } else {
-        alert("Verification failed. Please check your code.");
+        const errorData = await response.json();
+        alert(`Verification failed: ${errorData.error}`);
       }
     } catch (error) {
       console.error("Verification error:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
   const handleRequestNewCode = async (e) => {
     e.preventDefault();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError(true);
+      alert("Please enter a valid email.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/forgotPassword", {
         method: "POST",
@@ -70,7 +96,7 @@ function Verification() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="border w-full p-2 mb-4 rounded"
+            className={`border w-full p-2 mb-4 rounded ${emailError ? "border-red-500" : ""}`}
             required
           />
 
@@ -84,7 +110,9 @@ function Verification() {
                 maxLength="1"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
-                className="border w-12 h-12 text-center text-lg rounded"
+                className={`border w-12 h-12 text-center text-lg rounded ${
+                  codeError && !digit ? "border-red-500" : ""
+                }`}
               />
             ))}
           </div>
