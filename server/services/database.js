@@ -93,6 +93,13 @@ class Database {
 
     }
 
+    async deleteCourse(courseId) {
+        console.log('Deleting course:', courseId);
+        await Course.destroy({
+            where: { id: courseId }
+        });
+    }
+
     async getCoursesByStudentId(studentId) {
         const courses = await Course.findAll({
             include: [
