@@ -42,7 +42,8 @@ class Database {
         console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
-            role
+            role,
+            is_verified: false,
         });
         if (role > 0) {
             await Faculty.create({
@@ -66,6 +67,10 @@ class Database {
                 phone_number: phoneNumber
             });
         }
+    }
+
+    async verifyUser(userId) {
+        await User.update({ is_verified: true }, { where: { id: userId } });
     }
 
     async getAllCourses() {
