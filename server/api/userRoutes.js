@@ -1,6 +1,8 @@
 // IMPORTS
 import express from "express";
 
+import { isSignedIn, isVerified, isStudent, isFaculty, isAdmin } from "../config/authConfig.js";
+
 
 // CONSTANTS
 const userRoutes = express.Router();
@@ -20,7 +22,6 @@ userRoutes.get('/user/:userId', async (req, res) => {
     }
 })
 
-// get user by session
 userRoutes.get('/getUserBySession', async (req, res) => {
     const db = req.db;
     try {

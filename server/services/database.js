@@ -40,7 +40,6 @@ class Database {
     }
 
     async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
-        console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
             role,

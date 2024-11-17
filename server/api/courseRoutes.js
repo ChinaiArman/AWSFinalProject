@@ -1,21 +1,21 @@
 // IMPORTS
 import express from "express";
 
+import { isSignedIn, isVerified, isStudent, isFaculty, isAdmin } from "../config/authConfig.js";
+
 
 // CONSTANTS
 const courseRoutes = express.Router();
 
 
 // ROUTES
-
-// Get all courses
 courseRoutes.get('/getAllCourses', async (req, res) => {
     const db = req.db;
     try {
         const courses = await db.getAllCourses();
         res.status(200).json({ "courses": courses });
         return;
-    } catch(error) {
+    } catch (error) {
         res.status(400).json({ "error": error.message });
         return;
     }
@@ -29,7 +29,7 @@ courseRoutes.post('/createCourse', async (req, res) => {
         await db.createCourse(faculty_id, course_name, course_description, room_number, seats_available, total_seats);
         res.status(200).json({ "message": "Course created successfully" });
         return;
-    } catch(error) {
+    } catch (error) {
         res.status(400).json({ "error": error.message });
         return;
     }
@@ -43,7 +43,7 @@ courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
         await db.deleteCourse(courseId);
         res.status(200).json({ "message": "Course deleted successfully" });
         return;
-    } catch(error) {
+    } catch (error) {
         res.status(400).json({ "error": error.message });
         return;
     }
