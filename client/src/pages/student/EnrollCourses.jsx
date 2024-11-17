@@ -1,3 +1,4 @@
+//EnrollCourses.jsx
 import React, { useEffect, useState } from 'react';
 import ConfirmationPopup from '../../components/ConfirmationPopup';
 import BaseSidebar from "../../components/BaseSidebar";
@@ -19,44 +20,6 @@ const EnrollCourses = () => {
   ];
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const data = [
-          {
-            id: 1,
-            name: "Cloud Computing",
-            description: "Introduction to cloud platforms",
-            schedule: "Mon 9:30-10:20",
-            room: "Room A102",
-          },
-          {
-            id: 2,
-            name: "DevOps Fundamentals",
-            description: "CI/CD pipelines and infrastructure as code",
-            schedule: "Tue 10:30-11:20",
-            room: "Room B203",
-          },
-          {
-            id: 3,
-            name: "AI and Machine Learning",
-            description: "Overview of AI and ML techniques",
-            schedule: "Wed 1:00-2:20",
-            room: "Room C304",
-          },
-        ];
-        setCourses(data); // Set courses with provided data
-        setFilteredCourses(data); // Initialize filtered courses
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        setCourses([]);
-        setFilteredCourses([]);
-      }
-    };
-
-    fetchCourses();
-  }, []); // Runs once when the component loads
-
-  useEffect(() => {
     // Update filtered courses based on search query
     const filtered = courses.filter((course) =>
       course.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -64,9 +27,97 @@ const EnrollCourses = () => {
     setFilteredCourses(filtered);
   }, [searchQuery, courses]);
 
-  const handleConfirm = () => {
+  // useEffect(() => {
+  //   const fetchCourses = async () => {
+  //     try {
+  //       const data = [
+  //         {
+  //           id: 1,
+  //           name: "Cloud Computing",
+  //           description: "Introduction to cloud platforms",
+  //           schedule: "Mon 9:30-10:20",
+  //           room: "Room A102",
+  //         },
+  //         {
+  //           id: 2,
+  //           name: "DevOps Fundamentals",
+  //           description: "CI/CD pipelines and infrastructure as code",
+  //           schedule: "Tue 10:30-11:20",
+  //           room: "Room B203",
+  //         },
+  //         {
+  //           id: 3,
+  //           name: "AI and Machine Learning",
+  //           description: "Overview of AI and ML techniques",
+  //           schedule: "Wed 1:00-2:20",
+  //           room: "Room C304",
+  //         },
+  //       ];
+  //       setCourses(data); // Set courses with provided data
+  //       setFilteredCourses(data); // Initialize filtered courses
+  //     } catch (error) {
+  //       console.error("Error fetching courses:", error);
+  //       setCourses([]);
+  //       setFilteredCourses([]);
+  //     }
+  //   };
+
+  //   fetchCourses();
+  // }, []); // Runs once when the component loads
+
+
+  // Fetch courses from the API
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/course/getAllCourses');
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        const courses = data.courses.map((course) => ({
+          id: course.id,
+          name: course.course_name,
+          description: course.course_description,
+          faculty: course.facultyName, // Extract facultyName from API response
+          schedule: course.courseRuntimes.length
+            ? course.courseRuntimes.map(runtime => `${runtime.day} ${runtime.startTime}-${runtime.endTime}`).join(', ')
+            : 'Schedule not available', // Format courseRuntimes or show default message
+          room: `Room ${course.room_number}`,
+          seat: `${course.seats_available} seats available out of ${course.total_seats}`,
+        }));
+        setCourses(courses); // Set courses with fetched data
+        setFilteredCourses(courses); // Initialize filtered courses
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        setCourses([]);
+        setFilteredCourses([]);
+      }
+    };
+  
+    fetchCourses();
+  }, []); // Runs once when the component loads  
+  
+///////////////////////////////////////////////////////////////////////
+  const studentId = 1;  //should delete this line
+  const selectedCourseId = 2; //should delete this line
+
+  const handleConfirm = async () => {
     setIsPopupOpen(false);
-    alert("Enrolled successfully!"); // Replace with your action
+    if (selectedCourseId) {
+      try {
+        const response = await fetch(`http://localhost:5001/api/student/${studentId}/enroll/${selectedCourseId}`, {
+          method: 'PUT',
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to enroll: ${response.statusText}`);
+        }
+        alert("Enrolled successfully!");
+      } catch (error) {
+        console.error("Error enrolling in course:", error);
+        alert("Enrollment failed. Please try again.");
+      }
+    }
   };
 
   const handleCancel = () => {
@@ -101,10 +152,16 @@ const EnrollCourses = () => {
                   <strong>Description:</strong> {course.description}
                 </p>
                 <p className="text-gray-700">
+                  <strong>Faculty:</strong> {course.faculty}
+                </p>
+                <p className="text-gray-700">
                   <strong>Schedule:</strong> {course.schedule}
                 </p>
                 <p className="text-gray-700">
                   <strong>Room:</strong> {course.room}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Seat:</strong> {course.seat}
                 </p>
                 <button
                   onClick={() => setIsPopupOpen(true)}
