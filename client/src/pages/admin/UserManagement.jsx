@@ -3,8 +3,10 @@ import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import AddButton from "../../components/buttons/AddButton";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
+import { useNavigate } from "react-router-dom";
 
 const UserManagement = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
 
   // Sidebar menu items
@@ -12,12 +14,12 @@ const UserManagement = () => {
     {
       label: "User Management",
       path: "/admin/user-management",
-      onClick: () => (window.location.href = "/admin/user-management"),
+      onClick: () => navigate("/admin/user-management"),
     },
     {
       label: "Course Management",
       path: "/admin/course-management",
-      onClick: () => (window.location.href = "/admin/course-management"),
+      onClick: () => navigate("/admin/course-management"),
     },
   ];
 

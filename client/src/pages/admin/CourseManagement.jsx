@@ -5,8 +5,10 @@ import AddButton from "../../components/buttons/AddButton";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
+import { useNavigate } from "react-router-dom";
 
 const CourseManagement = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState(null);
@@ -16,12 +18,12 @@ const CourseManagement = () => {
     {
       label: "User Management",
       path: "/admin/user-management",
-      onClick: () => (window.location.href = "/admin/user-management"),
+      onClick: () => navigate("/admin/user-management"),
     },
     {
       label: "Course Management",
       path: "/admin/course-management",
-      onClick: () => (window.location.href = "/admin/course-management"),
+      onClick: () => navigate("/admin/course-management"),
     },
   ];
 

@@ -5,13 +5,14 @@ import TextField from "../../components/TextField";
 import ScheduleTable from "../../components/ScheduleTable";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import DropdownList from "../../components/DropdownList";
+import { useNavigate } from "react-router-dom";
 
 const AddCourse = () => {
-
+  const navigate = useNavigate();
    // Sidebar menu items
    const sidebarItems = [
-    { label: "User Management", path: "/admin/user-management", onClick: () => (window.location.href = "/admin/user-management") },
-    { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
+    { label: "User Management", path: "/admin/user-management", onClick: () => navigate("/admin/user-management"), },
+    { label: "Course Management", path: "/admin/course-management", onClick: () => navigate("/admin/course-management"), },
   ];
 
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
