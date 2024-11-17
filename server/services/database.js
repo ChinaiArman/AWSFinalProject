@@ -106,10 +106,25 @@ class Database {
         return courses;
     }
 
+    async enrollStudent(studentId, courseId) {
+        console.log('Enrolling student:', studentId, courseId);
+        await Enrollment.create({
+            student_id: studentId,
+            course_id: courseId
+        });
+    }
+    
+    async deleteEnrollment(studentId, courseId) {
+        console.log('Deleting enrollment:', studentId, courseId);
+        await Enrollment.destroy({
+            where: {
+                student_id: studentId,
+                course_id: courseId
+            }
+        });
+    }
 
-
-
-
+    
 // Add faculty availability
 async addAvailability(facultyId, day, startTime, endTime, available) {
   const newAvailability = await FacultyAvailability.create({
@@ -154,16 +169,6 @@ async deleteAvailabilityById(id) {
   return deletedRows;
 }
 
-
-
-
-    async enrollStudent(studentId, courseId) {
-        console.log('Enrolling student:', studentId, courseId);
-        await Enrollment.create({
-            student_id: studentId,
-            course_id: courseId
-        });
-    }
 }
 
 

@@ -9,6 +9,8 @@ const studentRoutes = express.Router();
 
 
 // ROUTES
+
+// Get all courses for a student
 studentRoutes.get('/:studentId/courses', async (req, res) => {
     const studentId = req.params.studentId;
     const db = req.db;
@@ -22,6 +24,7 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
+// Add Enrollment (student enrolls into course)
 studentRoutes.post('/:studentId/enroll/:courseId', async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
@@ -36,6 +39,20 @@ studentRoutes.post('/:studentId/enroll/:courseId', async (req, res) => {
     }
 })
 
+// Delete Enrollment (student drops course)
+studentRoutes.delete('/:studentId/drop/:courseId', async (req, res) => {
+    const studentId = req.params.studentId;
+    const courseId = req.params.courseId;
+    const db = req.db;
+    try {
+        await db.deleteEnrollment(studentId, courseId);
+        res.status(200).json({ "message": "Enrollment deleted successfully" });
+        return;
+    } catch(error) {
+        res.status(400).json({ "Error deleting enrollment": error.message });
+        return;
+    }
+})
 
 // EXPORTS
 export default studentRoutes;
