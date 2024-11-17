@@ -1,6 +1,6 @@
 // IMPORTS
 import { DataTypes } from "sequelize";
-import db_config from '../config/db_config.js';
+import db_config from '../config/dbConfig.js';
 
 
 // MODEL DEFINITION
@@ -11,7 +11,7 @@ const Faculty = db_config.define('Faculty', {
         primaryKey: true
     },
     user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     first_name: {
@@ -30,6 +30,14 @@ const Faculty = db_config.define('Faculty', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    date_of_birth: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    is_admin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    }
 }, {
     tableName: 'faculty',
     timestamps: false

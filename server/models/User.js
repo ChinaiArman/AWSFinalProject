@@ -1,21 +1,20 @@
 // IMPORTS
 import { DataTypes } from "sequelize";
-import db_config from '../config/db_config.js';
+import db_config from '../config/dbConfig.js';
 
 
 // MODEL DEFINITION
 const User = db_config.define('User', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.STRING,
         primaryKey: true
     },
     role: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    date_of_birth: {
-        type: DataTypes.DATE,
+    is_verified: {
+        type: DataTypes.BOOLEAN,
         allowNull: false
     },
 }, {
