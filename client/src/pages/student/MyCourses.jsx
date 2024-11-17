@@ -27,6 +27,7 @@ function MyCourses() {
     const fetchCourses = async () => {
       setIsLoading(true);
       try {
+        // const response = await fetch(`http://localhost:5001/api/student/${studentId}/courses`);
         const response = await fetch(`http://localhost:5001/api/student/1/courses`);
         if (!response.ok) {
           throw new Error(`Failed to fetch courses: ${response.statusText}`);
@@ -87,6 +88,7 @@ function MyCourses() {
     setIsLoading(true);
     try {
       const response = await fetch(
+        // `http://localhost:5001/api/student/${studentId}/drop/${courseToDrop.id}`,
         `http://localhost:5001/api/student/1/drop/${courseToDrop.id}`,
         {
           method: "DELETE",

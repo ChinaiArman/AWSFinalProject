@@ -1,4 +1,3 @@
-//EnrollCourses.jsx
 import React, { useEffect, useState } from 'react';
 import ConfirmationPopup from '../../components/ConfirmationPopup';
 import BaseSidebar from "../../components/BaseSidebar";
@@ -11,6 +10,7 @@ const EnrollCourses = () => {
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null); // Selected course ID for enrollment
 
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => (window.location.href = "/student/my-courses") },
@@ -61,25 +61,25 @@ const EnrollCourses = () => {
     fetchCourses();
   }, []); // Runs once when the component loads  
 
-  ///////////////////////////////////////////////////////////////////////
-  const studentId = 1;  //should delete this line
-  const selectedCourseId = 2; //should delete this line
-
   const handleConfirm = async () => {
     setIsPopupOpen(false);
     if (selectedCourseId) {
       try {
-        const response = await fetch(`http://localhost:5001/api/student/${studentId}/enroll/${selectedCourseId}`, {
+        // const response = await fetch(`http://localhost:5001/api/student/${studentId}/enroll/${selectedCourseId}`, {
+        const response = await fetch(`http://localhost:5001/api/student/1/enroll/2`, {
           method: 'PUT',
         });
         if (!response.ok) {
           throw new Error(`Failed to enroll: ${response.statusText}`);
         }
-        alert("Enrolled successfully!");
+        const data = await response.json();
+        alert(data.message || "Enrolled successfully!");
       } catch (error) {
         console.error("Error enrolling in course:", error);
         alert("Enrollment failed. Please try again.");
       }
+    } else {
+      alert("No course selected for enrollment.");
     }
   };
 
@@ -127,7 +127,10 @@ const EnrollCourses = () => {
                   <strong>Seat:</strong> {course.seat}
                 </p>
                 <button
-                  onClick={() => setIsPopupOpen(true)}
+                  onClick={() => {
+                    setSelectedCourseId(course.id); // Set selected course ID
+                    setIsPopupOpen(true); // Open confirmation popup
+                  }}
                   className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                 >
                   Enroll
