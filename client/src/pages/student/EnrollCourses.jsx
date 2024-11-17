@@ -31,7 +31,7 @@ const EnrollCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/course/getAllCourses');
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -65,8 +65,8 @@ const EnrollCourses = () => {
     setIsPopupOpen(false);
     if (selectedCourseId) {
       try {
-        // const response = await fetch(`http://localhost:5001/api/student/${studentId}/enroll/${selectedCourseId}`, {
-        const response = await fetch(`http://localhost:5001/api/student/1/enroll/2`, {
+        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/enroll/${selectedCourseId}`, {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/1/enroll/2`, {
           method: 'PUT',
         });
         if (!response.ok) {

@@ -180,8 +180,9 @@ const AddCourse = () => {
             <ScheduleTable
               days={days}
               timeSlots={timeSlots}
-              availability={formData.availability}
+              initialAvailability={formData.availability}
               toggleAvailability={toggleAvailability}
+
             />
           </div>
 

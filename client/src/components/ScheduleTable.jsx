@@ -6,7 +6,11 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
 
   // Sync availability with `initialAvailability` prop whenever it changes
   useEffect(() => {
-    setAvailability(initialAvailability);
+    // console.log("initialAvailability changed:", initialAvailability);
+    // setAvailability(initialAvailability);
+    if (JSON.stringify(availability) !== JSON.stringify(initialAvailability)) {
+      setAvailability(initialAvailability);
+    }
   }, [initialAvailability]);
 
   const handleReset = () => {
