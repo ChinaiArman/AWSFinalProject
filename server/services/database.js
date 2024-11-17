@@ -148,6 +148,13 @@ class Database {
             is_admin: isAdmin
         });
     }
+
+    async deleteFaculty(facultyId) {
+        console.log('Deleting faculty:', facultyId);
+        await Faculty.destroy({
+            where: { id: facultyId }
+        });
+    }
     
 // Add faculty availability
 async addAvailability(facultyId, day, startTime, endTime, available) {

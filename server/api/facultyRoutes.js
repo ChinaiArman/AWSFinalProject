@@ -34,5 +34,19 @@ facultyRoutes.post('/addFaculty', async (req, res) => {
     }
 })
 
+// Delete faculty by ID
+facultyRoutes.delete('/deleteFaculty/:facultyId', async (req, res) => {
+    const facultyId = req.params.facultyId;
+    const db = req.db;
+    try {
+        await db.deleteFaculty(facultyId);
+        res.status(200).json({ "message": "Faculty deleted successfully" });
+        return;
+    } catch(error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+})
+
 // EXPORTS
 export default facultyRoutes;
