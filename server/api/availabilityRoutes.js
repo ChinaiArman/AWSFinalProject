@@ -43,7 +43,7 @@ availabilityRoutes.get('/:facultyId', async (req, res) => {
     }
 });
 
-// Update Availability
+// Update Availability (Finds values that match faculty_id, day, start_time and end_time -> then only updates the availability value (0 or 1))
 availabilityRoutes.put('/update', async (req, res) => {
     const { facultyId, day, startTime, endTime, available } = req.body;
 
@@ -71,7 +71,7 @@ availabilityRoutes.put('/update', async (req, res) => {
     }
 });
 
-// Delete Availability
+// Delete Availability (Based on id in faculty_availabilities)
 availabilityRoutes.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
 
