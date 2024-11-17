@@ -6,6 +6,7 @@ import courseRoutes from "./courseRoutes.js";
 import studentRoutes from "./studentRoutes.js";
 import availabilityRoutes from "./availabilityRoutes.js"
 import facultyRoutes from "./facultyRoutes.js";
+import userRoutes from "./userRoutes.js";
 
 
 // CONSTANTS
@@ -18,7 +19,7 @@ router.use('/course', courseRoutes);
 router.use('/student', studentRoutes);
 router.use('/availability', availabilityRoutes);
 router.use('/faculty', facultyRoutes);
-
+router.use('/user', userRoutes);
 
 
 // EXPORTS
