@@ -7,7 +7,6 @@ function Verification() {
   const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [emailError, setEmailError] = useState(false);
-  const [codeError, setCodeError] = useState(false);
 
   useEffect(() => {
     document.getElementById("digit-0").focus(); // Focus the first digit on load
@@ -33,16 +32,13 @@ function Verification() {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     setEmailError(!isValidEmail);
 
-    const verificationCode = code.join("");
-    setCodeError(verificationCode.length !== 6);
-
     if (!isValidEmail) {
       alert("Please enter a valid email.");
       return;
     }
 
-    // Request a new code from Cognito (forgotPassword API)
     try {
+      // Request a new code from Cognito (forgotPassword API)
       const forgotPasswordResponse = await fetch(
         "http://localhost:5001/api/auth/forgotPassword",
         {
@@ -58,23 +54,11 @@ function Verification() {
       }
 
       alert("A new verification code has been sent to your email.");
-
-      // Verify the new code
-      const response = await fetch("http://localhost:5001/api/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: verificationCode }),
-      });
-
-      if (response.ok) {
-        console.log("Verification successful");
-        navigate("/password-setup", { state: { isFirstTime: true, email } });
-      } else {
-        const errorData = await response.json();
-        alert(`Verification failed: ${errorData.error}`);
-      }
+      
+      // Navigate to the next page (Password Setup)
+      navigate("/password-setup", { state: { isFirstTime: true, email } });
     } catch (error) {
-      console.error("Verification error:", error);
+      console.error("Forgot password error:", error);
       alert("An error occurred. Please try again.");
     }
   };
@@ -118,23 +102,6 @@ function Verification() {
             className={`border w-full p-2 mb-4 rounded ${emailError ? "border-red-500" : ""}`}
             required
           />
-
-          <label className="block mb-2 text-sm font-medium">Verification Code</label>
-          <div className="flex justify-between mb-4">
-            {code.map((digit, index) => (
-              <input
-                key={index}
-                id={`digit-${index}`}
-                type="text"
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                className={`border w-12 h-12 text-center text-lg rounded ${
-                  codeError && !digit ? "border-red-500" : ""
-                }`}
-              />
-            ))}
-          </div>
 
           <div className="flex flex-col gap-4">
             <AuthenticationButton
