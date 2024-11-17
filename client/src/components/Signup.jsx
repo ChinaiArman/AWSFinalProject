@@ -7,8 +7,7 @@ function Signup() {
     firstName: "",
     lastName: "",
     email: "",
-    password: "",
-    dateOfBirth: "", 
+    dateOfBirth: "",
     phoneNumber: "",
     role: "0", // Default role is set to student
   });
@@ -45,6 +44,18 @@ function Signup() {
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">Sign up a new user</h1>
         <form onSubmit={handleSubmit}>
+          <label className="block mb-2 text-sm font-medium">Role</label>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            className="border w-full p-2 mb-4 rounded"
+            required
+          >
+            <option value="0">Student</option>
+            <option value="1">Faculty</option>
+            <option value="2">Admin</option>
+          </select>
           <label className="block mb-2 text-sm font-medium">First Name</label>
           <input
             type="text"
@@ -75,7 +86,7 @@ function Signup() {
             className="border w-full p-2 mb-4 rounded"
             required
           />
-          <label className="block mb-2 text-sm font-medium">Password</label>
+          {/* <label className="block mb-2 text-sm font-medium">Password</label>
           <input
             type="password"
             name="password"
@@ -84,7 +95,7 @@ function Signup() {
             placeholder="Password"
             className="border w-full p-2 mb-4 rounded"
             required
-          />
+          /> */}
           <label className="block mb-2 text-sm font-medium">Date of Birth</label>
           <input
             type="date"
@@ -104,18 +115,6 @@ function Signup() {
             className="border w-full p-2 mb-4 rounded"
             required
           />
-          <label className="block mb-2 text-sm font-medium">Role</label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="border w-full p-2 mb-4 rounded"
-            required
-          >
-            <option value="0">Student</option>
-            <option value="1">Faculty</option>
-            <option value="2">Admin</option>
-          </select>
           <AuthenticationButton label="Sign Up" type="submit" />
         </form>
       </div>

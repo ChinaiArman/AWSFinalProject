@@ -168,8 +168,8 @@ const CourseManagement = () => {
                   <p>{course.course_description || "N/A"}</p>
                 </div>
                 <div className="mb-4">
-                  <p className="font-semibold">Instructor:</p>
-                  <p>{course.faculty_id || "TBD"}</p>
+                  <p className="font-semibold">Assigned Instructor:</p>
+                  <p>{course.facultyName ? `${course.facultyName} (ID: ${course.faculty_id})` : "TBD"}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Total seats:</p>
@@ -182,6 +182,12 @@ const CourseManagement = () => {
                 <div className="mb-4">
                   <p className="font-semibold">Room:</p>
                   <p>{course.room_number || "TBD"}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Course Runtimes:</p>
+                  <p>{course.courseRuntimes && course.courseRuntimes.length > 0
+                    ? course.courseRuntimes.join(", ")
+                    : "TBD"}</p>
                 </div>
 
                 {/* Buttons */}
@@ -212,7 +218,7 @@ const CourseManagement = () => {
         isOpen={isPopupOpen}
         title="Delete Course"
         message={`Are you sure you want to delete the course "${courseToDelete?.course_name}"?`}
-        onConfirm={() => deleteCourse(courseToDelete?.id)} 
+        onConfirm={() => deleteCourse(courseToDelete?.id)}
         onCancel={cancelDelete}
       />
     </div>
