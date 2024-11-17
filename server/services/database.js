@@ -40,7 +40,6 @@ class Database {
     }
 
     async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
-        console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
             role,
@@ -121,6 +120,17 @@ class Database {
                 }
             ]
         });
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const courseRuntimes = await CourseRuntime.findAll({
+                where: { course_id: course.id }
+            });
+            course.dataValues.courseRuntimes = courseRuntimes;
+            const faculty = await Faculty.findOne({
+                where: { id: course.faculty_id }
+            });
+            course.dataValues.facultyName = faculty.first_name + ' ' + faculty.last_name;
+        }
         return courses;
     }
 
@@ -165,16 +175,26 @@ class Database {
             course_id: courseId,
             status: 'unlocked' // hardcoding a default as unlocked for now, will be updated for next milestone
         });
+        await Course.update(
+            { seats_available: course.seats_available - 1 },
+            { where: { id: courseId } }
+        );
     }
 
     async deleteEnrollment(studentId, courseId) {
-        console.log('Deleting enrollment:', studentId, courseId);
         await Enrollment.destroy({
             where: {
                 student_id: studentId,
                 course_id: courseId
             }
         });
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        await Course.update(
+            { seats_available: course.seats_available + 1 },
+            { where: { id: courseId } }
+        );
     }
 
     async getAllFaculty() {
@@ -288,6 +308,47 @@ class Database {
             }
         }
         return users;
+    }
+
+    async createCourseRuntime(courseId, start_date, end_date, start_time, end_time, day_of_week, location) {
+        // Check if course exists
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        if (!course) {
+            throw new Error('Course does not exist');
+        }
+        // convert start_date and end_date to date objects with format YYYY-MM-DD
+        start_date = new Date(start_date);
+        end_date = new Date(end_date);
+
+        // convert start_time and end_time to time objects with format HH:MM
+        // start_time = new Date(start_time);
+        // end_time = new Date(end_time);
+        // console.log(start_time, end_time);
+        const courseRuntime = await CourseRuntime.findOne({
+            where: {
+                course_id: courseId,
+                start_date,
+                end_date,
+                start_time,
+                end_time,
+                day_of_week,
+                location
+            }
+        });
+        if (courseRuntime) {
+            throw new Error('Course runtime already exists');
+        }
+        await CourseRuntime.create({
+            course_id: courseId,
+            start_date,
+            end_date,
+            start_time,
+            end_time,
+            day_of_week,
+            location
+        });
     }
 }
 

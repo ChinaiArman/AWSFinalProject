@@ -30,7 +30,7 @@ const CourseRuntime = db_config.define('CourseRuntime', {
         type: DataTypes.TIME,
         allowNull: false
     },
-    days_of_week: {
+    day_of_week: {
         type: DataTypes.STRING,
         allowNull: false
     },

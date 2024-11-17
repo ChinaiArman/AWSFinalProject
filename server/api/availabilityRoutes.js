@@ -1,9 +1,14 @@
 import express from "express";
 import FacultyAvailability from '../models/FacultyAvailability.js';
 
+import { isSignedIn, isVerified, isStudent, isFaculty, isAdmin } from "../config/authConfig.js";
+
+
+// CONSTANTS
 const availabilityRoutes = express.Router();
 
-// Add Availability
+
+// ROUTES
 availabilityRoutes.post('/add', async (req, res) => {
     const { facultyId, day, startTime, endTime, available } = req.body;
 
@@ -23,7 +28,6 @@ availabilityRoutes.post('/add', async (req, res) => {
     }
 });
 
-// Get Availability by Faculty ID
 availabilityRoutes.get('/:facultyId', async (req, res) => {
     const { facultyId } = req.params;
 
@@ -43,7 +47,6 @@ availabilityRoutes.get('/:facultyId', async (req, res) => {
     }
 });
 
-// Update Availability (Finds values that match faculty_id, day, start_time and end_time -> then only updates the availability value (0 or 1))
 availabilityRoutes.put('/update', async (req, res) => {
     const { facultyId, day, startTime, endTime, available } = req.body;
 
@@ -71,7 +74,6 @@ availabilityRoutes.put('/update', async (req, res) => {
     }
 });
 
-// Delete Availability (Based on id in faculty_availabilities)
 availabilityRoutes.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -91,4 +93,37 @@ availabilityRoutes.delete('/delete/:id', async (req, res) => {
     }
 });
 
+
+// PUT
+availabilityRoutes.put('/:facultyId', async (req, res) => {
+  const { facultyId } = req.params;
+  const { availability } = req.body;
+
+  try {
+    // Delete existing availability entries for the faculty
+    await FacultyAvailability.destroy({
+      where: { faculty_id: facultyId },
+    });
+
+    // Bulk insert new availability entries
+    const newAvailabilities = availability.map((entry) => ({
+      faculty_id: facultyId,
+      day: entry.day,
+      start_time: entry.start_time,
+      end_time: entry.end_time,
+      available: entry.available,
+    }));
+
+    await FacultyAvailability.bulkCreate(newAvailabilities);
+
+    res.status(200).json({ message: 'Availability updated successfully' });
+  } catch (error) {
+    console.error('Error updating availability:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+// EXPORTS
 export default availabilityRoutes;

@@ -1,6 +1,8 @@
 // IMPORTS
 import express from "express";
 
+import { isSignedIn, isVerified, isStudent, isFaculty, isAdmin } from "../config/authConfig.js";
+
 
 // CONSTANTS
 const authenticationRoutes = express.Router();

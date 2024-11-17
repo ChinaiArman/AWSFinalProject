@@ -3,14 +3,14 @@ import express from "express";
 import Course from "../models/Course.js";
 import Enrollment from "../models/Enrollment.js";
 
+import { isSignedIn, isVerified, isStudent, isFaculty, isAdmin } from "../config/authConfig.js";
+
 
 // CONSTANTS
 const studentRoutes = express.Router();
 
 
 // ROUTES
-
-// Get all courses for a student
 studentRoutes.get('/:studentId/courses', async (req, res) => {
     const studentId = req.params.studentId;
     const db = req.db;
@@ -24,7 +24,6 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
-// Add Enrollment (student enrolls into course)
 studentRoutes.put('/:studentId/enroll/:courseId', async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
@@ -39,7 +38,6 @@ studentRoutes.put('/:studentId/enroll/:courseId', async (req, res) => {
     }
 })
 
-// Delete Enrollment (student drops course)
 studentRoutes.delete('/:studentId/drop/:courseId', async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
@@ -53,6 +51,7 @@ studentRoutes.delete('/:studentId/drop/:courseId', async (req, res) => {
         return;
     }
 })
+
 
 // EXPORTS
 export default studentRoutes;
