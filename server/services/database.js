@@ -260,22 +260,7 @@ class Database {
         return availability;
     }
 
-    // Update availability
-    async updateAvailability(facultyId, day, startTime, endTime, available) {
-        const [updatedRows] = await FacultyAvailability.update(
-            { available },
-            {
-                where: {
-                    faculty_id: facultyId,
-                    day,
-                    start_time: startTime,
-                    end_time: endTime
-                }
-            }
-        );
-        return updatedRows;
-    }
-
+  
     // Delete availability
     async deleteAvailabilityById(id) {
         const deletedRows = await FacultyAvailability.destroy({
@@ -387,6 +372,35 @@ class Database {
         }
         return faculty;
     }
+
+
+
+    async updateFacultyAvailability(facultyId, availabilityList) {
+     try {
+            // Delete existing availability entries for the faculty
+            await FacultyAvailability.destroy({
+                where: { faculty_id: facultyId }
+         });
+
+            // Bulk insert new availability entries
+            const newAvailabilities = availabilityList.map((entry) => ({
+                faculty_id: facultyId,
+                day: entry.day,
+                start_time: entry.start_time,
+                end_time: entry.end_time,
+                available: entry.available,
+            }));
+
+         const createdEntries = await FacultyAvailability.bulkCreate(newAvailabilities);
+         return createdEntries;
+        } catch (error) {
+            console.error('Error updating availability in Database:', error);
+            throw new Error('Failed to update faculty availability');
+        }
+    }
+
+ 
+
 }
 
 
