@@ -1,17 +1,12 @@
-import React from "react";
+//MyTimetable.jsx
+import React, { useEffect, useState } from "react";
 import Timetable from "../../components/Timetable";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 
 const MyTimetable = () => {
-  // Sample student-specific timetable data (replace with actual data from backend)
-  const studentTimetableData = [
-    { day: "Monday", courseName: "Python lect :(", startTime: "08:30", endTime: "12:20", color: "#FF5733" },
-    { day: "Monday", courseName: "Python lab :((", startTime: "13:30", endTime: "17:20", color: "#FF5733" },
-    { day: "Tuesday", courseName: "History", startTime: "10:30", endTime: "11:20", color: "#33B5FF" },
-    { day: "Wednesday", courseName: "Physics", startTime: "13:30", endTime: "14:20", color: "#FFC300" },
-    { day: "Thursday", courseName: "Biology", startTime: "15:30", endTime: "16:20", color: "#8A2BE2" },
-  ];
+  const [timetableData, setTimetableData] = useState([]); // State for timetable data
+  const colors = ["#FF5733", "#33B5FF", "#FFC300", "#8A2BE2"];
 
   // Sidebar menu items for students
   const sidebarItems = [
@@ -20,6 +15,43 @@ const MyTimetable = () => {
     { label: "Waitlist", path: "/student/waitlist", onClick: () => (window.location.href = "/student/waitlist") },
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
   ];
+
+  // Fetch student timetable data from API
+  useEffect(() => {
+    const fetchTimetableData = async () => {
+      try {
+        // const response = await fetch(`http://localhost:5001/api/student/${studentId}/courses`);
+        const response = await fetch(`http://localhost:5001/api/student/1/courses`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Transform API data into timetable format
+        let colorIndex = 0; // To keep track of the color rotation
+        const timetable = data.courses.flatMap((course) =>
+          course.courseRuntimes.map((runtime) => {
+            const color = colors[colorIndex % colors.length]; // Rotate through colors
+            colorIndex += 1; // Move to the next color
+            return {
+              day: runtime.day_of_week || "N/A", // Use day_of_week
+              courseName: course.course_name, // Course name
+              startTime: runtime.start_time, // Start time
+              endTime: runtime.end_time, // End time
+              color: color, // Assign color
+            };
+          })
+        );
+
+        setTimetableData(timetable); // Set the transformed data
+      } catch (error) {
+        console.error("Error fetching timetable data:", error);
+        setTimetableData([]); // Reset to empty on error
+      }
+    };
+
+    fetchTimetableData();
+  }, []);
 
   return (
     <div className="flex h-screen">
@@ -31,7 +63,7 @@ const MyTimetable = () => {
         <Navbar role="student" />
         <div className="p-4">
           <h1 className="text-2xl font-bold text-center mb-6">My Weekly Timetable</h1>
-          <Timetable timetableData={studentTimetableData} />
+          <Timetable timetableData={timetableData} />
         </div>
       </div>
     </div>
