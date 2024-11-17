@@ -25,42 +25,6 @@ const CourseManagement = () => {
     },
   ];
 
-  // Mock data
-  const mockCourses = [
-    {
-      id: 1,
-      name: "DevOps",
-      description: "Learn the principles of DevOps and CI/CD pipelines.",
-      instructor: "Dr. John Doe",
-      time: "10:30 AM - 12:00 PM",
-      room: "Room 101",
-    },
-    {
-      id: 2,
-      name: "Serverless",
-      description: "An introduction to serverless computing.",
-      instructor: "Prof. Jane Smith",
-      time: "1:00 PM - 2:30 PM",
-      room: "Room 202",
-    },
-    {
-      id: 3,
-      name: "AWS",
-      description: "Master cloud services with AWS.",
-      instructor: "Dr. Alice Johnson",
-      time: "9:00 AM - 10:30 AM",
-      room: "Room 303",
-    },
-    {
-      id: 4,
-      name: "Azure",
-      description: "Comprehensive course on Azure cloud solutions.",
-      instructor: "Prof. Bob Brown",
-      time: "3:00 PM - 4:30 PM",
-      room: "Room 404",
-    },
-  ];
-
   // Fetch courses from the server when the component mounts
   useEffect(() => {
     const fetchCourses = async () => {
@@ -80,25 +44,6 @@ const CourseManagement = () => {
 
     fetchCourses();
   }, []);
-
-  //fetch faculty name using faculty id
-  // useEffect(() => {
-  //   const fetchFacultyName = async () => {
-  //     try {
-  //       const response = await fetch("http://localhost:5001/api/faculty/");
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch faculty name");
-  //       }
-  //       const data = await response.json();
-
-  //     } catch (error) {
-  //       console.error("Error fetching faculty name:", error);
-  //     }
-  //   };
-
-  //   fetchFacultyName();
-  // }, []);
-
 
   // Function to delete a course
   const deleteCourse = async (courseId) => {
@@ -125,7 +70,6 @@ const CourseManagement = () => {
       alert(`Error: ${error.message}`); // Show an error message to the user
     }
   };
-
 
   // Open confirmation popup and set the course to delete
   const openDeleteConfirmation = (course) => {
@@ -183,12 +127,25 @@ const CourseManagement = () => {
                   <p className="font-semibold">Room:</p>
                   <p>{course.room_number || "TBD"}</p>
                 </div>
-                <div className="mb-4">
+
+                {/* <div className="mb-4">
                   <p className="font-semibold">Course Runtimes:</p>
-                  <p>{course.courseRuntimes && course.courseRuntimes.length > 0
-                    ? course.courseRuntimes.join(", ")
-                    : "TBD"}</p>
-                </div>
+                  <div>
+                    {course.courseRuntimes && course.courseRuntimes.length > 0 ? (
+                      course.courseRuntimes.map((runtime, index) => (
+                        <div key={index} className="mb-2">
+                          <p><strong>Start Time:</strong> {runtime.start_time}</p>
+                          <p><strong>End Time:</strong> {runtime.end_time}</p>
+                          <p><strong>Location:</strong> {runtime.location}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>TBD</p>
+                    )}
+                  </div>
+                </div> */}
+
+
 
                 {/* Buttons */}
                 <div className="flex justify-center gap-12">
