@@ -15,7 +15,7 @@ function Navbar({ role }) {
   };
 
   return (
-    <div className="bg-blue-500 text-white p-4 flex items-center justify-between">
+    <div className="bg-blue-500 text-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-50 shadow-md">
       {/* Home Icon and Logo */}
       <div className="flex items-center">
         <div
