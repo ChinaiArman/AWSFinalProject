@@ -20,8 +20,8 @@ const MyTimetable = () => {
   useEffect(() => {
     const fetchTimetableData = async () => {
       try {
-        // const response = await fetch(`http://localhost:5001/api/faculty/${facultyId}/courses`);
-        const response = await fetch(`http://localhost:5001/api/faculty/1/courses`);
+        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/1/courses`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
