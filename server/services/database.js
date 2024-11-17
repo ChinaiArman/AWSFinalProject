@@ -322,10 +322,6 @@ class Database {
         start_date = new Date(start_date);
         end_date = new Date(end_date);
 
-        // convert start_time and end_time to time objects with format HH:MM
-        // start_time = new Date(start_time);
-        // end_time = new Date(end_time);
-        // console.log(start_time, end_time);
         const courseRuntime = await CourseRuntime.findOne({
             where: {
                 course_id: courseId,
