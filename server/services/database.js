@@ -134,6 +134,24 @@ class Database {
         return courses;
     }
 
+    async getCoursesByFacultyId(facultyId) {
+        const courses = await Course.findAll({
+            where: { faculty_id: facultyId }
+        });
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const courseRuntimes = await CourseRuntime.findAll({
+                where: { course_id: course.id }
+            });
+            course.dataValues.courseRuntimes = courseRuntimes;
+            const faculty = await Faculty.findOne({
+                where: { id: course.faculty_id }
+            });
+            course.dataValues.facultyName = faculty.first_name + ' ' + faculty.last_name;
+        }
+        return courses;
+    }
+
     async enrollStudent(studentId, courseId) {
         // Check if student is already enrolled
         const enrollment = await Enrollment
