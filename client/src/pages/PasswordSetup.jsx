@@ -25,19 +25,43 @@ function PasswordSetup() {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/auth/resetPassword`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code, password }),
-      });
+      // Step 1: Reset the password
+      const resetPasswordResponse = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/auth/resetPassword`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code, password }),
+        }
+      );
 
-      if (response.ok) {
-        alert("Password set successfully. You can now log in.");
-        navigate("/");
-      } else {
-        const errorData = await response.json();
+      if (!resetPasswordResponse.ok) {
+        const errorData = await resetPasswordResponse.json();
         setError(errorData.error || "Error setting password.");
+        return;
       }
+
+      // Step 2: Call the completeVerification API
+      const completeVerificationResponse = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/auth/completeVerification`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!completeVerificationResponse.ok) {
+        const errorData = await completeVerificationResponse.json();
+        setError(
+          errorData.error || "Password reset successful, but verification failed."
+        );
+        return;
+      }
+
+      // Success: Navigate to login
+      alert("Password set successfully. Your account is now verified. You can log in.");
+      navigate("/");
     } catch (err) {
       console.error("Error during password setup:", err);
       setError("An unexpected error occurred. Please try again.");
