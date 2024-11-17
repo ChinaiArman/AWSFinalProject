@@ -9,7 +9,11 @@ function Verification() {
   const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
-    document.getElementById("digit-0").focus(); // Focus the first digit on load
+    // Ensure the element exists before calling focus
+    const firstDigitInput = document.getElementById("digit-0");
+    if (firstDigitInput) {
+      firstDigitInput.focus();
+    }
   }, []);
 
   const handleChange = (index, value) => {
@@ -18,9 +22,11 @@ function Verification() {
     updatedCode[index] = value;
 
     if (value && index < 5) {
-      document.getElementById(`digit-${index + 1}`).focus();
+      const nextInput = document.getElementById(`digit-${index + 1}`);
+      if (nextInput) nextInput.focus();
     } else if (!value && index > 0) {
-      document.getElementById(`digit-${index - 1}`).focus();
+      const prevInput = document.getElementById(`digit-${index - 1}`);
+      if (prevInput) prevInput.focus();
     }
 
     setCode(updatedCode);
@@ -37,8 +43,8 @@ function Verification() {
       return;
     }
 
+    // Request a new code from Cognito (forgotPassword API)
     try {
-      // Request a new code from Cognito (forgotPassword API)
       const forgotPasswordResponse = await fetch(
         "http://localhost:5001/api/auth/forgotPassword",
         {
@@ -102,6 +108,21 @@ function Verification() {
             className={`border w-full p-2 mb-4 rounded ${emailError ? "border-red-500" : ""}`}
             required
           />
+
+          <label className="block mb-2 text-sm font-medium">Verification Code</label>
+          <div className="flex justify-between mb-4">
+            {code.map((digit, index) => (
+              <input
+                key={index}
+                id={`digit-${index}`}
+                type="text"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+                className={`border w-12 h-12 text-center text-lg rounded`}
+              />
+            ))}
+          </div>
 
           <div className="flex flex-col gap-4">
             <AuthenticationButton
