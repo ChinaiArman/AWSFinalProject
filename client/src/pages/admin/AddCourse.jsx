@@ -134,7 +134,7 @@ const AddCourse = () => {
       <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
         {/* Form Container */}
-        <form onSubmit={handleSave} className="max-w-5xl mx-auto bg-white p-6 rounded shadow-md">
+        <form onSubmit={handleSave} className="mt-2 max-w-5xl mx-auto bg-white p-6 rounded shadow-md">
           <h1 className="text-2xl font-bold text-center mb-6">Add a new course</h1>
 
           {/* Form Fields */}
@@ -190,9 +190,9 @@ const AddCourse = () => {
             selectedValue={formData.instructor}
             onChange={handleChange}
           />
-
-          {/* Save & Cancel Buttons */}
-          <div className="flex justify-center gap-10 mt-6">
+        </form>
+        {/* Save & Cancel Buttons */}
+        <div className="flex justify-center gap-10 mt-6">
             <DropdownButton
               label="Cancel"
               onClick={() => (window.location.href = "/admin/course-management")}
@@ -204,7 +204,6 @@ const AddCourse = () => {
               color="green"
             />
           </div>
-        </form>
       </div>
     </div>
   );

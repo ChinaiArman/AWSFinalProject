@@ -4,7 +4,7 @@ const TextField = ({ label, onChange, placeholder, type = "text" }) => {
   return (
     <div className="mb-1">
       <div className="flex items-center">
-        <label className="text-md font-medium text-gray-700 w-1/4 text-right">{label}</label>
+        <label className="text-md font-medium  w-1/4 text-right">{label}</label>
         <input
           type={type}
           onChange={onChange}
