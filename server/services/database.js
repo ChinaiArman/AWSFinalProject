@@ -175,16 +175,26 @@ class Database {
             course_id: courseId,
             status: 'unlocked' // hardcoding a default as unlocked for now, will be updated for next milestone
         });
+        await Course.update(
+            { seats_available: course.seats_available - 1 },
+            { where: { id: courseId } }
+        );
     }
 
     async deleteEnrollment(studentId, courseId) {
-        console.log('Deleting enrollment:', studentId, courseId);
         await Enrollment.destroy({
             where: {
                 student_id: studentId,
                 course_id: courseId
             }
         });
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        await Course.update(
+            { seats_available: course.seats_available + 1 },
+            { where: { id: courseId } }
+        );
     }
 
     async getAllFaculty() {
