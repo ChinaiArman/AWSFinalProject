@@ -9,6 +9,8 @@ const studentRoutes = express.Router();
 
 
 // ROUTES
+
+// Get all courses for a student
 studentRoutes.get('/:studentId/courses', async (req, res) => {
     const studentId = req.params.studentId;
     const db = req.db;
@@ -22,6 +24,7 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
+// Add Enrollment (student enrolls into course)
 studentRoutes.post('/:studentId/enroll/:courseId', async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
