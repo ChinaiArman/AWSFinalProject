@@ -17,7 +17,7 @@ function MyCourses() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/user/getUserBySession", {
+        const response = await fetch(`${process.env.SERVER_URL}/api/user/getUserBySession`, {
           method: "GET",
           credentials: "include", // Include cookies in the request
         });
@@ -49,7 +49,7 @@ function MyCourses() {
 
       try {
         // Use the facultyId to fetch courses for the faculty member
-        const response = await fetch(`http://localhost:5001/api/courses/faculty/${facultyId}`);
+        const response = await fetch(`${process.env.SERVER_URL}/api/courses/faculty/${facultyId}`);
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
