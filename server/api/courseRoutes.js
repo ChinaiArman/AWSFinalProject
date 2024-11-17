@@ -7,6 +7,8 @@ const courseRoutes = express.Router();
 
 
 // ROUTES
+
+// Get all courses
 courseRoutes.get('/getAllCourses', async (req, res) => {
     const db = req.db;
     try {
@@ -19,6 +21,7 @@ courseRoutes.get('/getAllCourses', async (req, res) => {
     }
 })
 
+// Create new course
 courseRoutes.post('/createCourse', async (req, res) => {
     const db = req.db;
     const { faculty_id, course_name, course_description, room_number, seats_available, total_seats } = req.body;
