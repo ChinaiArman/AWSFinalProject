@@ -108,7 +108,7 @@ const CourseManagement = () => {
       <BaseSidebar items={sidebarItems} /> 
 
       {/* Main Content */}
-      <div className="flex-1">
+      <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
 
         <AddButton

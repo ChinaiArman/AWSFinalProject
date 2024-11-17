@@ -13,7 +13,7 @@ const AddCourse = () => {
     { label: "User Management", path: "/admin/user-management", onClick: () => (window.location.href = "/admin/user-management") },
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
-  
+
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   const timeSlots = [
     "8:30-9:20",
@@ -53,7 +53,6 @@ const AddCourse = () => {
 
       // Mock data for now
       const mockInstructors = [
-        { label: "Available Instructor", value: "" }, 
         { label: "Instructor 1", value: "instructor1" },
         { label: "Instructor 2", value: "instructor2" },
         { label: "Instructor 3", value: "instructor3" },

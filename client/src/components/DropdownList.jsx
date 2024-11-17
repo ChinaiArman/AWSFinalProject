@@ -9,8 +9,11 @@ const DropdownList = ({ label, options, selectedValue, onChange }) => {
           <select
             value={selectedValue}
             onChange={onChange}
-            className="relative z-10 w-48 mt-1 ml-12 mr-12 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="relative z-10 w-80 mt-1 ml-12 mr-12 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
+             <option value="" disabled>
+              Available instructors
+            </option>
             {options && options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
