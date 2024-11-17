@@ -22,6 +22,20 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
+studentRoutes.get('/:studentId/enroll/:courseId', async (req, res) => {
+    const studentId = req.params.studentId;
+    const courseId = req.params.courseId;
+    const db = req.db;
+    try {
+        await db.enrollStudent(studentId, courseId);
+        res.status(200).json({ "message": "Student enrolled successfully" });
+        return;
+    } catch(error) {
+        res.status(400).json({ "Error enrolling student": error.message });
+        return;
+    }
+})
+
 
 // EXPORTS
 export default studentRoutes;
