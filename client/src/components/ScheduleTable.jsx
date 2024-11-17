@@ -1,39 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ScheduleButton from "./buttons/ScheduleButton";
 
 function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
-  // State to manage availability
-  const [availability, setAvailability] = useState(() => {
-    if (Object.keys(initialAvailability).length) {
-      return initialAvailability;
-    }
+  const [availability, setAvailability] = useState(initialAvailability);
 
-    // Default empty availability
-    const defaultAvailability = {};
-    days.forEach((day) => {
-      defaultAvailability[day] = {};
-      timeSlots.forEach((slot) => {
-        defaultAvailability[day][slot] = false;
-      });
-    });
-    return defaultAvailability;
-  });
+  // Sync availability with `initialAvailability` prop whenever it changes
+  useEffect(() => {
+    setAvailability(initialAvailability);
+  }, [initialAvailability]);
 
-  // Reset availability to initial state
   const handleReset = () => {
-    setAvailability(() => {
-      const resetAvailability = {};
-      days.forEach((day) => {
-        resetAvailability[day] = {};
-        timeSlots.forEach((slot) => {
-          resetAvailability[day][slot] = false;
-        });
+    const resetAvailability = {};
+    days.forEach((day) => {
+      resetAvailability[day] = {};
+      timeSlots.forEach((slot) => {
+        resetAvailability[day][slot] = false;
       });
-      return resetAvailability;
     });
+    setAvailability(resetAvailability);
   };
 
-  // Toggle individual availability cell
   const toggleAvailability = (day, slot) => {
     setAvailability((prevAvailability) => ({
       ...prevAvailability,
@@ -65,11 +51,11 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
                 <td
                   key={`${day}-${slot}`}
                   className={`border border-gray-300 p-2 text-center cursor-pointer ${
-                    availability[day][slot] ? "bg-green-200" : "bg-red-200"
+                    availability[day]?.[slot] ? "bg-green-200" : "bg-red-200"
                   }`}
                   onClick={() => toggleAvailability(day, slot)}
                 >
-                  {availability[day][slot] ? "✓" : ""}
+                  {availability[day]?.[slot] ? "✓" : ""}
                 </td>
               ))}
             </tr>
@@ -78,13 +64,7 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
       </table>
       <div className="flex justify-center mt-4">
         <div className="flex w-1/3 justify-between">
-          {/* Reset Button on the Left */}
-          <ScheduleButton
-            label="Reset"
-            color="gray"
-            onClick={handleReset}
-          />
-          {/* Apply Button on the Right */}
+          <ScheduleButton label="Reset" color="gray" onClick={handleReset} />
           <ScheduleButton
             label="Apply"
             color="blue"

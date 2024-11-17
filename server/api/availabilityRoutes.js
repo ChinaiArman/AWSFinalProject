@@ -94,5 +94,36 @@ availabilityRoutes.delete('/delete/:id', async (req, res) => {
 });
 
 
+// PUT
+availabilityRoutes.put('/:facultyId', async (req, res) => {
+  const { facultyId } = req.params;
+  const { availability } = req.body;
+
+  try {
+    // Delete existing availability entries for the faculty
+    await FacultyAvailability.destroy({
+      where: { faculty_id: facultyId },
+    });
+
+    // Bulk insert new availability entries
+    const newAvailabilities = availability.map((entry) => ({
+      faculty_id: facultyId,
+      day: entry.day,
+      start_time: entry.start_time,
+      end_time: entry.end_time,
+      available: entry.available,
+    }));
+
+    await FacultyAvailability.bulkCreate(newAvailabilities);
+
+    res.status(200).json({ message: 'Availability updated successfully' });
+  } catch (error) {
+    console.error('Error updating availability:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 // EXPORTS
 export default availabilityRoutes;
