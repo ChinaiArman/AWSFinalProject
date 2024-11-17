@@ -40,7 +40,6 @@ class Database {
     }
 
     async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
-        console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
             role,
@@ -76,6 +75,18 @@ class Database {
 
     async getAllCourses() {
         const courses = await Course.findAll();
+        // for course in courses, get the course runtimes and the faculty name
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const courseRuntimes = await CourseRuntime.findAll({
+                where: { course_id: course.id }
+            });
+            course.dataValues.courseRuntimes = courseRuntimes;
+            const faculty = await Faculty.findOne({
+                where: { id: course.faculty_id }
+            });
+            course.dataValues.facultyName = faculty.first_name + ' ' + faculty.last_name;
+        }
         return courses;
     }
 
@@ -109,26 +120,81 @@ class Database {
                 }
             ]
         });
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const courseRuntimes = await CourseRuntime.findAll({
+                where: { course_id: course.id }
+            });
+            course.dataValues.courseRuntimes = courseRuntimes;
+            const faculty = await Faculty.findOne({
+                where: { id: course.faculty_id }
+            });
+            course.dataValues.facultyName = faculty.first_name + ' ' + faculty.last_name;
+        }
         return courses;
     }
 
     async enrollStudent(studentId, courseId) {
-        console.log('Enrolling student:', studentId, courseId);
+        // Check if student is already enrolled
+        const enrollment = await Enrollment
+            .findOne({
+                where: {
+                    student_id: studentId,
+                    course_id: courseId
+                }
+            });
+        if (enrollment) {
+            throw new Error('Student is already enrolled in this course');
+        }
+        // Check if course is full
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        if (course.seats_available <= 0) {
+            // add student to waitlist
+            await Waitlist.create({
+                student_id: studentId,
+                course_id: courseId
+            });
+            throw new Error('Course is full');
+        }
+        // Check if student is already waitlisted
+        const waitlist = await Waitlist
+            .findOne({
+                where: {
+                    student_id: studentId,
+                    course_id: courseId
+                }
+            });
+        if (waitlist) {
+            throw new Error('Student is already waitlisted for this course');
+        }
+        // Enroll student
         await Enrollment.create({
             student_id: studentId,
             course_id: courseId,
             status: 'unlocked' // hardcoding a default as unlocked for now, will be updated for next milestone
         });
+        await Course.update(
+            { seats_available: course.seats_available - 1 },
+            { where: { id: courseId } }
+        );
     }
-    
+
     async deleteEnrollment(studentId, courseId) {
-        console.log('Deleting enrollment:', studentId, courseId);
         await Enrollment.destroy({
             where: {
                 student_id: studentId,
                 course_id: courseId
             }
         });
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        await Course.update(
+            { seats_available: course.seats_available + 1 },
+            { where: { id: courseId } }
+        );
     }
 
     async getAllFaculty() {
@@ -136,7 +202,7 @@ class Database {
         return faculty;
     }
 
-    async addFaculty(userId, firstName, lastName, email, phoneNumber, dateOfBirth ,isAdmin) {
+    async addFaculty(userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin) {
         console.log('Adding new Faculty:', userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin);
         await Faculty.create({
             user_id: userId,
@@ -155,51 +221,135 @@ class Database {
             where: { id: facultyId }
         });
     }
-    
-// Add faculty availability
-async addAvailability(facultyId, day, startTime, endTime, available) {
-  const newAvailability = await FacultyAvailability.create({
-      faculty_id: facultyId,
-      day,
-      start_time: startTime,
-      end_time: endTime,
-      available
-  });
-  return newAvailability;
-}
 
-// Get availability by faculty ID
-async getAvailabilityByFacultyId(facultyId) {
-  const availability = await FacultyAvailability.findAll({
-      where: { faculty_id: facultyId }
-  });
-  return availability;
-}
+    // Add faculty availability
+    async addAvailability(facultyId, day, startTime, endTime, available) {
+        const newAvailability = await FacultyAvailability.create({
+            faculty_id: facultyId,
+            day,
+            start_time: startTime,
+            end_time: endTime,
+            available
+        });
+        return newAvailability;
+    }
 
-// Update availability
-async updateAvailability(facultyId, day, startTime, endTime, available) {
-  const [updatedRows] = await FacultyAvailability.update(
-      { available },
-      {
-          where: {
-              faculty_id: facultyId,
-              day,
-              start_time: startTime,
-              end_time: endTime
-          }
-      }
-  );
-  return updatedRows;
-}
+    // Get availability by faculty ID
+    async getAvailabilityByFacultyId(facultyId) {
+        const availability = await FacultyAvailability.findAll({
+            where: { faculty_id: facultyId }
+        });
+        return availability;
+    }
 
-// Delete availability
-async deleteAvailabilityById(id) {
-  const deletedRows = await FacultyAvailability.destroy({
-      where: { id }
-  });
-  return deletedRows;
-}
+    // Update availability
+    async updateAvailability(facultyId, day, startTime, endTime, available) {
+        const [updatedRows] = await FacultyAvailability.update(
+            { available },
+            {
+                where: {
+                    faculty_id: facultyId,
+                    day,
+                    start_time: startTime,
+                    end_time: endTime
+                }
+            }
+        );
+        return updatedRows;
+    }
 
+    // Delete availability
+    async deleteAvailabilityById(id) {
+        const deletedRows = await FacultyAvailability.destroy({
+            where: { id }
+        });
+        return deletedRows;
+    }
+
+    async getFacultyById(facultyId) {
+        const faculty = await Faculty.findOne({
+            where: { id: facultyId }
+        });
+        return faculty;
+    }
+
+    async getUserById(userId) {
+        const user = await User.findOne({
+            where: { id: userId }
+        });
+        if (user.role > 0) {
+            const faculty = await Faculty.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = faculty;
+        } else {
+            const student = await Student.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = student;
+        }
+        return user;
+    }
+
+    async getAllUsers() {
+        const users = await User.findAll();
+        for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            if (user.role > 0) {
+                const faculty = await Faculty.findOne({
+                    where: { user_id: user.id }
+                });
+                user.dataValues.profile = faculty;
+            } else {
+                const student = await Student.findOne({
+                    where: { user_id: user.id }
+                });
+                user.dataValues.profile = student;
+            }
+        }
+        return users;
+    }
+
+    async createCourseRuntime(courseId, start_date, end_date, start_time, end_time, day_of_week, location) {
+        // Check if course exists
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        if (!course) {
+            throw new Error('Course does not exist');
+        }
+        // convert start_date and end_date to date objects with format YYYY-MM-DD
+        start_date = new Date(start_date);
+        end_date = new Date(end_date);
+
+        // convert start_time and end_time to time objects with format HH:MM
+        // start_time = new Date(start_time);
+        // end_time = new Date(end_time);
+        // console.log(start_time, end_time);
+        const courseRuntime = await CourseRuntime.findOne({
+            where: {
+                course_id: courseId,
+                start_date,
+                end_date,
+                start_time,
+                end_time,
+                day_of_week,
+                location
+            }
+        });
+        if (courseRuntime) {
+            throw new Error('Course runtime already exists');
+        }
+        await CourseRuntime.create({
+            course_id: courseId,
+            start_date,
+            end_date,
+            start_time,
+            end_time,
+            day_of_week,
+            location
+        });
+    }
 }
 
 

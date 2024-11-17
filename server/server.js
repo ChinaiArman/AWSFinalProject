@@ -4,7 +4,6 @@ dotenv.config();
 
 import express from "express";
 import cors from 'cors'
-import session from "express-session";
 import bodyParser from "body-parser";
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import { SESClient } from "@aws-sdk/client-ses";
