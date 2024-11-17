@@ -93,7 +93,7 @@ class Database {
 
     }
 
-    async getCoursesbyStudentId(studentId) {
+    async getCoursesByStudentId(studentId) {
         const courses = await Course.findAll({
             include: [
                 {
@@ -156,6 +156,14 @@ async deleteAvailabilityById(id) {
 
 
 
+
+    async enrollStudent(studentId, courseId) {
+        console.log('Enrolling student:', studentId, courseId);
+        await Enrollment.create({
+            student_id: studentId,
+            course_id: courseId
+        });
+    }
 }
 
 

@@ -3,7 +3,6 @@ import express from "express";
 
 import authenticationRoutes from "./authenticationRoutes.js";
 import courseRoutes from "./courseRoutes.js";
-import userRoutes from "./userRoutes.js";
 import studentRoutes from "./studentRoutes.js";
 import availabilityRoutes from "./availabilityRoutes.js"
 
