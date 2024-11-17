@@ -32,9 +32,9 @@ function TimeAvailability() {
   };
 
   const sidebarItems = [
-    { label: "My Courses", path: "/faculty/my-courses" },
-    { label: "My Timetable", path: "/faculty/my-timetable" },
-    { label: "Time Availability", path: "/faculty/time-availability" },
+    { label: "My Courses", path: "/faculty/my-courses", onClick: () => (window.location.href = "/faculty/my-courses") },
+    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
+    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => (window.location.href = "/faculty/time-availability") },
   ];
 
   const [availability, setAvailability] = useState(() => {

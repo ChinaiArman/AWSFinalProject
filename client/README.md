@@ -3,7 +3,7 @@
 To start the development server: 
 
 ```
-cd frontend
+cd client
 npm install
 npm run dev 
 ```

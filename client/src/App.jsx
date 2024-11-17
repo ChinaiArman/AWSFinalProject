@@ -41,7 +41,6 @@ const App = () => {
         <Route path="/faculty/my-courses" element={<FacultyMyCoursesPage />} />
         <Route path="/faculty/my-timetable" element={<FacultyMyTimetablePage />} />
         <Route path="/faculty/time-availability" element={<FacultyTimeAvailabilityPage />} />
-        {/* <Route path="/faculty/time-availability/:facultyId" element={<FacultyTimeAvailabilityPage />} /> */}
 
       </Routes>
     </div>
