@@ -61,10 +61,52 @@ const CourseManagement = () => {
     },
   ];
 
-  useEffect(() => {
-    // Set mock courses as initial data
-    setCourses(mockCourses);
-  }, []);
+    // Fetch courses from the server when the component mounts
+    useEffect(() => {
+      const fetchCourses = async () => {
+        try {
+          const response = await fetch("http://localhost:5001/api/course/getAllCourses");
+          if (!response.ok) {
+            throw new Error("Failed to fetch courses");
+          }
+          const data = await response.json();
+          console.log(data);
+          setCourses(data.courses); 
+        } catch (error) {
+          console.error("Error fetching courses:", error);
+        }
+      };
+  
+      fetchCourses(); 
+    }, []);
+
+    //fetch faculty name using faculty id
+    // useEffect(() => {
+    //   const fetchCoursesWithFaculty = async () => {
+    //     try {
+    //       const response = await fetch("http://localhost:5001/api/course/getAllCourses");
+    //       if (!response.ok) {
+    //         throw new Error("Failed to fetch courses");
+    //       }
+    //       const data = await response.json();
+    
+    //       // Fetch faculty names for each course
+    //       const coursesWithFaculty = await Promise.all(
+    //         data.courses.map(async (course) => {
+    //           const facultyName = await fetchFacultyName(course.faculty_id);
+    //           return { ...course, instructor: facultyName }; // Add the instructor name to the course
+    //         })
+    //       );
+    
+    //       setCourses(coursesWithFaculty);
+    //     } catch (error) {
+    //       console.error("Error fetching courses with faculty:", error);
+    //     }
+    //   };
+    
+    //   fetchCoursesWithFaculty();
+    // }, []);
+    
 
   // Function to delete a course
   const deleteCourse = async (courseId) => {
@@ -119,28 +161,32 @@ const CourseManagement = () => {
 
         {courses.length > 0 &&
           courses.map((course) => (
-            <BaseDropdownMenu key={course.id} title={course.name}>
+            <BaseDropdownMenu key={course.id} title={course.course_name}>
               <div className="px-6 py-3">
                 {/* Course Information */}
                 <div className="mb-4">
                   <p className="font-semibold">Course Name:</p>
-                  <p>{course.name}</p>
+                  <p>{course.course_name}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Course Description:</p>
-                  <p>{course.description || "N/A"}</p>
+                  <p>{course.course_description || "N/A"}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Instructor:</p>
-                  <p>{course.instructor || "TBD"}</p>
+                  <p>{course.faculty_id || "TBD"}</p>
                 </div>
                 <div className="mb-4">
-                  <p className="font-semibold">Time:</p>
-                  <p>{course.time || "TBD"}</p>
+                  <p className="font-semibold">Total seats:</p>
+                  <p>{course.total_seats || "TBD"}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Available seats:</p>
+                  <p>{course.seats_available || "TBD"}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Room:</p>
-                  <p>{course.room || "TBD"}</p>
+                  <p>{course.room_number || "TBD"}</p>
                 </div>
 
                 {/* Buttons */}
