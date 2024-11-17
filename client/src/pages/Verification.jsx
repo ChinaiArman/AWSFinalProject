@@ -41,7 +41,7 @@ function Verification() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/verify", {
+      const response = await fetch("http://localhost:5001/api/auth/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, code: verificationCode }),
@@ -70,7 +70,7 @@ function Verification() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/forgotPassword", {
+      const response = await fetch("http://localhost:5001/api/auth/forgotPassword", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
