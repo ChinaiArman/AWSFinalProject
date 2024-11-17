@@ -12,6 +12,7 @@ import StudentMyTimetablePage from "./pages/student/MyTimetable"
 import FacultyMyCoursesPage from "./pages/faculty/MyCourses"
 import FacultyMyTimetablePage from "./pages/faculty/MyTimetable"
 import FacultyTimeAvailabilityPage from "./pages/faculty/TimeAvailability"
+import PasswordSetupPage from "./pages/PasswordSetup"
 import "./styles/App.css";
 
 const App = () => {
