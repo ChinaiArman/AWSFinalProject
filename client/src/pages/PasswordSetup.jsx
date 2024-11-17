@@ -6,7 +6,7 @@ function PasswordSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const isFirstTime = location.state?.isFirstTime || false;
-  const [email, setEmail] = useState('');
+  const email = location.state?.email || ''; // Get the email passed from Verification
   const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
 
@@ -17,7 +17,7 @@ function PasswordSetup() {
       const response = await fetch('http://localhost:5000/api/auth/resetPassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code, password }),
+        body: JSON.stringify({ email, code, password }), // Email is passed here
       });
       if (response.ok) {
         alert('Password set successfully. You can now log in.');
@@ -37,14 +37,6 @@ function PasswordSetup() {
           {isFirstTime ? 'Complete Your Account' : 'Reset Your Password'}
         </h1>
         <form onSubmit={handleSubmit}>
-          <label className="block mb-2 text-sm font-medium">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="border w-full p-2 mb-4 rounded"
-          />
           <label className="block mb-2 text-sm font-medium">Verification Code</label>
           <input
             type="text"
