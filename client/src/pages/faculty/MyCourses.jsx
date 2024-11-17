@@ -17,7 +17,7 @@ function MyCourses() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/user/getUserBySession", {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
           method: "GET",
           credentials: "include", // Include cookies in the request
         });

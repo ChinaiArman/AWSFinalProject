@@ -12,7 +12,7 @@ function Login() {
         e.preventDefault(); // Prevent form from refreshing the page
 
         try {
-            const response = await fetch("http://localhost:5001/api/auth/login", {
+            const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -26,7 +26,7 @@ function Login() {
             }
 
             // Fetch user details from session
-            const userResponse = await fetch("http://localhost:5001/api/user/getUserBySession", {
+            const userResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
                 method: "GET",
                 credentials: "include",
             });
