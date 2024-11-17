@@ -52,7 +52,8 @@ class Database {
                 last_name: lastName,
                 email,
                 date_of_birth: dateOfBirth,
-                phone_number: phoneNumber
+                phone_number: phoneNumber,
+                is_admin: role === 2
             });
         } else {
             await Student.create({

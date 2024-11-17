@@ -15,7 +15,7 @@ const Enrollment = db_config.define('Enrollment', {
         allowNull: false,
     },
     student_id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     enrollment_date: {

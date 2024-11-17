@@ -6,7 +6,8 @@ import db_config from '../config/dbConfig.js';
 // MODEL DEFINITION
 const Faculty = db_config.define('Faculty', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
     user_id: {
@@ -33,6 +34,10 @@ const Faculty = db_config.define('Faculty', {
         type: DataTypes.DATE,
         allowNull: false
     },
+    is_admin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    }
 }, {
     tableName: 'faculty',
     timestamps: false

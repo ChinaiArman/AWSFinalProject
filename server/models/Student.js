@@ -6,7 +6,8 @@ import db_config from '../config/dbConfig.js';
 // MODEL DEFINITION
 const Student = db_config.define('Student', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true
     },
     user_id: {
