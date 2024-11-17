@@ -23,6 +23,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/verification" element={<VerificationPage />} />
+        <Route path="/password-setup" element={<PasswordSetupPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin/user-management" element={<UserManagement />} />
