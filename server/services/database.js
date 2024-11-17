@@ -79,10 +79,9 @@ class Database {
         return courses;
     }
 
-    async createCourse(courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
-        console.log('Creating course:', courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats);
+    async createCourse(facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
+        console.log('Creating course:', facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats);
         await Course.create({
-            id: courseId,
             faculty_id: facultyId,
             course_name: courseName,
             course_description: courseDescription,
@@ -91,6 +90,13 @@ class Database {
             total_seats: totalSeats
         })
 
+    }
+
+    async deleteCourse(courseId) {
+        console.log('Deleting course:', courseId);
+        await Course.destroy({
+            where: { id: courseId }
+        });
     }
 
     async getCoursesByStudentId(studentId) {

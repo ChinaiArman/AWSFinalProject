@@ -35,5 +35,19 @@ courseRoutes.post('/createCourse', async (req, res) => {
     }
 })
 
+// Delete course
+courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
+    const courseId = req.params.courseId;
+    const db = req.db;
+    try {
+        await db.deleteCourse(courseId);
+        res.status(200).json({ "message": "Course deleted successfully" });
+        return;
+    } catch(error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+})
+
 // EXPORTS
 export default courseRoutes;
