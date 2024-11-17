@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
 function Verification() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
@@ -22,25 +24,37 @@ function Verification() {
     const verificationCode = code.join(""); // Combine the 6 boxes into one string
 
     try {
-      const response = await axios.post("/api/auth/verify", {
-        email,
-        verificationCode,
+      const response = await fetch("http://localhost:5000/api/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: verificationCode }),
       });
-      console.log("Account verification successful:", response.data);
-      // Redirect to password setup or appropriate page
+      if (response.ok) {
+        console.log("Verification successful");
+        navigate("/password-setup", { state: { isFirstTime: true } });
+      } else {
+        alert("Verification failed. Please check your code.");
+      }
     } catch (error) {
-      console.error("Verification failed:", error.response.data);
+      console.error("Verification error:", error);
     }
   };
 
   const handleRequestNewCode = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axios.post("/api/auth/forgotPassword", { email });
-      console.log("New code sent successfully:", response.data);
+      const response = await fetch("http://localhost:5000/api/auth/forgotPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (response.ok) {
+        alert("A new verification code has been sent to your email.");
+      } else {
+        alert("Failed to request a new code. Please check your email.");
+      }
     } catch (error) {
-      console.error("Failed to request a new code:", error.response.data);
+      console.error("Request new code error:", error);
     }
   };
 
