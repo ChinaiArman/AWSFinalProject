@@ -110,7 +110,8 @@ class Database {
         console.log('Enrolling student:', studentId, courseId);
         await Enrollment.create({
             student_id: studentId,
-            course_id: courseId
+            course_id: courseId,
+            status: 'unlocked' // hardcoding a default as unlocked for now, will be updated for next milestone
         });
     }
     
