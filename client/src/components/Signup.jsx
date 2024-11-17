@@ -28,7 +28,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${process.env.SERVER_URL}/api/auth/register`, {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

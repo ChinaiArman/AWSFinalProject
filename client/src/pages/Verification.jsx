@@ -46,7 +46,7 @@ function Verification() {
     // Request a new code from Cognito (forgotPassword API)
     try {
       const forgotPasswordResponse = await fetch(
-        `${process.env.SERVER_URL}/api/auth/forgotPassword`,
+        `${import.meta.env.VITE_SERVER_URL}/api/auth/forgotPassword`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -79,7 +79,7 @@ function Verification() {
     }
 
     try {
-      const response = await fetch(`${process.env.SERVER_URL}/api/auth/forgotPassword`, {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/auth/forgotPassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
