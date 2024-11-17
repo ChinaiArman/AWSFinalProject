@@ -92,7 +92,7 @@ class Database {
 
     }
 
-    async getCoursesbyStudentId(studentId) {
+    async getCoursesByStudentId(studentId) {
         const courses = await Course.findAll({
             include: [
                 {
@@ -105,6 +105,14 @@ class Database {
         return courses;
     }
 
+    async enrollStudent(studentId, courseId) {
+        console.log('Enrolling student:', studentId, courseId);
+        await Enrollment.create({
+            student_id: studentId,
+            course_id: courseId
+        });
+    }
+    
     async verifyUser(userId) {
         await User.update({ is_verified: true }, { where: { id: userId } });
     }
