@@ -49,5 +49,19 @@ courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
     }
 })
 
+courseRoutes.put('/createCourseRuntime/:courseId', async (req, res) => {
+    const courseId = req.params.courseId;
+    const db = req.db;
+    const { start_date, end_date, start_time, end_time, day_of_week, location } = req.body;
+    try {
+        await db.createCourseRuntime(courseId, start_date, end_date, start_time, end_time, day_of_week, location);
+        res.status(200).json({ "message": "Course runtime created successfully" });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
 // EXPORTS
 export default courseRoutes;

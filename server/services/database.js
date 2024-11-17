@@ -309,6 +309,47 @@ class Database {
         }
         return users;
     }
+
+    async createCourseRuntime(courseId, start_date, end_date, start_time, end_time, day_of_week, location) {
+        // Check if course exists
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        if (!course) {
+            throw new Error('Course does not exist');
+        }
+        // convert start_date and end_date to date objects with format YYYY-MM-DD
+        start_date = new Date(start_date);
+        end_date = new Date(end_date);
+
+        // convert start_time and end_time to time objects with format HH:MM
+        // start_time = new Date(start_time);
+        // end_time = new Date(end_time);
+        // console.log(start_time, end_time);
+        const courseRuntime = await CourseRuntime.findOne({
+            where: {
+                course_id: courseId,
+                start_date,
+                end_date,
+                start_time,
+                end_time,
+                day_of_week,
+                location
+            }
+        });
+        if (courseRuntime) {
+            throw new Error('Course runtime already exists');
+        }
+        await CourseRuntime.create({
+            course_id: courseId,
+            start_date,
+            end_date,
+            start_time,
+            end_time,
+            day_of_week,
+            location
+        });
+    }
 }
 
 
