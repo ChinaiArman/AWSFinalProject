@@ -31,7 +31,8 @@ function Verification() {
       });
       if (response.ok) {
         console.log("Verification successful");
-        navigate("/password-setup", { state: { isFirstTime: true } });
+        // Pass email to Password Setup page
+        navigate("/password-setup", { state: { isFirstTime: true, email } });
       } else {
         alert("Verification failed. Please check your code.");
       }
