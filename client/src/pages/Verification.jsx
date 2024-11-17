@@ -43,8 +43,33 @@ function Verification() {
       return;
     }
 
-    // Request a new code from Cognito (forgotPassword API)
+    const verificationCode = code.join(""); // Combine the code into a single string
+
+    if (verificationCode.length !== 6) {
+      alert("Please enter the 6-digit verification code.");
+      return;
+    }
+
     try {
+      // Step 1: Verify the code
+      const verifyResponse = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/auth/verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code: verificationCode }),
+        }
+      );
+
+      if (!verifyResponse.ok) {
+        const errorData = await verifyResponse.json();
+        alert(`Verification failed: ${errorData.error}`);
+        return;
+      }
+
+      alert("Verification successful!");
+
+      // Step 2: Request a new code
       const forgotPasswordResponse = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/auth/forgotPassword`,
         {
@@ -55,16 +80,16 @@ function Verification() {
       );
 
       if (!forgotPasswordResponse.ok) {
-        alert("Failed to request a new code. Please check your email.");
+        alert("Failed to request a new code for password setup. Please try again.");
         return;
       }
 
-      alert("A new verification code has been sent to your email.");
-      
-      // Navigate to the next page (Password Setup)
+      alert("A new verification code has been sent to your email for password setup.");
+
+      // Step 3: Navigate to the password setup page
       navigate("/password-setup", { state: { isFirstTime: true, email } });
     } catch (error) {
-      console.error("Forgot password error:", error);
+      console.error("Error during account completion:", error);
       alert("An error occurred. Please try again.");
     }
   };
