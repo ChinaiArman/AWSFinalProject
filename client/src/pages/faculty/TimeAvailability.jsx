@@ -133,51 +133,52 @@ function TimeAvailability() {
   }, [facultyId]); // Depend on facultyId
 
   const handleSave = async (newAvailability) => {
-    console.log("Saved Availability:", newAvailability);
+  console.log("Saved Availability:", newAvailability);
 
-    if (!facultyId) {
-      console.error('Faculty ID not available');
-      return;
-    }
+  if (!facultyId) {
+    console.error('Faculty ID not available');
+    return;
+  }
 
-    try {
-      // Prepare the data to send to the backend
-      const availabilityList = [];
+  try {
+    // Prepare the data to send to the backend
+    const availabilityList = [];
 
-      days.forEach((day) => {
-        timeSlots.forEach((slot) => {
-          const isAvailable = newAvailability[day][slot];
-          if (isAvailable) {
-            const [startTime, endTime] = predefinedTimeSlots[slot];
-            availabilityList.push({
-              day,
-              start_time: startTime,
-              end_time: endTime,
-              available: true,
-            });
-          }
-        });
+    days.forEach((day) => {
+      timeSlots.forEach((slot) => {
+        const isAvailable = newAvailability[day][slot];
+        if (isAvailable) {
+          const [startTime, endTime] = predefinedTimeSlots[slot];
+          availabilityList.push({
+            day,
+            start_time: startTime,
+            end_time: endTime,
+            available: true,
+          });
+        }
       });
+    });
 
-      // Send the availability list to the backend
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`, {
-        method: 'PUT',
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`,
+      {
+        method: "PUT", // Use PUT universally here
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ availability: availabilityList }),
-      });
-
-      if (response.ok) {
-        console.log('Availability updated successfully');
-        
-      } else {
-        console.error('Failed to update availability');
       }
-    } catch (error) {
-      console.error('Error updating availability:', error);
+    );
+
+    if (response.ok) {
+      console.log("Availability updated successfully");
+    } else {
+      console.error("Failed to update availability");
     }
-  };
+  } catch (error) {
+    console.error("Error updating availability:", error);
+  }
+};
 
   return (
     <div className="flex h-screen">
