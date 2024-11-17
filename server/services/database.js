@@ -47,7 +47,6 @@ class Database {
         });
         if (role > 0) {
             await Faculty.create({
-                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -58,7 +57,6 @@ class Database {
             });
         } else {
             await Student.create({
-                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -260,7 +258,7 @@ class Database {
         return availability;
     }
 
-  
+
     // Delete availability
     async deleteAvailabilityById(id) {
         const deletedRows = await FacultyAvailability.destroy({
@@ -376,11 +374,11 @@ class Database {
 
 
     async updateFacultyAvailability(facultyId, availabilityList) {
-     try {
+        try {
             // Delete existing availability entries for the faculty
             await FacultyAvailability.destroy({
                 where: { faculty_id: facultyId }
-         });
+            });
 
             // Bulk insert new availability entries
             const newAvailabilities = availabilityList.map((entry) => ({
@@ -391,15 +389,15 @@ class Database {
                 available: entry.available,
             }));
 
-         const createdEntries = await FacultyAvailability.bulkCreate(newAvailabilities);
-         return createdEntries;
+            const createdEntries = await FacultyAvailability.bulkCreate(newAvailabilities);
+            return createdEntries;
         } catch (error) {
             console.error('Error updating availability in Database:', error);
             throw new Error('Failed to update faculty availability');
         }
     }
 
- 
+
 
 }
 

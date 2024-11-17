@@ -78,16 +78,6 @@ app.get('/', async (req, res) => {
 app.use('/api', router);
 
 
-app.get('/set-session', (req, res) => {
-    req.session.userId = 12345; // Storing userId in session
-    res.send('Session data saved!');
-});
-
-app.get('/get-session', (req, res) => {
-    res.send({ sessionData: req.session }); // Retrieving session data
-});
-
-
 // LISTEN
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
