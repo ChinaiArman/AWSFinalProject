@@ -20,6 +20,19 @@ userRoutes.get('/user/:userId', async (req, res) => {
     }
 })
 
+// get user by session
+userRoutes.get('/getUserBySession', async (req, res) => {
+    const db = req.db;
+    try {
+        const user = await db.getUserById(req.session.userId);
+        res.status(200).json({ "user": user });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
 userRoutes.get('/getAllUsers', async (req, res) => {
     const db = req.db;
     try {

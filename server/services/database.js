@@ -125,7 +125,41 @@ class Database {
     }
 
     async enrollStudent(studentId, courseId) {
-        console.log('Enrolling student:', studentId, courseId);
+        // Check if student is already enrolled
+        const enrollment = await Enrollment
+            .findOne({
+                where: {
+                    student_id: studentId,
+                    course_id: courseId
+                }
+            });
+        if (enrollment) {
+            throw new Error('Student is already enrolled in this course');
+        }
+        // Check if course is full
+        const course = await Course.findOne({
+            where: { id: courseId }
+        });
+        if (course.seats_available <= 0) {
+            // add student to waitlist
+            await Waitlist.create({
+                student_id: studentId,
+                course_id: courseId
+            });
+            throw new Error('Course is full');
+        }
+        // Check if student is already waitlisted
+        const waitlist = await Waitlist
+            .findOne({
+                where: {
+                    student_id: studentId,
+                    course_id: courseId
+                }
+            });
+        if (waitlist) {
+            throw new Error('Student is already waitlisted for this course');
+        }
+        // Enroll student
         await Enrollment.create({
             student_id: studentId,
             course_id: courseId,
@@ -223,6 +257,17 @@ class Database {
         const user = await User.findOne({
             where: { id: userId }
         });
+        if (user.role > 0) {
+            const faculty = await Faculty.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = faculty;
+        } else {
+            const student = await Student.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = student;
+        }
         return user;
     }
 
