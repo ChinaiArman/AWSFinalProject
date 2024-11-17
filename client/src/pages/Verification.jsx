@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
 function Verification() {
-  const [email, setEmail] = useState(""); // Assuming this comes from Cognito or state
+  const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleChange = (index, value) => {
@@ -17,29 +17,49 @@ function Verification() {
     setCode(updatedCode);
   };
 
-  const handleSubmit = async (e) => {
+  const handleCompleteAccount = async (e) => {
     e.preventDefault();
     const verificationCode = code.join(""); // Combine the 6 boxes into one string
 
     try {
-      const response = await axios.post("/verify", {
-        email, // Replace with dynamic email
+      const response = await axios.post("/api/auth/verify", {
+        email,
         verificationCode,
       });
-      console.log("Verification successful:", response.data);
+      console.log("Account verification successful:", response.data);
+      // Redirect to password setup or appropriate page
     } catch (error) {
       console.error("Verification failed:", error.response.data);
+    }
+  };
+
+  const handleRequestNewCode = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("/api/auth/forgotPassword", { email });
+      console.log("New code sent successfully:", response.data);
+    } catch (error) {
+      console.error("Failed to request a new code:", error.response.data);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Verify Your Account</h1>
-        <p className="text-sm mb-4 text-center">
-          Please enter the verification code we sent to your email.
-        </p>
-        <form onSubmit={handleSubmit}>
+        <h1 className="text-2xl font-bold mb-4 text-center">Verify</h1>
+        <form>
+          <label className="block mb-2 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="border w-full p-2 mb-4 rounded"
+            required
+          />
+
+          <label className="block mb-2 text-sm font-medium">Verification Code</label>
           <div className="flex justify-between mb-4">
             {code.map((digit, index) => (
               <input
@@ -53,7 +73,18 @@ function Verification() {
               />
             ))}
           </div>
-          <AuthenticationButton label="Confirm Code" type="submit" />
+
+          <div className="flex flex-col gap-4">
+            <AuthenticationButton
+              label="Complete your account"
+              onClick={handleCompleteAccount}
+            />
+            <AuthenticationButton
+              label="Has your code expired? Request a new one"
+              onClick={handleRequestNewCode}
+              color="gray"
+            />
+          </div>
         </form>
       </div>
     </div>
