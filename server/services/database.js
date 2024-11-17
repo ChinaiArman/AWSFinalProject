@@ -131,6 +131,11 @@ class Database {
         });
     }
 
+    async getAllFaculty() {
+        const faculty = await Faculty.findAll();
+        return faculty;
+    }
+
     
 // Add faculty availability
 async addAvailability(facultyId, day, startTime, endTime, available) {
