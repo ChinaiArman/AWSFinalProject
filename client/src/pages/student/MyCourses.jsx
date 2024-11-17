@@ -39,8 +39,10 @@ function MyCourses() {
           description: course.course_description,
           faculty: course.facultyName,
           schedule: course.courseRuntimes.length
-            ? course.courseRuntimes.map(runtime => `${runtime.day} ${runtime.startTime}-${runtime.endTime}`).join(', ')
-            : 'Schedule not available', // Format courseRuntimes or show default message
+            ? course.courseRuntimes.map(runtime =>
+              `${runtime.day_of_week || "N/A"} ${runtime.start_time} - ${runtime.end_time}`
+            ).join(', ')
+            : 'Schedule not available',
           room: `Room ${course.room_number}`,
           enrollmentDate: course.enrollment?.[0]?.enrollment_date || "N/A",
           status: course.enrollment?.[0]?.status || "N/A",

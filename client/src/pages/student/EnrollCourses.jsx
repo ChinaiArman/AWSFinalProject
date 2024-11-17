@@ -27,45 +27,6 @@ const EnrollCourses = () => {
     setFilteredCourses(filtered);
   }, [searchQuery, courses]);
 
-  // useEffect(() => {
-  //   const fetchCourses = async () => {
-  //     try {
-  //       const data = [
-  //         {
-  //           id: 1,
-  //           name: "Cloud Computing",
-  //           description: "Introduction to cloud platforms",
-  //           schedule: "Mon 9:30-10:20",
-  //           room: "Room A102",
-  //         },
-  //         {
-  //           id: 2,
-  //           name: "DevOps Fundamentals",
-  //           description: "CI/CD pipelines and infrastructure as code",
-  //           schedule: "Tue 10:30-11:20",
-  //           room: "Room B203",
-  //         },
-  //         {
-  //           id: 3,
-  //           name: "AI and Machine Learning",
-  //           description: "Overview of AI and ML techniques",
-  //           schedule: "Wed 1:00-2:20",
-  //           room: "Room C304",
-  //         },
-  //       ];
-  //       setCourses(data); // Set courses with provided data
-  //       setFilteredCourses(data); // Initialize filtered courses
-  //     } catch (error) {
-  //       console.error("Error fetching courses:", error);
-  //       setCourses([]);
-  //       setFilteredCourses([]);
-  //     }
-  //   };
-
-  //   fetchCourses();
-  // }, []); // Runs once when the component loads
-
-
   // Fetch courses from the API
   useEffect(() => {
     const fetchCourses = async () => {
@@ -81,8 +42,10 @@ const EnrollCourses = () => {
           description: course.course_description,
           faculty: course.facultyName, // Extract facultyName from API response
           schedule: course.courseRuntimes.length
-            ? course.courseRuntimes.map(runtime => `${runtime.day} ${runtime.startTime}-${runtime.endTime}`).join(', ')
-            : 'Schedule not available', // Format courseRuntimes or show default message
+            ? course.courseRuntimes.map(runtime =>
+              `${runtime.day_of_week || "N/A"} ${runtime.start_time} - ${runtime.end_time}`
+            ).join(', ')
+            : 'Schedule not available',
           room: `Room ${course.room_number}`,
           seat: `${course.seats_available} seats available out of ${course.total_seats}`,
         }));
@@ -94,11 +57,11 @@ const EnrollCourses = () => {
         setFilteredCourses([]);
       }
     };
-  
+
     fetchCourses();
   }, []); // Runs once when the component loads  
-  
-///////////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////
   const studentId = 1;  //should delete this line
   const selectedCourseId = 2; //should delete this line
 
