@@ -9,6 +9,7 @@ import Waitlist from '../models/Waitlist.js';
 import User from '../models/User.js';
 
 
+
 // CONSTANTS
 
 
@@ -104,7 +105,62 @@ class Database {
         });
         return courses;
     }
+
+
+
+
+
+// Add faculty availability
+async addAvailability(facultyId, day, startTime, endTime, available) {
+  const newAvailability = await FacultyAvailability.create({
+      faculty_id: facultyId,
+      day,
+      start_time: startTime,
+      end_time: endTime,
+      available
+  });
+  return newAvailability;
 }
+
+// Get availability by faculty ID
+async getAvailabilityByFacultyId(facultyId) {
+  const availability = await FacultyAvailability.findAll({
+      where: { faculty_id: facultyId }
+  });
+  return availability;
+}
+
+// Update availability
+async updateAvailability(facultyId, day, startTime, endTime, available) {
+  const [updatedRows] = await FacultyAvailability.update(
+      { available },
+      {
+          where: {
+              faculty_id: facultyId,
+              day,
+              start_time: startTime,
+              end_time: endTime
+          }
+      }
+  );
+  return updatedRows;
+}
+
+// Delete availability
+async deleteAvailabilityById(id) {
+  const deletedRows = await FacultyAvailability.destroy({
+      where: { id }
+  });
+  return deletedRows;
+}
+
+
+
+}
+
+
+
+
 
 
 // EXPORTS

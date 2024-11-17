@@ -5,6 +5,7 @@ import authenticationRoutes from "./authenticationRoutes.js";
 import courseRoutes from "./courseRoutes.js";
 import userRoutes from "./userRoutes.js";
 import studentRoutes from "./studentRoutes.js";
+import availabilityRoutes from "./availabilityRoutes.js"
 
 
 // CONSTANTS
@@ -16,6 +17,7 @@ router.use('/auth', authenticationRoutes);
 router.use('/course', courseRoutes);
 router.use('/student', studentRoutes);
 router.use('/user', userRoutes);
+router.use('/availability', availabilityRoutes);
 
 
 // Student Routes
