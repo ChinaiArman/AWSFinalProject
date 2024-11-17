@@ -15,23 +15,29 @@ function Navbar({ role }) {
   };
 
   return (
-    <div className="bg-blue-500 text-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-50 shadow-md">
-      {/* Home Icon and Logo */}
-      <div className="flex items-center">
-        <div
-          className="flex items-center cursor-pointer"
-          onClick={() => navigate(getHomeRoute())}
-        >
-          <HomeIcon className="mr-2" />
+    <>
+      {/* Fixed Navbar */}
+      <div className="bg-blue-500 text-white p-4 flex items-center justify-between fixed top-0 left-0 w-full z-50 shadow-md">
+        {/* Home Icon and Logo */}
+        <div className="flex items-center">
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => navigate(getHomeRoute())}
+          >
+            <HomeIcon className="mr-2" />
+          </div>
+          <div className="text-lg font-bold">Logo</div>
         </div>
-        <div className="text-lg font-bold">Logo</div>
+
+        {/* Profile Icon */}
+        <div className="cursor-pointer">
+          <AccountCircleIcon />
+        </div>
       </div>
 
-      {/* Profile Icon */}
-      <div className="cursor-pointer">
-        <AccountCircleIcon />
-      </div>
-    </div>
+      {/* Spacer for Navbar */}
+      <div className="h-16"></div>
+    </>
   );
 }
 
