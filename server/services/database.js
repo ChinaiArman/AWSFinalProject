@@ -42,19 +42,23 @@ class Database {
         console.log('Creating user:', userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
         await User.create({
             id: userId,
-            role
+            role,
+            is_verified: false,
         });
         if (role > 0) {
             await Faculty.create({
+                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
                 email,
                 date_of_birth: dateOfBirth,
-                phone_number: phoneNumber
+                phone_number: phoneNumber,
+                is_admin: role === 2
             });
         } else {
             await Student.create({
+                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -63,6 +67,10 @@ class Database {
                 phone_number: phoneNumber
             });
         }
+    }
+
+    async verifyUser(userId) {
+        await User.update({ is_verified: true }, { where: { id: userId } });
     }
 
     async getAllCourses() {
@@ -81,7 +89,7 @@ class Database {
             seats_available: seatsAvailable,
             total_seats: totalSeats
         })
-        
+
     }
 
     async getCoursesByStudentId(studentId) {
@@ -103,6 +111,10 @@ class Database {
             student_id: studentId,
             course_id: courseId
         });
+    }
+    
+    async verifyUser(userId) {
+        await User.update({ is_verified: true }, { where: { id: userId } });
     }
 }
 

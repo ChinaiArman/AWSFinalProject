@@ -13,6 +13,10 @@ const User = db_config.define('User', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    is_verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    },
 }, {
     tableName: 'users',
     timestamps: false
