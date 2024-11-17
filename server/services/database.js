@@ -104,6 +104,10 @@ class Database {
         });
         return courses;
     }
+
+    async verifyUser(userId) {
+        await User.update({ is_verified: true }, { where: { id: userId } });
+    }
 }
 
 

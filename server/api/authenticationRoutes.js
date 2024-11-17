@@ -83,6 +83,24 @@ authenticationRoutes.post('/resetPassword', async (req, res) => {
     }
 });
 
+authenticationRoutes.put('/completeVerification', async (req, res) => {
+    const db = req.db;
+    const { email } = req.body;
+    try {
+        const user = await db.getUser(email);
+        if (user.is_verified) {
+            res.status(400).json({ "error": "User already verified" });
+            return;
+        }
+        await db.verifyUser(user.id);
+        req.session.userId = user.id;
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
+
 
 // EXPORTS
 export default authenticationRoutes;
