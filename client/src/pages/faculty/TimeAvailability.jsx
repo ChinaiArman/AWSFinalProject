@@ -58,7 +58,7 @@ function TimeAvailability() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/user/getUserBySession', {
+        const response = await fetch(`${process.env.SERVER_URL}/api/user/getUserBySession`, {
           method: 'GET',
           credentials: 'include', // Include cookies in the request
         });
@@ -87,7 +87,7 @@ function TimeAvailability() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5001/api/availability/${facultyId}`);
+        const response = await fetch(`${process.env.SERVER_URL}/api/availability/${facultyId}`);
         const data = await response.json();
 
         console.log("API Response:", data);
@@ -160,7 +160,7 @@ function TimeAvailability() {
       });
 
       // Send the availability list to the backend
-      const response = await fetch(`http://localhost:5001/api/availability/${facultyId}`, {
+      const response = await fetch(`${process.env.SERVER_URL}/api/availability/${facultyId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

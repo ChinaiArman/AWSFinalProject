@@ -7,10 +7,13 @@ function Verification() {
   const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [emailError, setEmailError] = useState(false);
-  const [codeError, setCodeError] = useState(false);
 
   useEffect(() => {
-    document.getElementById("digit-0").focus(); // Focus the first digit on load
+    // Ensure the element exists before calling focus
+    const firstDigitInput = document.getElementById("digit-0");
+    if (firstDigitInput) {
+      firstDigitInput.focus();
+    }
   }, []);
 
   const handleChange = (index, value) => {
@@ -19,9 +22,11 @@ function Verification() {
     updatedCode[index] = value;
 
     if (value && index < 5) {
-      document.getElementById(`digit-${index + 1}`).focus();
+      const nextInput = document.getElementById(`digit-${index + 1}`);
+      if (nextInput) nextInput.focus();
     } else if (!value && index > 0) {
-      document.getElementById(`digit-${index - 1}`).focus();
+      const prevInput = document.getElementById(`digit-${index - 1}`);
+      if (prevInput) prevInput.focus();
     }
 
     setCode(updatedCode);
@@ -33,29 +38,33 @@ function Verification() {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     setEmailError(!isValidEmail);
 
-    const verificationCode = code.join("");
-    setCodeError(verificationCode.length !== 6);
-
-    if (!isValidEmail || verificationCode.length !== 6) {
+    if (!isValidEmail) {
+      alert("Please enter a valid email.");
       return;
     }
 
+    // Request a new code from Cognito (forgotPassword API)
     try {
-      const response = await fetch("http://localhost:5001/api/auth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code: verificationCode }),
-      });
+      const forgotPasswordResponse = await fetch(
+        `${process.env.SERVER_URL}/api/auth/forgotPassword`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-      if (response.ok) {
-        console.log("Verification successful");
-        navigate("/password-setup", { state: { isFirstTime: true, email } });
-      } else {
-        const errorData = await response.json();
-        alert(`Verification failed: ${errorData.error}`);
+      if (!forgotPasswordResponse.ok) {
+        alert("Failed to request a new code. Please check your email.");
+        return;
       }
+
+      alert("A new verification code has been sent to your email.");
+      
+      // Navigate to the next page (Password Setup)
+      navigate("/password-setup", { state: { isFirstTime: true, email } });
     } catch (error) {
-      console.error("Verification error:", error);
+      console.error("Forgot password error:", error);
       alert("An error occurred. Please try again.");
     }
   };
@@ -70,7 +79,7 @@ function Verification() {
     }
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/forgotPassword", {
+      const response = await fetch(`${process.env.SERVER_URL}/api/auth/forgotPassword`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -110,9 +119,7 @@ function Verification() {
                 maxLength="1"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
-                className={`border w-12 h-12 text-center text-lg rounded ${
-                  codeError && !digit ? "border-red-500" : ""
-                }`}
+                className={`border w-12 h-12 text-center text-lg rounded`}
               />
             ))}
           </div>

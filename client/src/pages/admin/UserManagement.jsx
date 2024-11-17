@@ -27,7 +27,7 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/user/getAllUsers");
+        const response = await fetch(`${process.env.SERVER_URL}/api/user/getAllUsers`);
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }
