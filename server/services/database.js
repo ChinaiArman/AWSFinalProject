@@ -112,10 +112,6 @@ class Database {
             course_id: courseId
         });
     }
-    
-    async verifyUser(userId) {
-        await User.update({ is_verified: true }, { where: { id: userId } });
-    }
 }
 
 
