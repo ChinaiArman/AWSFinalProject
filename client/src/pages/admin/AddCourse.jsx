@@ -57,7 +57,7 @@ const AddCourse = () => {
 
   // Sidebar menu items
   const sidebarItems = [
-    { label: "Faculty Management", path: "/admin/faculty-management", onClick: () => (window.location.href = "/admin/faculty-management") },
+    { label: "Faculty Management", path: "/admin/user-management", onClick: () => (window.location.href = "/admin/user-management") },
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
 
@@ -163,7 +163,7 @@ const AddCourse = () => {
         <div className="mt-auto flex justify-center gap-10 mb-6">
           <DropdownButton
             label="Cancel"
-            onClick={() => console.log("Button clicked! Placeholder action.")}
+            onClick={() => (window.location.href = "/admin/course-management")}
             color="gray"
           />
 

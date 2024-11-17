@@ -1,11 +1,10 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Login';
-import SignupPage from './pages/Signup';
 import VerificationPage from "./pages/Verification"
-import AdminFacultyManagementPage from "./pages/admin/FacultyManagement"
+import UserManagement from './pages/admin/UserManagement';
 import AdminCourseManagementPage from "./pages/admin/CourseManagement"
-import AdminAddFacultyPage from "./pages/admin/AddFaculty"
+import AdminAddUserPage from "./pages/admin/AddUser"
 import AdminAddCoursePage from "./pages/admin/AddCourse"
 import StudentMyCoursesPage from "./pages/student/MyCourses"
 import StudentEnrollCoursesPage from "./pages/student/EnrollCourses"
@@ -23,13 +22,12 @@ const App = () => {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
         <Route path="/verification" element={<VerificationPage />} />
 
         {/* Admin Routes */}
-        <Route path="/admin/faculty-management" element={<AdminFacultyManagementPage />} />
+        <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/course-management" element={<AdminCourseManagementPage />} />
-        <Route path="/admin/add-faculty" element={<AdminAddFacultyPage />} />
+        <Route path="/admin/add-user" element={<AdminAddUserPage />} />
         <Route path="/admin/add-course" element={<AdminAddCoursePage />} />
 
         {/* Student Routes */}

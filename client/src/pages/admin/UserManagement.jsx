@@ -6,17 +6,17 @@ import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import ConfirmationPopup from "../../components/ConfirmationPopup"; 
 
-const FacultyManagement = () => {
-  const [faculties, setFaculties] = useState([]);
+const UserManagement = () => {
+  const [users, setUsers] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false); 
-  const [facultyToFire, setFacultyToFire] = useState(null); 
+  const [userToDelete, setUserToDelete] = useState(null); 
 
   // Sidebar menu items
   const sidebarItems = [
     {
-      label: "Faculty Management",
-      path: "/admin/faculty-management",
-      onClick: () => (window.location.href = "/admin/faculty-management"),
+      label: "User Management", 
+      path: "/admin/user-management",
+      onClick: () => (window.location.href = "/admin/user-management"),
     },
     {
       label: "Course Management",
@@ -25,37 +25,40 @@ const FacultyManagement = () => {
     },
   ];
 
-  // Mock data for faculties
+  // Mock data for users
   const mockData = [
     {
       id: 1,
       name: "Dr. John Doe",
       course: "Advanced Physics",
       email: "johndoe@example.com",
+      role: "faculty"
     },
     {
       id: 2,
       name: "Prof. Jane Smith",
       course: "Creative Writing",
       email: "janesmith@example.com",
+      role: "user"
     },
     {
       id: 3,
       name: "Dr. Alice Johnson",
       course: "Introduction to Chemistry",
       email: "alicejohnson@example.com",
+      role: "admin"
     },
   ];
 
   useEffect(() => {
     // Set mock data as initial state
-    setFaculties(mockData);
+    setUsers(mockData);
   }, []);
 
-  // Function to fire a faculty member
-  const fireFaculty = async (facultyId) => {
+  // Function to delete a user
+  const deleteUser = async (userId) => {
     try {
-      // Send DELETE request to the server to fire the faculty (mocked here)
+      // Send DELETE request to the server to delete the user
       // const response = await fetch(`/api/faculty/${facultyId}`, {
       //   method: "DELETE",
       // });
@@ -65,27 +68,26 @@ const FacultyManagement = () => {
       // }
 
       // Remove faculty from local state
-      setFaculties((prevFaculties) =>
-        prevFaculties.filter((faculty) => faculty.id !== facultyId)
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== userId)
       );
 
-      console.log(`Faculty with ID: ${facultyId} has been fired.`);
       setIsPopupOpen(false);
     } catch (error) {
-      console.error("Error firing faculty:", error);
+      console.error("Error deleting user:", error);
     }
   };
 
   // Open confirmation popup and set the faculty to fire
-  const openFireConfirmation = (faculty) => {
-    setFacultyToFire(faculty);
+  const openDeleteConfirmation = (user) => {
+    setUserToDelete(user);
     setIsPopupOpen(true);
   };
 
   // Close the confirmation popup without firing
-  const cancelFire = () => {
+  const cancelDelete = () => {
     setIsPopupOpen(false);
-    setFacultyToFire(null);
+    setUserToDelete(null);
   };
 
   return (
@@ -98,38 +100,38 @@ const FacultyManagement = () => {
         <Navbar role="admin" />
 
         <AddButton
-          label="Add Faculty"
-          onClick={() => (window.location.href = "/admin/add-faculty")}
+          label="Add User"
+          onClick={() => (window.location.href = "/admin/add-user")}
           color="gray"
         />
 
-        {faculties.length > 0 &&
-          faculties.map((faculty) => (
-            <BaseDropdownMenu key={faculty.id} title={faculty.name}>
+        {users.length > 0 &&
+          users.map((user) => (
+            <BaseDropdownMenu key={user.id} title={user.name}>
               <div className="px-6 py-3">
                 <div className="mb-4">
                   <p className="font-semibold">Name:</p>
-                  <p>{faculty.name}</p>
+                  <p>{user.name}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Courses:</p>
-                  <p>{faculty.course}</p>
+                  <p>{user.course}</p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Email:</p>
-                  <p>{faculty.email}</p>
+                  <p>{user.email}</p>
+                </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Role:</p>
+                  <p>{user.role}</p>
                 </div>
 
                 {/* Buttons */}
                 <div className="flex justify-center gap-12">
+                
                   <DropdownButton
-                    label="Edit"
-                    onClick={() => console.log(`Editing ${faculty.name}`)}
-                    color="gray"
-                  />
-                  <DropdownButton
-                    label="Fire"
-                    onClick={() => openFireConfirmation(faculty)} // Open confirmation popup
+                    label="Delete User"
+                    onClick={() => openDeleteConfirmation(user)} // Open confirmation popup
                     color="red"
                   />
                 </div>
@@ -141,13 +143,13 @@ const FacultyManagement = () => {
       {/* Confirmation Popup */}
       <ConfirmationPopup
         isOpen={isPopupOpen}
-        title="Fire Faculty"
-        message={`Are you sure you want to fire ${facultyToFire?.name}?`}
-        onConfirm={() => fireFaculty(facultyToFire?.id)} // Confirm and fire the faculty
-        onCancel={cancelFire} // Cancel and close the popup
+        title="Delete User"
+        message={`Are you sure you want to delete ${userToDelete?.name}?`}
+        onConfirm={() => deleteUser(userToDelete?.id)} // Confirm and fire the faculty
+        onCancel={cancelDelete} // Cancel and close the popup
       />
     </div>
   );
 };
 
-export default FacultyManagement;
+export default UserManagement;

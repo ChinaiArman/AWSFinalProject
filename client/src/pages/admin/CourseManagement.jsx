@@ -14,9 +14,9 @@ const CourseManagement = () => {
   // Sidebar menu items
   const sidebarItems = [
     {
-      label: "Faculty Management",
-      path: "/admin/faculty-management",
-      onClick: () => (window.location.href = "/admin/faculty-management"),
+      label: "User Management",
+      path: "/admin/user-management",
+      onClick: () => (window.location.href = "/admin/user-management"),
     },
     {
       label: "Course Management",
@@ -105,7 +105,7 @@ const CourseManagement = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar items={sidebarItems} /> 
 
       {/* Main Content */}
       <div className="flex-1">

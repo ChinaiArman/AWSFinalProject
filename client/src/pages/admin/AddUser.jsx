@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import TextField from "../../components/TextField";
 import DropdownButton from "../../components/buttons/DropdownButton";
 
-const AddFaculty = () => {
+const AddUser = () => {
   // State variables to store form data
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -13,7 +13,7 @@ const AddFaculty = () => {
  
   // Sidebar menu items
   const sidebarItems = [
-    { label: "Faculty Management", path: "/admin/faculty-management", onClick: () => (window.location.href = "/admin/faculty-management") },
+    { label: "User Management", path: "/admin/user-management", onClick: () => (window.location.href = "/admin/user-management") },
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
 
@@ -104,4 +104,4 @@ const AddFaculty = () => {
   );
 };
 
-export default AddFaculty;
+export default AddUser;
