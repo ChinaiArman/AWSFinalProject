@@ -105,6 +105,31 @@ authenticationRoutes.put('/completeVerification', async (req, res) => {
     }
 });
 
+authenticationRoutes.get('/isSignedIn', isSignedIn, async (req, res) => {
+    res.status(200).json({ "message": "User is signed in" });
+    return;
+});
+
+authenticationRoutes.get('/isVerified', isSignedIn, isVerified, async (req, res) => {
+    res.status(200).json({ "message": "User is verified" });
+    return;
+});
+
+authenticationRoutes.get('/isStudent', isSignedIn, isStudent, async (req, res) => {
+    res.status(200).json({ "message": "User is a student" });
+    return;
+});
+
+authenticationRoutes.get('/isFaculty', isSignedIn, isFaculty, async (req, res) => {
+    res.status(200).json({ "message": "User is a faculty member" });
+    return;
+});
+
+authenticationRoutes.get('/isAdmin', isSignedIn, isAdmin, async (req, res) => {
+    res.status(200).json({ "message": "User is an admin" });
+    return;
+});
+
 
 // EXPORTS
 export default authenticationRoutes;
