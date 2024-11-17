@@ -120,7 +120,7 @@ class Database {
             status: 'unlocked' // hardcoding a default as unlocked for now, will be updated for next milestone
         });
     }
-    
+
     async deleteEnrollment(studentId, courseId) {
         console.log('Deleting enrollment:', studentId, courseId);
         await Enrollment.destroy({
@@ -136,7 +136,7 @@ class Database {
         return faculty;
     }
 
-    async addFaculty(userId, firstName, lastName, email, phoneNumber, dateOfBirth ,isAdmin) {
+    async addFaculty(userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin) {
         console.log('Adding new Faculty:', userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin);
         await Faculty.create({
             user_id: userId,
@@ -155,51 +155,64 @@ class Database {
             where: { id: facultyId }
         });
     }
-    
-// Add faculty availability
-async addAvailability(facultyId, day, startTime, endTime, available) {
-  const newAvailability = await FacultyAvailability.create({
-      faculty_id: facultyId,
-      day,
-      start_time: startTime,
-      end_time: endTime,
-      available
-  });
-  return newAvailability;
-}
 
-// Get availability by faculty ID
-async getAvailabilityByFacultyId(facultyId) {
-  const availability = await FacultyAvailability.findAll({
-      where: { faculty_id: facultyId }
-  });
-  return availability;
-}
+    // Add faculty availability
+    async addAvailability(facultyId, day, startTime, endTime, available) {
+        const newAvailability = await FacultyAvailability.create({
+            faculty_id: facultyId,
+            day,
+            start_time: startTime,
+            end_time: endTime,
+            available
+        });
+        return newAvailability;
+    }
 
-// Update availability
-async updateAvailability(facultyId, day, startTime, endTime, available) {
-  const [updatedRows] = await FacultyAvailability.update(
-      { available },
-      {
-          where: {
-              faculty_id: facultyId,
-              day,
-              start_time: startTime,
-              end_time: endTime
-          }
-      }
-  );
-  return updatedRows;
-}
+    // Get availability by faculty ID
+    async getAvailabilityByFacultyId(facultyId) {
+        const availability = await FacultyAvailability.findAll({
+            where: { faculty_id: facultyId }
+        });
+        return availability;
+    }
 
-// Delete availability
-async deleteAvailabilityById(id) {
-  const deletedRows = await FacultyAvailability.destroy({
-      where: { id }
-  });
-  return deletedRows;
-}
+    // Update availability
+    async updateAvailability(facultyId, day, startTime, endTime, available) {
+        const [updatedRows] = await FacultyAvailability.update(
+            { available },
+            {
+                where: {
+                    faculty_id: facultyId,
+                    day,
+                    start_time: startTime,
+                    end_time: endTime
+                }
+            }
+        );
+        return updatedRows;
+    }
 
+    // Delete availability
+    async deleteAvailabilityById(id) {
+        const deletedRows = await FacultyAvailability.destroy({
+            where: { id }
+        });
+        return deletedRows;
+    }
+
+    async getFacultyById(facultyId) {
+        const faculty = await Faculty.findOne({
+            where: { id: facultyId }
+        });
+        return faculty;
+    }
+
+    async getUserById(userId) {
+        const user = await User.findOne({
+            where: { id: userId }
+        });
+        return user;
+    }
 }
 
 
