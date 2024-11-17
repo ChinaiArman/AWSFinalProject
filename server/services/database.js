@@ -257,6 +257,17 @@ class Database {
         const user = await User.findOne({
             where: { id: userId }
         });
+        if (user.role > 0) {
+            const faculty = await Faculty.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = faculty;
+        } else {
+            const student = await Student.findOne({
+                where: { user_id: userId }
+            });
+            user.dataValues.profile = student;
+        }
         return user;
     }
 
