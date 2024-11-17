@@ -31,7 +31,7 @@ const CourseManagement = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${process.env.SERVER_URL}/api/course/getAllCourses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`);
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
         }
@@ -51,7 +51,7 @@ const CourseManagement = () => {
   const deleteCourse = async (courseId) => {
     try {
       // Send DELETE request to the backend
-      const response = await fetch(`${process.env.SERVER_URL}/api/course/deleteCourse/${courseId}`, {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourse/${courseId}`, {
         method: "DELETE",
       });
 
