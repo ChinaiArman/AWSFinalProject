@@ -32,7 +32,7 @@ function Login() {
           <p className="mt-2 text-gray-500">— OR —</p>
           <p>
             First time logging in?{" "}
-            <Link to="/password-setup" className="text-blue-500">
+            <Link to="/verification" className="text-blue-500">
               Set Up Your Password
             </Link>
           </p>
