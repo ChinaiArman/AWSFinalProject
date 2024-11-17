@@ -35,7 +35,7 @@ courseRoutes.post('/createCourse', async (req, res) => {
     }
 })
 
-// Delete course
+// Delete course by ID
 courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
     const courseId = req.params.courseId;
     const db = req.db;

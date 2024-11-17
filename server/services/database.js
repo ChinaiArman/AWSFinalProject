@@ -131,6 +131,30 @@ class Database {
         });
     }
 
+    async getAllFaculty() {
+        const faculty = await Faculty.findAll();
+        return faculty;
+    }
+
+    async addFaculty(userId, firstName, lastName, email, phoneNumber, dateOfBirth ,isAdmin) {
+        console.log('Adding new Faculty:', userId, firstName, lastName, email, phoneNumber, dateOfBirth, isAdmin);
+        await Faculty.create({
+            user_id: userId,
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            phone_number: phoneNumber,
+            date_of_birth: dateOfBirth,
+            is_admin: isAdmin
+        });
+    }
+
+    async deleteFaculty(facultyId) {
+        console.log('Deleting faculty:', facultyId);
+        await Faculty.destroy({
+            where: { id: facultyId }
+        });
+    }
     
 // Add faculty availability
 async addAvailability(facultyId, day, startTime, endTime, available) {
