@@ -60,6 +60,19 @@ facultyRoutes.get('/getFaculty/:facultyId', async (req, res) => {
     }
 })
 
+facultyRoutes.get('/:facultyId/courses', async (req, res) => {
+    const facultyId = req.params.facultyId;
+    const db = req.db;
+    try {
+        const courses = await db.getCoursesByFacultyId(facultyId);
+        res.status(200).json({ "courses": courses });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+})
+
 
 // EXPORTS
 export default facultyRoutes;
