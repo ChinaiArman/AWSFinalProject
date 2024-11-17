@@ -9,6 +9,9 @@ const userRoutes = express.Router();
 // ROUTES
 userRoutes.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId;
+    if (!userId) {
+        userId = req.session.userId;
+    }
     const db = req.db;
     try {
         const user = await db.getUserById(userId);
