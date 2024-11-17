@@ -24,12 +24,16 @@ function Login() {
         </form>
         <div className="mt-4 text-sm text-center">
           <p>
-            Forgot password? <a href="#" className="text-blue-500">Reset</a>
+            Forgot password?{" "}
+            <Link to="/password-setup" className="text-blue-500">
+              Reset Password
+            </Link>
           </p>
+          <p className="mt-2 text-gray-500">— OR —</p>
           <p>
-            Need an account?{" "}
-            <Link to="/signup" className="text-blue-500">
-              Sign Up
+            First time logging in?{" "}
+            <Link to="/verification" className="text-blue-500">
+              Set Up Your Password
             </Link>
           </p>
         </div>

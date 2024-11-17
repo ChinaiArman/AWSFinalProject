@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
 
 function Verification() {
-  const [email, setEmail] = useState(""); // Assuming this comes from Cognito or state
+  const navigate = useNavigate();
+  const [email, setEmail] = useState(""); // For email input
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleChange = (index, value) => {
@@ -17,29 +19,62 @@ function Verification() {
     setCode(updatedCode);
   };
 
-  const handleSubmit = async (e) => {
+  const handleCompleteAccount = async (e) => {
     e.preventDefault();
     const verificationCode = code.join(""); // Combine the 6 boxes into one string
 
     try {
-      const response = await axios.post("/verify", {
-        email, // Replace with dynamic email
-        verificationCode,
+      const response = await fetch("http://localhost:5000/api/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code: verificationCode }),
       });
-      console.log("Verification successful:", response.data);
+      if (response.ok) {
+        console.log("Verification successful");
+        // Pass email to Password Setup page
+        navigate("/password-setup", { state: { isFirstTime: true, email } });
+      } else {
+        alert("Verification failed. Please check your code.");
+      }
     } catch (error) {
-      console.error("Verification failed:", error.response.data);
+      console.error("Verification error:", error);
+    }
+  };
+
+  const handleRequestNewCode = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/forgotPassword", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (response.ok) {
+        alert("A new verification code has been sent to your email.");
+      } else {
+        alert("Failed to request a new code. Please check your email.");
+      }
+    } catch (error) {
+      console.error("Request new code error:", error);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Verify Your Account</h1>
-        <p className="text-sm mb-4 text-center">
-          Please enter the verification code we sent to your email.
-        </p>
-        <form onSubmit={handleSubmit}>
+        <h1 className="text-2xl font-bold mb-4 text-center">Verify</h1>
+        <form>
+          <label className="block mb-2 text-sm font-medium">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            className="border w-full p-2 mb-4 rounded"
+            required
+          />
+
+          <label className="block mb-2 text-sm font-medium">Verification Code</label>
           <div className="flex justify-between mb-4">
             {code.map((digit, index) => (
               <input
@@ -53,7 +88,18 @@ function Verification() {
               />
             ))}
           </div>
-          <AuthenticationButton label="Confirm Code" type="submit" />
+
+          <div className="flex flex-col gap-4">
+            <AuthenticationButton
+              label="Complete your account"
+              onClick={handleCompleteAccount}
+            />
+            <AuthenticationButton
+              label="Has your code expired? Request a new one"
+              onClick={handleRequestNewCode}
+              color="gray"
+            />
+          </div>
         </form>
       </div>
     </div>
