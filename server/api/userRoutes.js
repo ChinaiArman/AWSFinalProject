@@ -7,7 +7,7 @@ const userRoutes = express.Router();
 
 
 // ROUTES
-userRoutes.get('/:userId', async (req, res) => {
+userRoutes.get('/user/:userId', async (req, res) => {
     const userId = req.params.userId;
     const db = req.db;
     try {

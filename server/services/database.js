@@ -228,6 +228,20 @@ class Database {
 
     async getAllUsers() {
         const users = await User.findAll();
+        for (let i = 0; i < users.length; i++) {
+            const user = users[i];
+            if (user.role > 0) {
+                const faculty = await Faculty.findOne({
+                    where: { user_id: user.id }
+                });
+                user.dataValues.profile = faculty;
+            } else {
+                const student = await Student.findOne({
+                    where: { user_id: user.id }
+                });
+                user.dataValues.profile = student;
+            }
+        }
         return users;
     }
 }
