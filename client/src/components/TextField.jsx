@@ -9,7 +9,7 @@ const TextField = ({ label, onChange, placeholder, type = "text" }) => {
           type={type}
           onChange={onChange}
           placeholder={placeholder}
-          className="mt-1 ml-12 mr-12 p-2 w-3/4 border border-gray-300 focus:outline-none"
+          className="mt-1 ml-12 mr-12 p-2 w-3/4 border rounded"
         />
       </div>
     </div>

@@ -10,7 +10,7 @@ function Navbar({ role }) {
   const getHomeRoute = () => {
     if (role === "student") return "/student/my-courses";
     if (role === "faculty") return "/faculty/my-courses";
-    if (role === "admin") return "/admin/faculty-management";
+    if (role === "admin") return "/admin/user-management";
     return "/"; // Default route if no role is provided
   };
 

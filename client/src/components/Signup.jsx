@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import AuthenticationButton from "../components/buttons/AuthenticationButton";
+import AuthenticationButton from "./buttons/AuthenticationButton";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -8,7 +8,7 @@ function Signup() {
     lastName: "",
     email: "",
     password: "",
-    dateOfBirth: "",
+    dateOfBirth: "", 
     phoneNumber: "",
     role: "0", // Default role is set to student
   });
@@ -43,7 +43,7 @@ function Signup() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Sign up a new user</h1>
         <form onSubmit={handleSubmit}>
           <label className="block mb-2 text-sm font-medium">First Name</label>
           <input
@@ -118,14 +118,6 @@ function Signup() {
           </select>
           <AuthenticationButton label="Sign Up" type="submit" />
         </form>
-        <div className="mt-4 text-sm text-center">
-          <p>
-            Already a user?{" "}
-            <Link to="/" className="text-blue-500">
-              Login
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );
