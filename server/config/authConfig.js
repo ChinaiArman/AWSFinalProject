@@ -21,7 +21,7 @@ const isSignedIn = async (req, res, next) => {
 const isVerified = async (req, res, next) => {
     const db = req.db;
     const user = await db.getUserById(req.session.userId);
-    if (!user.is_verified) {
+    if (user.is_verified === 1) {
         res.status(401).json({ "error": "User is not verified" });
         return;
     }
