@@ -9,7 +9,7 @@ function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent form from refreshing the page
 
         try {
             const response = await fetch("http://localhost:5001/api/auth/login", {
