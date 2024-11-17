@@ -346,6 +346,29 @@ class Database {
             location
         });
     }
+
+    async getAvailableFacultyByTimeslots(timeSlots) {
+        let faculty = await FacultyAvailability.findAll({
+            where: {
+                day: timeSlots[0].day,
+                start_time: timeSlots[0].startTime,
+                end_time: timeSlots[0].endTime,
+                available: true
+            }
+        });
+        for (let i = 1; i < timeSlots.length; i++) {
+            const newFaculty = await FacultyAvailability.findAll({
+                where: {
+                    day: timeSlots[i].day,
+                    start_time: timeSlots[i].startTime,
+                    end_time: timeSlots[i].endTime,
+                    available: true
+                }
+            });
+            faculty = faculty.filter(f => newFaculty.some(nf => nf.faculty_id === f.faculty_id));
+        }
+        return faculty;
+    }
 }
 
 

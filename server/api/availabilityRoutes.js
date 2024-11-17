@@ -96,33 +96,45 @@ availabilityRoutes.delete('/delete/:id', async (req, res) => {
 
 // PUT
 availabilityRoutes.put('/:facultyId', async (req, res) => {
-  const { facultyId } = req.params;
-  const { availability } = req.body;
+    const { facultyId } = req.params;
+    const { availability } = req.body;
 
-  try {
-    // Delete existing availability entries for the faculty
-    await FacultyAvailability.destroy({
-      where: { faculty_id: facultyId },
-    });
+    try {
+        // Delete existing availability entries for the faculty
+        await FacultyAvailability.destroy({
+            where: { faculty_id: facultyId },
+        });
 
-    // Bulk insert new availability entries
-    const newAvailabilities = availability.map((entry) => ({
-      faculty_id: facultyId,
-      day: entry.day,
-      start_time: entry.start_time,
-      end_time: entry.end_time,
-      available: entry.available,
-    }));
+        // Bulk insert new availability entries
+        const newAvailabilities = availability.map((entry) => ({
+            faculty_id: facultyId,
+            day: entry.day,
+            start_time: entry.start_time,
+            end_time: entry.end_time,
+            available: entry.available,
+        }));
 
-    await FacultyAvailability.bulkCreate(newAvailabilities);
+        await FacultyAvailability.bulkCreate(newAvailabilities);
 
-    res.status(200).json({ message: 'Availability updated successfully' });
-  } catch (error) {
-    console.error('Error updating availability:', error);
-    res.status(500).json({ error: error.message });
-  }
+        res.status(200).json({ message: 'Availability updated successfully' });
+    } catch (error) {
+        console.error('Error updating availability:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
+availabilityRoutes.post('/getFacultyAvailableAtTimeSlots', async (req, res) => {
+    const db = req.db;
+    const { timeSlots } = req.body;
+    try {
+        const faculty = await db.getAvailableFacultyByTimeslots(timeSlots);
+        res.status(200).json({ "faculty": faculty });
+        return;
+    } catch (error) {
+        res.status(400).json({ "error": error.message });
+        return;
+    }
+});
 
 
 // EXPORTS
