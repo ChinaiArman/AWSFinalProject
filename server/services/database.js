@@ -46,6 +46,7 @@ class Database {
         });
         if (role > 0) {
             await Faculty.create({
+                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -55,6 +56,7 @@ class Database {
             });
         } else {
             await Student.create({
+                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -81,7 +83,7 @@ class Database {
             seats_available: seatsAvailable,
             total_seats: totalSeats
         })
-        
+
     }
 }
 
