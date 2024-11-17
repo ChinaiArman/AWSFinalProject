@@ -47,9 +47,11 @@ const UserManagement = () => {
             user.role === 0
               ? "Student"
               : user.role === 1
-              ? "Faculty"
-              : "Admin",
+                ? "Faculty"
+                : "Admin",
+          is_verified: user.is_verified ? "Verified" : "Not Verified",
         }));
+
 
         setUsers(transformedUsers);
       } catch (error) {
@@ -96,10 +98,9 @@ const UserManagement = () => {
           onClick={() => (window.location.href = "/admin/add-user")}
           color="gray"
         />
-
         {users.length > 0 &&
           users.map((user) => (
-            <BaseDropdownMenu key={user.id} title={user.name}>
+            <BaseDropdownMenu key={user.id} title={`${user.name} (ID: ${user.id})`}>
               <div className="px-6 py-3">
                 <div className="mb-4">
                   <p className="font-semibold">First and Last Name:</p>
@@ -117,8 +118,12 @@ const UserManagement = () => {
                   <p className="font-semibold">Role:</p>
                   <p>{user.role}</p>
                 </div>
+                <div className="mb-4">
+                  <p className="font-semibold">Verification Status:</p>
+                  <p>{user.is_verified}</p> {/* Add this line to show verification status */}
+                </div>
 
-                {/* Buttons */}
+                {/* Delete Button */}
                 <div className="flex justify-center gap-12">
                   <DropdownButton
                     label="Delete User"
@@ -129,6 +134,8 @@ const UserManagement = () => {
               </div>
             </BaseDropdownMenu>
           ))}
+
+
       </div>
 
       {/* Confirmation Popup */}

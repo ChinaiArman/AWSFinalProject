@@ -156,7 +156,7 @@ const CourseManagement = () => {
 
         {courses.length > 0 &&
           courses.map((course) => (
-            <BaseDropdownMenu key={course.id} title={course.course_name}>
+            <BaseDropdownMenu key={course.id} title={`${course.course_name} (ID: ${course.id})`}>
               <div className="px-6 py-3">
                 {/* Course Information */}
                 <div className="mb-4">
