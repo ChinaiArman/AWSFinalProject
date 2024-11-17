@@ -22,7 +22,7 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
-studentRoutes.get('/:studentId/enroll/:courseId', async (req, res) => {
+studentRoutes.post('/:studentId/enroll/:courseId', async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
     const db = req.db;
