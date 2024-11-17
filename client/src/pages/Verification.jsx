@@ -36,11 +36,30 @@ function Verification() {
     const verificationCode = code.join("");
     setCodeError(verificationCode.length !== 6);
 
-    if (!isValidEmail || verificationCode.length !== 6) {
+    if (!isValidEmail) {
+      alert("Please enter a valid email.");
       return;
     }
 
+    // Request a new code from Cognito (forgotPassword API)
     try {
+      const forgotPasswordResponse = await fetch(
+        "http://localhost:5001/api/auth/forgotPassword",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!forgotPasswordResponse.ok) {
+        alert("Failed to request a new code. Please check your email.");
+        return;
+      }
+
+      alert("A new verification code has been sent to your email.");
+
+      // Verify the new code
       const response = await fetch("http://localhost:5001/api/auth/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
