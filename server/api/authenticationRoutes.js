@@ -25,7 +25,9 @@ authenticationRoutes.post('/login', async (req, res) => {
 authenticationRoutes.post('/register', async (req, res) => {
     const db = req.db;
     const cognito = req.cognito;
-    const { email, password, role, dateOfBirth, firstName, lastName, phoneNumber } = req.body;
+    const { email, role, dateOfBirth, firstName, lastName, phoneNumber } = req.body;
+    // make a unique random password with 8 char, one uppercase, one lowercase, one number, one special character
+    let password = "Aa1!" + Math.random().toString(36).slice(2, 10);
     try {
         const userId = await cognito.signUp(email, password).then(data => data.UserSub);
         db.createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber);
