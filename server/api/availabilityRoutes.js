@@ -66,14 +66,35 @@ availabilityRoutes.delete('/delete/:id', async (req, res) => {
 // PUT
 availabilityRoutes.put('/:facultyId', async (req, res) => {
     const { facultyId } = req.params;
-    const { availability } = req.body;
+    const { availability } = req.body; // New availability
     const db = req.db;
 
     try {
-        // Call the database method to update faculty availability
-        const updatedEntries = await db.updateFacultyAvailability(facultyId, availability);
+        // Fetch existing availability
+        const existingAvailability = await db.getAvailabilityByFacultyId(facultyId);
 
-        res.status(200).json({ message: 'Availability updated successfully', updatedEntries });
+        // Create a map to avoid duplicates
+        const availabilityMap = new Map();
+
+        // Add existing availability to the map
+        for (const entry of existingAvailability) {
+            const key = `${entry.day}-${entry.start_time}-${entry.end_time}`;
+            availabilityMap.set(key, entry);
+        }
+
+        // Add new availability to the map
+        for (const entry of availability) {
+            const key = `${entry.day}-${entry.start_time}-${entry.end_time}`;
+            availabilityMap.set(key, { ...entry, faculty_id: facultyId });
+        }
+
+        // Convert map back to an array
+        const updatedAvailability = Array.from(availabilityMap.values());
+
+        // Update the database (delete old records and insert new ones)
+        await db.updateFacultyAvailability(facultyId, updatedAvailability);
+
+        res.status(200).json({ message: 'Availability updated successfully', updatedAvailability });
     } catch (error) {
         console.error('Error updating availability:', error);
         res.status(500).json({ error: error.message });
