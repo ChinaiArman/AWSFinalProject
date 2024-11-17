@@ -76,6 +76,18 @@ class Database {
 
     async getAllCourses() {
         const courses = await Course.findAll();
+        // for course in courses, get the course runtimes and the faculty name
+        for (let i = 0; i < courses.length; i++) {
+            const course = courses[i];
+            const courseRuntimes = await CourseRuntime.findAll({
+                where: { course_id: course.id }
+            });
+            course.dataValues.courseRuntimes = courseRuntimes;
+            const faculty = await Faculty.findOne({
+                where: { id: course.faculty_id }
+            });
+            course.dataValues.facultyName = faculty.first_name + ' ' + faculty.last_name;
+        }
         return courses;
     }
 
@@ -212,6 +224,11 @@ class Database {
             where: { id: userId }
         });
         return user;
+    }
+
+    async getAllUsers() {
+        const users = await User.findAll();
+        return users;
     }
 }
 
