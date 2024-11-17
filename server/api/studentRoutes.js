@@ -15,7 +15,7 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     const studentId = req.params.studentId;
     const db = req.db;
     try {
-        const courses = await db.getStudentCourses(studentId);
+        const courses = await db.getCoursesByStudentId(studentId);
         res.status(200).json({ "courses": courses });
         return;
     } catch (error) {
