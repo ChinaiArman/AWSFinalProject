@@ -354,23 +354,35 @@ class Database {
         let faculty = await FacultyAvailability.findAll({
             where: {
                 day: timeSlots[0].day,
-                start_time: timeSlots[0].startTime,
-                end_time: timeSlots[0].endTime,
                 available: true
-            }
-        });
-        for (let i = 1; i < timeSlots.length; i++) {
-            const newFaculty = await FacultyAvailability.findAll({
-                where: {
-                    day: timeSlots[i].day,
-                    start_time: timeSlots[i].startTime,
-                    end_time: timeSlots[i].endTime,
-                    available: true
+            },
+            include: [
+                {
+                    model: Faculty,
+                    as: 'faculty',   
                 }
+            ]
+        });
+    
+        faculty = faculty.filter(f => {
+            return timeSlots.every(slot => {
+                const isAvailable = (
+                    (slot.startTime >= f.start_time && slot.startTime < f.end_time) &&
+                    (slot.endTime > f.start_time && slot.endTime <= f.end_time)
+                );
+                return isAvailable;
             });
-            faculty = faculty.filter(f => newFaculty.some(nf => nf.faculty_id === f.faculty_id));
-        }
-        return faculty;
+        });
+    
+        return faculty.map(f => ({
+            id: f.faculty.id,
+            first_name: f.faculty.first_name,
+            last_name: f.faculty.last_name,
+            email: f.faculty.email,
+            phone_number: f.faculty.phone_number,
+            date_of_birth: f.faculty.date_of_birth,
+            is_admin: f.faculty.is_admin,
+        }));
     }
 
     async getFacultyIdByUserId(userId) {

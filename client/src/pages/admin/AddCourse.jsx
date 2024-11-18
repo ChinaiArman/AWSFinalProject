@@ -20,11 +20,11 @@ const AddCourse = () => {
     "9:30-10:20",
     "10:30-11:20",
     "11:30-12:20",
-    "12:30-1:20",
-    "1:30-2:20",
-    "2:30-3:20",
-    "3:30-4:20",
-    "4:30-5:20",
+    "12:30-13:20",
+    "13:30-14:20",
+    "14:30-15:20",
+    "15:30-16:20",
+    "16:30-17:20",
   ];
 
   // State for form data
@@ -47,28 +47,6 @@ const AddCourse = () => {
   });
 
   const [instructorOptions, setInstructorOptions] = useState([]);
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchInstructors = async () => {
-
-  //     // Mock data for now
-  //     const mockInstructors = [
-  //       { label: "Instructor 1", value: "instructor1" },
-  //       { label: "Instructor 2", value: "instructor2" },
-  //       { label: "Instructor 3", value: "instructor3" },
-  //     ];
-
-  //     setInstructorOptions(mockInstructors);
-
-  //     // For actual fetching from backend, you can use:
-  //     // const response = await fetch("/api/instructors");
-  //     // const data = await response.json();
-  //     // setInstructorOptions(data);
-  //   };
-
-  //   fetchInstructors();
-  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -133,27 +111,28 @@ const AddCourse = () => {
 
   const handleApply = (newAvailability) => {
     const timeSlots = [];
-
+  
     days.forEach((day) => {
-        Object.entries(newAvailability[day]).forEach(([slot, isAvailable]) => {
-            if (isAvailable) {
-                const [startTime, endTime] = slot.split("-").map((time) => {
-                    const [hour, minute] = time.split(":");
-                    return `${hour}:${minute}:00`;
-                });
-
-                timeSlots.push({
-                    day,
-                    startTime,
-                    endTime,
-                });
-            }
-        });
+      Object.entries(newAvailability[day]).forEach(([slot, isAvailable]) => {
+        if (isAvailable) {
+          const [startTime, endTime] = slot.split("-").map((time) => {
+            const [hour, minute] = time.split(":");
+            return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+          });
+  
+          timeSlots.push({
+            day,
+            startTime,
+            endTime,
+          });
+        }
+      });
     });
-
-    console.log("formatted timeslots", timeSlots); 
+  
+    console.log("Formatted time slots:", timeSlots); 
     fetchAvailableInstructors(timeSlots);
-};
+  };
+  
 
 
 const fetchAvailableInstructors = async (timeSlots) => {
@@ -164,6 +143,7 @@ const fetchAvailableInstructors = async (timeSlots) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ timeSlots }),
+          credentials: "include"
       });
 
       if (!response.ok) throw new Error("Failed to fetch available instructors");
