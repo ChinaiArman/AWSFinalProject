@@ -5,6 +5,7 @@ import Navbar from "../../components/Navbar";
 
 const MyTimetable = () => {
   const [timetableData, setTimetableData] = useState([]); // State for timetable data
+  const [facultyId, setFacultyId] = useState(null); // State for faculty ID
 
   // Sidebar menu items for faculty
   const sidebarItems = [
@@ -16,15 +17,47 @@ const MyTimetable = () => {
   // Array of colors to rotate through
   const colors = ["#FF5733", "#33B5FF", "#FFC300", "#8A2BE2"];
 
-  // Fetch faculty timetable data from API
+  // Fetch faculty ID from session
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const facultyIdFromProfile = data.user.profile.id; // Assuming this is the facultyId
+          setFacultyId(facultyIdFromProfile);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  // Fetch faculty timetable data when faculty ID is available
   useEffect(() => {
     const fetchTimetableData = async () => {
+      if (!facultyId) {
+        console.error("Faculty ID not available yet");
+        return;
+      }
+
       try {
-        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`);
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/1/courses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`, {
+          credentials: "include", // Include cookies in the request
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const data = await response.json();
 
         // Transform API data into timetable format
@@ -51,7 +84,7 @@ const MyTimetable = () => {
     };
 
     fetchTimetableData();
-  }, []);
+  }, [facultyId]); // Depend on facultyId
 
   return (
     <div className="flex h-screen">
