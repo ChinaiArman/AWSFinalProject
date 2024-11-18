@@ -1,7 +1,7 @@
 // components/ConfirmationPopup.jsx
 import React from "react";
 
-const ConfirmationPopup = ({ isOpen, title, message, onConfirm, onCancel }) => {
+const ConfirmationPopup = ({ isOpen, title, message, onConfirm, onCancel, cancelLabel="Cancel", confirmLabel="Confirm" }) => {
   if (!isOpen) return null; // Do not render if the pop-up is closed
 
   return (
@@ -15,17 +15,20 @@ const ConfirmationPopup = ({ isOpen, title, message, onConfirm, onCancel }) => {
 
         {/* Buttons */}
         <div className="flex justify-end mt-6 space-x-4">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-          >
-            Cancel
-          </button>
+          {cancelLabel && (
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+            >
+            {cancelLabel}
+            </button>
+          )}
+          
           <button
             onClick={onConfirm}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            Confirm
+            {confirmLabel}
           </button>
         </div>
       </div>

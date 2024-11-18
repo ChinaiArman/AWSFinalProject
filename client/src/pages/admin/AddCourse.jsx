@@ -266,7 +266,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           setIsPopupOpen(false);
           navigate("/admin/course-management");
         }}
-        onCancel={() => setIsPopupOpen(false)}
+        cancelLabel={null}
+        confirmLabel="OK"
       />
     </div>
   );
