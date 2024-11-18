@@ -31,7 +31,15 @@ const CourseManagement = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`,
+          {method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
         }
@@ -53,6 +61,7 @@ const CourseManagement = () => {
       // Send DELETE request to the backend
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourse/${courseId}`, {
         method: "DELETE",
+        credentials: 'include', 
       });
 
       if (!response.ok) {

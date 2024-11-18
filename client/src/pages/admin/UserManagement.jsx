@@ -27,7 +27,15 @@ const UserManagement = () => {
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getAllUsers`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getAllUsers`,
+          {
+            method: 'GET',
+            credentials: 'include', 
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }

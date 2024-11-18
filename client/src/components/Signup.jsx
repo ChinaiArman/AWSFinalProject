@@ -29,11 +29,12 @@ function Signup() {
 
     try {
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/auth/register`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData),
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -52,7 +53,7 @@ function Signup() {
       }
     } catch (error) {
       console.error("Error registering user", error);
-      setSuccessMessage(""); 
+      setSuccessMessage("Unable to register user"); 
     }
   };
 
