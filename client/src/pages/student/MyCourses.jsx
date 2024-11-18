@@ -15,6 +15,7 @@ function MyCourses() {
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
   const [courseToDrop, setCourseToDrop] = useState(null); // State to track which course is being dropped
   const [isLoading, setIsLoading] = useState(false); // State for loading status
+  const [studentId, setStudentId] = useState(null); // State for student ID
 
   // Sidebar menu items for students
   const sidebarItems = [
@@ -24,13 +25,45 @@ function MyCourses() {
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
+  // Fetch student ID from session
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const studentIdFromProfile = data.user.profile.id; // Assuming this is the studentId
+          setStudentId(studentIdFromProfile);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   // Fetch enrolled courses for the student
   useEffect(() => {
+    if (!studentId) {
+      console.error("Student ID not available yet");
+      return;
+    }
+
     const fetchCourses = async () => {
       setIsLoading(true);
       try {
-        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`);
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/1/courses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`, {
+          credentials: "include", // Include cookies in the request
+        });
+
+
         if (!response.ok) {
           throw new Error(`Failed to fetch courses: ${response.statusText}`);
         }
@@ -62,7 +95,7 @@ function MyCourses() {
     };
 
     fetchCourses();
-  }, []); // Runs once when the component loads
+  }, [studentId]); // Depend on studentId
 
   // Filter courses based on the search query
   useEffect(() => {
@@ -86,19 +119,24 @@ function MyCourses() {
   const handleConfirmDrop = async () => {
     setIsPopupOpen(false);
     if (!courseToDrop) return;
-
+  
     setIsLoading(true);
     try {
       const response = await fetch(
-        // `${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/drop/${courseToDrop.id}`,
-        `${import.meta.env.VITE_SERVER_URL}/api/student/1/drop/${courseToDrop.id}`,
+        `${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/drop/${courseToDrop.id}`,
         {
           method: "DELETE",
+          credentials: "include", // Include cookies in the request
         }
       );
+  
+      const data = await response.json();
+      console.log("Drop Course Response:", data); // Log the API response
+  
       if (!response.ok) {
-        throw new Error(`Failed to drop course: ${response.statusText}`);
+        throw new Error(data.message || `HTTP error! Status: ${response.status}`);
       }
+  
       const updatedCourses = courses.filter((course) => course.id !== courseToDrop.id);
       setCourses(updatedCourses);
       setFilteredCourses(updatedCourses);
@@ -111,6 +149,7 @@ function MyCourses() {
       setIsLoading(false);
     }
   };
+  
 
   // Cancel dropping the course
   const handleCancelDrop = () => {

@@ -18,15 +18,18 @@ Technologies used for this project:
 
 AWS Services used for this project:
 
-* RDS
-* Cognito
-* CloudWatch
-* SES
-* S3
-* EC2
+* Amazon SES
+* Amazon RDS
+* API Gateway
+* Beanstalk
 * CloudFront
-* GitHub
-* COdeBuild
+* CloudWatch
+* CodeBuild
 * CodeDeploy
 * CodePipeline
-* Route 53
+* Cognito
+* EventBridge
+* GitHub
+* IAM Identity Center
+* Lambda
+* S3
