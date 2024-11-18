@@ -40,9 +40,6 @@ const MyTimetable = () => {
     fetchUserProfile();
   }, []);
 
-  // Array of colors to rotate through
-  const colors = ["#FF5733", "#33B5FF", "#FFC300", "#8A2BE2"];
-
   // Fetch student timetable data from API
   useEffect(() => {
     const fetchTimetableData = async () => {
@@ -62,17 +59,14 @@ const MyTimetable = () => {
         const data = await response.json();
 
         // Transform API data into timetable format
-        let colorIndex = 0; // To keep track of the color rotation
         const timetable = data.courses.flatMap((course) =>
           course.courseRuntimes.map((runtime) => {
-            const color = colors[colorIndex % colors.length]; // Rotate through colors
-            colorIndex += 1; // Move to the next color
             return {
               day: runtime.day_of_week || "N/A", // Use day_of_week
               courseName: course.course_name, // Course name
               startTime: runtime.start_time, // Start time
               endTime: runtime.end_time, // End time
-              color: color, // Assign color
+              color: course.id, // Assign color based on course ID
             };
           })
         );
