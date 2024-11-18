@@ -41,7 +41,6 @@ const isStudent = async (req, res, next) => {
 const isFaculty = async (req, res, next) => {
     const db = req.db;
     const user = await db.getUserById(req.session.userId);
-    console.log(req.session.userId)
 
     if (user.role === 0) {
         res.status(401).json({ "error": "User is not a faculty member" });

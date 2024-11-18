@@ -373,7 +373,12 @@ class Database {
         return faculty;
     }
 
-
+    async getFacultyIdByUserId(userId) {
+        const faculty = await Faculty.findOne({
+            where: { user_id: userId }
+        });
+        return faculty.id;
+    }
 
     async updateFacultyAvailability(facultyId, availabilityList) {
         try {
@@ -399,8 +404,21 @@ class Database {
         }
     }
 
+    async deleteAvailabilityByFacultyId(facultyId) {
+        await FacultyAvailability.destroy({
+            where: { faculty_id: facultyId }
+        });
+    }
 
-
+    async createAvailability(facultyId, dayOfWeek, startTime, endTime) {
+        await FacultyAvailability.create({
+            faculty_id: facultyId,
+            day: dayOfWeek,
+            start_time: startTime,
+            end_time: endTime,
+            available: true
+        });
+    }
 }
 
 
