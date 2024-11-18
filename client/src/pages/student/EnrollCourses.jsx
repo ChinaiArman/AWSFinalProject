@@ -104,9 +104,6 @@ const EnrollCourses = () => {
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/enroll/${selectedCourseId}`, {
           method: 'PUT',
           credentials: 'include', // Include cookies in the request
-          headers: {
-            'Content-Type': 'application/json', // Ensure headers are correct
-          },
         });
   
         const data = await response.json();
