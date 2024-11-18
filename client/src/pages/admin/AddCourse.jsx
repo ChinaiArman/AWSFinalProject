@@ -9,10 +9,11 @@ import { useNavigate } from "react-router-dom";
 
 const AddCourse = () => {
   const navigate = useNavigate();
+
    // Sidebar menu items
    const sidebarItems = [
-    { label: "User Management", path: "/admin/user-management", onClick: () => navigate("/admin/user-management"), },
-    { label: "Course Management", path: "/admin/course-management", onClick: () => navigate("/admin/course-management"), },
+    { label: "User Management", path: "/admin/user-management", onClick: () => navigate("/admin/user-management") },
+    { label: "Course Management", path: "/admin/course-management", onClick: () => navigate("/admin/course-management") },
   ];
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
@@ -28,44 +29,50 @@ const AddCourse = () => {
     "16:30-17:20",
   ];
 
-  // State for form data
-  const [formData, setFormData] = useState({
-    courseName: "",
-    courseDescription: "",
-    instructor: "",
-    roomNumber: "",
-    seatAvailability: "",
-    availability: () => {
-      const initialAvailability = {};
-      days.forEach((day) => {
-        initialAvailability[day] = {};
-        timeSlots.forEach((slot) => {
-          initialAvailability[day][slot] = false;
-        });
-      });
-      return initialAvailability;
-    },
+const [courseName, setCourseName] = useState("");
+const [courseDescription, setCourseDescription] = useState("");
+const [instructor, setInstructor] = useState("");
+const [roomNumber, setRoomNumber] = useState("");
+const [seatAvailability, setSeatAvailability] = useState(""); // m
+const [availability, setAvailability] = useState(() => {
+  const initialAvailability = {};
+  days.forEach((day) => {
+    initialAvailability[day] = {};
+    timeSlots.forEach((slot) => {
+      initialAvailability[day][slot] = false;
+    });
   });
+  return initialAvailability;
+});
+
+const handleCourseNameChange = (e) => {
+  setCourseName(e.target.value);
+};
+
+const handleCourseDescriptionChange = (e) => {
+  setCourseDescription(e.target.value);
+};
+
+const handleInstructorChange = (e) => {
+  setInstructor(e.target.value);
+};
+
+const handleRoomNumberChange = (e) => {
+  setRoomNumber(e.target.value);
+};
+
+const handleSeatAvailabilityChange = (e) => {
+  setSeatAvailability(e.target.value);
+};
 
   const [instructorOptions, setInstructorOptions] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const toggleAvailability = (day, slot) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      availability: {
-        ...prevData.availability,
-        [day]: {
-          ...prevData.availability[day],
-          [slot]: !prevData.availability[day][slot],
-        },
+    setAvailability((prevAvailability) => ({
+      ...prevAvailability,
+      [day]: {
+        ...prevAvailability[day],
+        [slot]: !prevAvailability[day][slot],
       },
     }));
   };
@@ -74,15 +81,13 @@ const AddCourse = () => {
     e.preventDefault();
 
     const courseData = {
-      courseName: formData.courseName,
-      courseDescription: formData.courseDescription,
-      instructor: formData.instructor,
-      roomNumber: formData.roomNumber,
-      seatAvailability: formData.seatAvailability,
-      availability: formData.availability,
+      faculty_id: instructor,
+      course_name: courseName,
+      course_description: courseDescription,
+      room_number: roomNumber,
+      seats_available: seatAvailability,
+      total_seats: seatAvailability,
     };
-
-    console.log('COURSE DATA', courseData)
 
     try {
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/createCourse`, {
@@ -91,6 +96,7 @@ const AddCourse = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(courseData),
+        credentials: "include"
       });
 
       if (!response.ok) {
@@ -98,12 +104,20 @@ const AddCourse = () => {
       }
 
       // Reset form after successful save
-      setFormData({
-        courseName: "",
-        courseDescription: "",
-        instructor: "",
-        roomNumber: "",
-        seatAvailability: "",
+      setCourseName("");
+      setCourseDescription("");
+      setInstructor("");
+      setRoomNumber("");
+      setSeatAvailability("");
+      setAvailability(() => {
+        const initialAvailability = {};
+        days.forEach((day) => {
+          initialAvailability[day] = {};
+          timeSlots.forEach((slot) => {
+            initialAvailability[day][slot] = false;
+          });
+        });
+        return initialAvailability;
       });
     } catch (error) {
       console.error("Error saving course data:", error);
@@ -130,7 +144,6 @@ const AddCourse = () => {
       });
     });
   
-    console.log("Formatted time slots:", timeSlots); 
     fetchAvailableInstructors(timeSlots);
   };
   
@@ -138,8 +151,6 @@ const AddCourse = () => {
 
 const fetchAvailableInstructors = async (timeSlots) => {
   try {
-      console.log("timeslots to api:", timeSlots); 
-
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -150,7 +161,6 @@ const fetchAvailableInstructors = async (timeSlots) => {
       if (!response.ok) throw new Error("Failed to fetch available instructors");
 
       const data = await response.json();
-      console.log("response:", data); 
 
       const instructors = data.faculty.map((instr) => ({
           label: `${instr.first_name} ${instr.last_name}`,
@@ -177,8 +187,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           <TextField
             label="Course Name"
             name="courseName"
-            value={formData.courseName}
-            onChange={handleChange}
+            value={courseName}
+            onChange={handleCourseNameChange}
             placeholder="Enter course name"
             required
           />
@@ -186,8 +196,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           <TextField
             label="Course Description"
             name="courseDescription"
-            value={formData.courseDescription}
-            onChange={handleChange}
+            value={courseDescription}
+            onChange={handleCourseDescriptionChange}
             placeholder="Enter course description"
             required
           />
@@ -195,8 +205,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           <TextField
             label="Room Number"
             name="roomNumber"
-            value={formData.roomNumber}
-            onChange={handleChange}
+            value={roomNumber}
+            onChange={handleRoomNumberChange}
             placeholder="Enter room number"
             required
           />
@@ -204,8 +214,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           <TextField
             label="Seats Available"
             name="seatAvailability"
-            value={formData.seatAvailability}
-            onChange={handleChange}
+            value={seatAvailability}
+            onChange={handleSeatAvailabilityChange}
             placeholder="Enter number of seats available"
             required
           />
@@ -215,7 +225,7 @@ const fetchAvailableInstructors = async (timeSlots) => {
             <ScheduleTable
               days={days}
               timeSlots={timeSlots}
-              initialAvailability={formData.availability}
+              initialAvailability={availability}
               toggleAvailability={toggleAvailability}
               onSave={handleApply}
 
@@ -225,8 +235,8 @@ const fetchAvailableInstructors = async (timeSlots) => {
           <DropdownList
             label="Instructor"
             options={instructorOptions}
-            selectedValue={formData.instructor}
-            onChange={handleChange}
+            selectedValue={instructor}
+            onChange={handleInstructorChange}
           />
         </form>
         {/* Save & Cancel Buttons */}
@@ -240,6 +250,7 @@ const fetchAvailableInstructors = async (timeSlots) => {
               label="Save"
               type="submit"
               color="green"
+              onClick={handleSave}
             />
           </div>
       </div>

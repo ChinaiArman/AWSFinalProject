@@ -1,7 +1,8 @@
 import React from 'react';
 
 const DropdownList = ({ label, options, selectedValue, onChange }) => {
-    console.log("Dropdown options:", options);  
+  const selectedInstructor = options.find(option => option.value === selectedValue);
+  // console.log('selectedInstructor:', selectedInstructor);
     return (
       <div className="mb-4">
         <div className="flex items-center">
@@ -12,7 +13,11 @@ const DropdownList = ({ label, options, selectedValue, onChange }) => {
             className="relative z-10 w-80 mt-1 ml-12 mr-12 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
              <option value="" disabled>
-              Available instructors
+              {/* {selectedInstructor ? selectedInstructor.label : `Select ${label}`} */}
+              {selectedInstructor
+                ? `${selectedInstructor.label}`  
+                : "Available instructors"    
+              }
             </option>
             {options && options.map((option) => (
               <option key={option.value} value={option.value}>
