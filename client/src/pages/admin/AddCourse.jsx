@@ -247,7 +247,7 @@ const fetchAvailableInstructors = async (timeSlots) => {
         <div className="flex justify-center gap-10 mt-6">
             <DropdownButton
               label="Cancel"
-              onClick={() => (window.location.href = "/admin/course-management")}
+              onClick={() => navigate("/admin/course-management")}
               color="gray"
             />
             <DropdownButton
