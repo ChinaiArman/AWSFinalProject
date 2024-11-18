@@ -1,5 +1,10 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { StudentAuthProvider } from './contexts/StudentAuthContext';
+import { FacultyAuthProvider } from './contexts/FacultyAuthContext';
+import { AdminAuthProvider } from './contexts/AdminAuthContext';
+import { VerifiedAuthProvider } from './contexts/VerifiedAuthContext';
+import { UnverifiedAuthProvider } from './contexts/UnverifiedAuthContext';
+import PrivateRoute from './components/PrivateRoute';
 import LoginPage from './pages/Login';
 import VerificationPage from "./pages/Verification"
 import UserManagement from './pages/admin/UserManagement';
@@ -18,31 +23,80 @@ import "./styles/App.css";
 const App = () => {
   return (
     <div>
-      <nav></nav>
+      <UnverifiedAuthProvider>
+        <VerifiedAuthProvider>
+          <StudentAuthProvider>
+            <FacultyAuthProvider>
+              <AdminAuthProvider>
+                <Router>
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<LoginPage />} />
+                    <Route path="/verification" element={<VerificationPage />} />
+                    <Route path="/password-setup" element={<PasswordSetupPage />} />
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/verification" element={<VerificationPage />} />
-        <Route path="/password-setup" element={<PasswordSetupPage />} />
+                    {/* Admin Routes */}
+                    <Route path="/admin/user-management" element={
+                      <PrivateRoute role="admin"
+                        element={<UserManagement />}
+                      />
+                    } />
+                    <Route path="/admin/course-management" element={
+                      <PrivateRoute role="admin"
+                        element={<AdminCourseManagementPage />}
+                      />
+                    } />
+                    <Route path="/admin/add-user" element={
+                      <PrivateRoute role="admin"
+                        element={<AdminAddUserPage />}
+                      />
+                    } />
+                    <Route path="/admin/add-course" element={
+                      <PrivateRoute role="admin"
+                        element={<AdminAddCoursePage />}
+                      />
+                    } />
+                    
+                    {/* Student Routes */}
+                    <Route path="/student/my-courses" element={
+                      <PrivateRoute role="student"
+                        element={<StudentMyCoursesPage />}
+                      />
+                    } />
+                    <Route path="/student/enroll-courses" element={
+                      <PrivateRoute role="student"
+                        element={<StudentEnrollCoursesPage />}
+                      />
+                    } />
+                    <Route path="/student/my-timetable" element={
+                      <PrivateRoute role="student"
+                        element={<StudentMyTimetablePage />}
+                      />
+                    } />
 
-        {/* Admin Routes */}
-        <Route path="/admin/user-management" element={<UserManagement />} />
-        <Route path="/admin/course-management" element={<AdminCourseManagementPage />} />
-        <Route path="/admin/add-user" element={<AdminAddUserPage />} />
-        <Route path="/admin/add-course" element={<AdminAddCoursePage />} />
-
-        {/* Student Routes */}
-        <Route path="/student/my-courses" element={<StudentMyCoursesPage />} />
-        <Route path="/student/enroll-courses" element={<StudentEnrollCoursesPage />} />
-        <Route path="/student/my-timetable" element={<StudentMyTimetablePage />} />
-
-        {/* Faculty Routes */}
-        <Route path="/faculty/my-courses" element={<FacultyMyCoursesPage />} />
-        <Route path="/faculty/my-timetable" element={<FacultyMyTimetablePage />} />
-        <Route path="/faculty/time-availability" element={<FacultyTimeAvailabilityPage />} />
-
-      </Routes>
+                    {/* Faculty Routes */}
+                    <Route path="/faculty/my-courses" element={
+                      <PrivateRoute role="faculty"
+                        element={<FacultyMyCoursesPage />}
+                      />
+                    } />
+                    <Route path="/faculty/my-timetable" element={
+                      <PrivateRoute role="faculty"
+                        element={<FacultyMyTimetablePage />}
+                      />
+                    } />
+                    <Route path="/faculty/time-availability" element={
+                      <PrivateRoute role="faculty"
+                        element={<FacultyTimeAvailabilityPage />}
+                      />
+                    } />
+                  </Routes>
+                </Router>
+              </AdminAuthProvider>
+            </FacultyAuthProvider>
+          </StudentAuthProvider>
+        </VerifiedAuthProvider>
+      </UnverifiedAuthProvider>
     </div>
   );
 };
