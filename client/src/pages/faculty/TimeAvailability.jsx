@@ -48,13 +48,11 @@ function TimeAvailability() {
     return initialAvailability;
   });
 
-  // Function to convert "HH:MM:SS" to minutes since midnight
   const timeStringToMinutes = (timeString) => {
     const [hours, minutes, seconds] = timeString.split(":").map(Number);
     return hours * 60 + minutes;
   };
 
-  // Fetch the facultyId from the user session
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -65,7 +63,7 @@ function TimeAvailability() {
 
         if (response.ok) {
           const data = await response.json();
-          const facultyIdFromProfile = data.user.profile.id; // Assuming this is the facultyId
+          const facultyIdFromProfile = data.user.profile.id;
           setFacultyId(facultyIdFromProfile);
         } else {
           console.error('Failed to fetch user profile');
@@ -78,7 +76,6 @@ function TimeAvailability() {
     fetchUserProfile();
   }, []);
 
-  // Fetch availability when facultyId is available
   useEffect(() => {
     const fetchAvailability = async () => {
       if (!facultyId) {
@@ -87,12 +84,13 @@ function TimeAvailability() {
       }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`, {
+          credentials: 'include', // Include cookies in the request
+        });
         const data = await response.json();
 
         console.log("API Response:", data);
 
-        // Initialize transformedAvailability with all false
         const transformedAvailability = {};
         days.forEach((day) => {
           transformedAvailability[day] = {};
@@ -101,7 +99,6 @@ function TimeAvailability() {
           });
         });
 
-        // Process each availability item from the API
         data.forEach((item) => {
           const { day, start_time, end_time, available } = item;
 
@@ -109,7 +106,6 @@ function TimeAvailability() {
 
           const availabilityStartMinutes = timeStringToMinutes(start_time);
 
-          // Match slots where slotStart equals availabilityStart
           for (const [slot, [slotStart, slotEnd]] of Object.entries(predefinedTimeSlots)) {
             const slotStartMinutes = timeStringToMinutes(slotStart);
 
@@ -130,55 +126,55 @@ function TimeAvailability() {
     };
 
     fetchAvailability();
-  }, [facultyId]); // Depend on facultyId
+  }, [facultyId]);
 
   const handleSave = async (newAvailability) => {
-  console.log("Saved Availability:", newAvailability);
+    console.log("Saved Availability:", newAvailability);
 
-  if (!facultyId) {
-    console.error('Faculty ID not available');
-    return;
-  }
-
-  try {
-    // Prepare the data to send to the backend
-    const availabilityList = [];
-
-    days.forEach((day) => {
-      timeSlots.forEach((slot) => {
-        const isAvailable = newAvailability[day][slot];
-        if (isAvailable) {
-          const [startTime, endTime] = predefinedTimeSlots[slot];
-          availabilityList.push({
-            day,
-            start_time: startTime,
-            end_time: endTime,
-            available: true,
-          });
-        }
-      });
-    });
-
-    const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`,
-      {
-        method: "PUT", // Use PUT universally here
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ availability: availabilityList }),
-      }
-    );
-
-    if (response.ok) {
-      console.log("Availability updated successfully");
-    } else {
-      console.error("Failed to update availability");
+    if (!facultyId) {
+      console.error('Faculty ID not available');
+      return;
     }
-  } catch (error) {
-    console.error("Error updating availability:", error);
-  }
-};
+
+    try {
+      const availabilityList = [];
+
+      days.forEach((day) => {
+        timeSlots.forEach((slot) => {
+          const isAvailable = newAvailability[day][slot];
+          if (isAvailable) {
+            const [startTime, endTime] = predefinedTimeSlots[slot];
+            availabilityList.push({
+              day,
+              start_time: startTime,
+              end_time: endTime,
+              available: true,
+            });
+          }
+        });
+      });
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ availability: availabilityList }),
+          credentials: 'include', // Include cookies in the request
+        }
+      );
+
+      if (response.ok) {
+        console.log("Availability updated successfully");
+      } else {
+        console.error("Failed to update availability");
+      }
+    } catch (error) {
+      console.error("Error updating availability:", error);
+    }
+  };
 
   return (
     <div className="flex h-screen">
