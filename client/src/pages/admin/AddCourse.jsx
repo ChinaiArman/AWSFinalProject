@@ -47,28 +47,6 @@ const AddCourse = () => {
   });
 
   const [instructorOptions, setInstructorOptions] = useState([]);
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchInstructors = async () => {
-
-  //     // Mock data for now
-  //     const mockInstructors = [
-  //       { label: "Instructor 1", value: "instructor1" },
-  //       { label: "Instructor 2", value: "instructor2" },
-  //       { label: "Instructor 3", value: "instructor3" },
-  //     ];
-
-  //     setInstructorOptions(mockInstructors);
-
-  //     // For actual fetching from backend, you can use:
-  //     // const response = await fetch("/api/instructors");
-  //     // const data = await response.json();
-  //     // setInstructorOptions(data);
-  //   };
-
-  //   fetchInstructors();
-  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
