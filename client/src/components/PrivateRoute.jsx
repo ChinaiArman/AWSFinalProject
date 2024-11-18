@@ -6,33 +6,40 @@ import { useVerifiedAuth } from '../contexts/VerifiedAuthContext';
 import { useUnverifiedAuth } from '../contexts/UnverifiedAuthContext';
 
 const PrivateRoute = ({ element, role }) => {
-    const { isStudent, loading: studentLoading } = useStudentAuth();
-    const { isFaculty, loading: facultyLoading } = useFacultyAuth();
-    const { isAdmin, loading: adminLoading } = useAdminAuth();
-    const { isVerified, loading: verifiedLoading } = useVerifiedAuth();
-    const { isUnverified, loading: unverifiedLoading } = useUnverifiedAuth();
-
-    const loading = studentLoading || facultyLoading || adminLoading || verifiedLoading || unverifiedLoading;
+    let isAuthorized = false;
+    let loading = false;
+    // Perform checks based on the role
+    if (role === 'admin') {
+        const { isAdmin, loading: adminLoading } = useAdminAuth();
+        isAuthorized = isAdmin;
+        loading = adminLoading;
+    } else if (role === 'faculty') {
+        const { isFaculty, loading: facultyLoading } = useFacultyAuth();
+        isAuthorized = isFaculty;
+        loading = facultyLoading;
+    } else if (role === 'student') {
+        const { isStudent, loading: studentLoading } = useStudentAuth();
+        isAuthorized = isStudent;
+        loading = studentLoading;
+    } else if (role === 'verified') {
+        const { isVerified, loading: verifiedLoading } = useVerifiedAuth();
+        isAuthorized = isVerified;
+        loading = verifiedLoading;
+    } else if (role === 'unverified') {
+        const { isUnverified, loading: unverifiedLoading } = useUnverifiedAuth();
+        isAuthorized = isUnverified;
+        loading = unverifiedLoading;
+    }
 
     if (loading) {
         return <div>Loading...</div>;
     }
-    if (role === 'admin' && isAdmin) {
+
+    if (isAuthorized) {
         return element;
     }
-    if (role === 'faculty' && (isFaculty || isAdmin)) {
-        return element;
-    }
-    if (role === 'student' && (isStudent || isAdmin)) {
-        return element;
-    }
-    if (role === 'verified' && isVerified) {
-        return element;
-    }
-    if (role === 'unverified' && isUnverified) {
-        return element;
-    }
+
     return <Navigate to="/" />;
-}
+};
 
 export default PrivateRoute;
