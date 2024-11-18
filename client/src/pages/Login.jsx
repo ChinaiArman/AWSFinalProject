@@ -39,9 +39,18 @@ function Login() {
 
             // Redirect based on user role
             const { role } = userData.user;
-            if (role === 0) navigate("/student/my-courses");
-            if (role === 1) navigate("/faculty/my-courses");
-            if (role === 2) navigate("/admin/user-management");
+            if (role === 0) {
+                window.location.href = "/student/my-courses";
+                return;
+            };
+            if (role === 1) {
+                window.location.href = "/faculty/my-courses";
+                return;
+            };
+            if (role === 2) {
+                window.location.href = "/admin/user-management";
+                return;
+            }
         } catch (error) {
             console.error("Error during login:", error);
             setErrorMessage("An error occurred. Please try again later.");
