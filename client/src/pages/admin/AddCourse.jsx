@@ -6,6 +6,7 @@ import ScheduleTable from "../../components/ScheduleTable";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import DropdownList from "../../components/DropdownList";
 import { useNavigate } from "react-router-dom";
+import ConfirmationPopup from "../../components/ConfirmationPopup";
 
 const AddCourse = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const AddCourse = () => {
     "15:30-16:20",
     "16:30-17:20",
   ];
-
+const [isPopupOpen, setIsPopupOpen] = useState(false);
 const [courseName, setCourseName] = useState("");
 const [courseDescription, setCourseDescription] = useState("");
 const [instructor, setInstructor] = useState("");
@@ -103,6 +104,8 @@ const handleSeatAvailabilityChange = (e) => {
         throw new Error("Failed to save course data");
       }
 
+      setIsPopupOpen(true);
+
       // Reset form after successful save
       setCourseName("");
       setCourseDescription("");
@@ -150,6 +153,7 @@ const handleSeatAvailabilityChange = (e) => {
 
 
 const fetchAvailableInstructors = async (timeSlots) => {
+  console.log('timeslots:', timeSlots);
   try {
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
           method: "POST",
@@ -254,6 +258,16 @@ const fetchAvailableInstructors = async (timeSlots) => {
             />
           </div>
       </div>
+      <ConfirmationPopup
+        isOpen={isPopupOpen}
+        title="Course Added"
+        message={"Course has been added successfully"}
+        onConfirm={() => {
+          setIsPopupOpen(false);
+          navigate("/admin/course-management");
+        }}
+        onCancel={() => setIsPopupOpen(false)}
+      />
     </div>
   );
 };
