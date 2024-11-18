@@ -9,7 +9,7 @@ const facultyRoutes = express.Router();
 
 
 // ROUTES
-facultyRoutes.get('/getAllFaculty', async (req, res) => {
+facultyRoutes.get('/getAllFaculty', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const db = req.db;
     try {
         const faculty = await db.getAllFaculty();
@@ -21,7 +21,7 @@ facultyRoutes.get('/getAllFaculty', async (req, res) => {
     }
 })
 
-facultyRoutes.post('/addFaculty', async (req, res) => {
+facultyRoutes.post('/addFaculty', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const db = req.db;
     const { user_id, first_name, last_name, email, phone_number, date_of_birth, is_admin } = req.body;
     try {
@@ -34,7 +34,7 @@ facultyRoutes.post('/addFaculty', async (req, res) => {
     }
 })
 
-facultyRoutes.delete('/deleteFaculty/:facultyId', async (req, res) => {
+facultyRoutes.delete('/deleteFaculty/:facultyId', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const facultyId = req.params.facultyId;
     const db = req.db;
     try {
@@ -47,7 +47,7 @@ facultyRoutes.delete('/deleteFaculty/:facultyId', async (req, res) => {
     }
 })
 
-facultyRoutes.get('/getFaculty/:facultyId', async (req, res) => {
+facultyRoutes.get('/getFaculty/:facultyId', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const facultyId = req.params.facultyId;
     const db = req.db;
     try {
@@ -60,7 +60,7 @@ facultyRoutes.get('/getFaculty/:facultyId', async (req, res) => {
     }
 })
 
-facultyRoutes.get('/:facultyId/courses', async (req, res) => {
+facultyRoutes.get('/:facultyId/courses', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const facultyId = req.params.facultyId;
     const db = req.db;
     try {

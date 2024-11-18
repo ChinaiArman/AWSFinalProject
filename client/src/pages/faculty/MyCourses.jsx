@@ -40,45 +40,49 @@ function MyCourses() {
   // Fetch courses when facultyId is available
   useEffect(() => {
     const fetchCourses = async () => {
-      // if (!facultyId) {
-      //   console.error("Faculty ID not available yet");
-      //   return;
-      // }
-  
+      if (!facultyId) {
+        console.error("Faculty ID not available yet");
+        return;
+      }
+
       try {
         // Fetch the courses for the faculty
-        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`);
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/1/courses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`, {
+          credentials: "include", // Include cookies in the request
+        });
+
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
+
         const data = await response.json();
-  
+
         // Transform API data to match the component's structure
         const transformedCourses = data.courses.map((course) => ({
           id: course.id,
           name: course.course_name,
           description: course.course_description,
           schedule: course.courseRuntimes.length
-            ? course.courseRuntimes.map(
-                (runtime) =>
-                  `${runtime.day_of_week || "Day not specified"} ${runtime.start_time} - ${runtime.end_time} @ ${runtime.location}`
-              ).join(", ")
+            ? course.courseRuntimes
+                .map(
+                  (runtime) =>
+                    `${runtime.day_of_week || "Day not specified"} ${runtime.start_time} - ${runtime.end_time} @ ${runtime.location}`
+                )
+                .join(", ")
             : "No schedule available",
           room: `Room: ${course.room_number}`,
           seats: `${course.seats_available} available out of ${course.total_seats}`,
         }));
-  
+
         setCourses(transformedCourses); // Update the courses state
       } catch (error) {
         console.error("Error fetching courses:", error);
         setCourses([]); // Set to an empty array if an error occurs
       }
     };
-  
+
     fetchCourses();
   }, [facultyId]);
-  
 
   return (
     <div className="flex h-screen">

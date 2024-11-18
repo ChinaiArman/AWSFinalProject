@@ -20,23 +20,25 @@ class Database {
     }
 
     async getUser(email) {
-        const user = await User.findOne({
-            include: [
-                {
-                    model: Faculty,
-                    as: 'faculty',
-                    where: { email }, // Search Faculty table for email
-                    required: false, // Optional, since the user might not have a faculty profile
-                },
-                {
-                    model: Student,
-                    as: 'student',
-                    where: { email }, // Search Student table for email
-                    required: false, // Optional, since the user might not have a student profile
-                }
-            ]
+        const faculty = await Faculty.findOne({
+            where: { email }
         });
-        return user;
+        if (faculty) {
+            const user = await User.findOne({
+                where: { id: faculty.user_id }
+            });
+            return user;
+        }
+        const student = await Student.findOne({
+            where: { email }
+        });
+        if (student) {
+            const user = await User.findOne({
+                where: { id: student.user_id }
+            });
+            return user;
+        }
+        return null;
     }
 
     async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
@@ -47,7 +49,6 @@ class Database {
         });
         if (role > 0) {
             await Faculty.create({
-                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -58,7 +59,6 @@ class Database {
             });
         } else {
             await Student.create({
-                id: userId,
                 user_id: userId,
                 first_name: firstName,
                 last_name: lastName,
@@ -260,21 +260,6 @@ class Database {
         return availability;
     }
 
-    // Update availability
-    async updateAvailability(facultyId, day, startTime, endTime, available) {
-        const [updatedRows] = await FacultyAvailability.update(
-            { available },
-            {
-                where: {
-                    faculty_id: facultyId,
-                    day,
-                    start_time: startTime,
-                    end_time: endTime
-                }
-            }
-        );
-        return updatedRows;
-    }
 
     // Delete availability
     async deleteAvailabilityById(id) {
@@ -369,23 +354,82 @@ class Database {
         let faculty = await FacultyAvailability.findAll({
             where: {
                 day: timeSlots[0].day,
-                start_time: timeSlots[0].startTime,
-                end_time: timeSlots[0].endTime,
                 available: true
-            }
-        });
-        for (let i = 1; i < timeSlots.length; i++) {
-            const newFaculty = await FacultyAvailability.findAll({
-                where: {
-                    day: timeSlots[i].day,
-                    start_time: timeSlots[i].startTime,
-                    end_time: timeSlots[i].endTime,
-                    available: true
+            },
+            include: [
+                {
+                    model: Faculty,
+                    as: 'faculty',   
                 }
+            ]
+        });
+    
+        faculty = faculty.filter(f => {
+            return timeSlots.every(slot => {
+                const isAvailable = (
+                    (slot.startTime >= f.start_time && slot.startTime < f.end_time) &&
+                    (slot.endTime > f.start_time && slot.endTime <= f.end_time)
+                );
+                return isAvailable;
             });
-            faculty = faculty.filter(f => newFaculty.some(nf => nf.faculty_id === f.faculty_id));
+        });
+    
+        return faculty.map(f => ({
+            id: f.faculty.id,
+            first_name: f.faculty.first_name,
+            last_name: f.faculty.last_name,
+            email: f.faculty.email,
+            phone_number: f.faculty.phone_number,
+            date_of_birth: f.faculty.date_of_birth,
+            is_admin: f.faculty.is_admin,
+        }));
+    }
+
+    async getFacultyIdByUserId(userId) {
+        const faculty = await Faculty.findOne({
+            where: { user_id: userId }
+        });
+        return faculty.id;
+    }
+
+    async updateFacultyAvailability(facultyId, availabilityList) {
+        try {
+            // Delete existing availability entries for the faculty
+            await FacultyAvailability.destroy({
+                where: { faculty_id: facultyId }
+            });
+
+            // Bulk insert new availability entries
+            const newAvailabilities = availabilityList.map((entry) => ({
+                faculty_id: facultyId,
+                day: entry.day,
+                start_time: entry.start_time,
+                end_time: entry.end_time,
+                available: entry.available,
+            }));
+
+            const createdEntries = await FacultyAvailability.bulkCreate(newAvailabilities);
+            return createdEntries;
+        } catch (error) {
+            console.error('Error updating availability in Database:', error);
+            throw new Error('Failed to update faculty availability');
         }
-        return faculty;
+    }
+
+    async deleteAvailabilityByFacultyId(facultyId) {
+        await FacultyAvailability.destroy({
+            where: { faculty_id: facultyId }
+        });
+    }
+
+    async createAvailability(facultyId, dayOfWeek, startTime, endTime) {
+        await FacultyAvailability.create({
+            faculty_id: facultyId,
+            day: dayOfWeek,
+            start_time: startTime,
+            end_time: endTime,
+            available: true
+        });
     }
 }
 

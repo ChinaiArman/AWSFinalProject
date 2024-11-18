@@ -9,7 +9,7 @@ const courseRoutes = express.Router();
 
 
 // ROUTES
-courseRoutes.get('/getAllCourses', async (req, res) => {
+courseRoutes.get('/getAllCourses', isSignedIn, isVerified, async (req, res) => {
     const db = req.db;
     try {
         const courses = await db.getAllCourses();
@@ -22,7 +22,7 @@ courseRoutes.get('/getAllCourses', async (req, res) => {
 })
 
 // Create new course
-courseRoutes.post('/createCourse', async (req, res) => {
+courseRoutes.post('/createCourse', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const db = req.db;
     const { faculty_id, course_name, course_description, room_number, seats_available, total_seats } = req.body;
     try {
@@ -36,7 +36,7 @@ courseRoutes.post('/createCourse', async (req, res) => {
 })
 
 // Delete course by ID
-courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
+courseRoutes.delete('/deleteCourse/:courseId', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const courseId = req.params.courseId;
     const db = req.db;
     try {
@@ -49,7 +49,7 @@ courseRoutes.delete('/deleteCourse/:courseId', async (req, res) => {
     }
 })
 
-courseRoutes.put('/createCourseRuntime/:courseId', async (req, res) => {
+courseRoutes.put('/createCourseRuntime/:courseId', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const courseId = req.params.courseId;
     const db = req.db;
     const { start_date, end_date, start_time, end_time, day_of_week, location } = req.body;
