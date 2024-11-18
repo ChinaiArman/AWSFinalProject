@@ -11,7 +11,7 @@ const studentRoutes = express.Router();
 
 
 // ROUTES
-studentRoutes.get('/:studentId/courses', async (req, res) => {
+studentRoutes.get('/:studentId/courses', isSignedIn, isVerified, async (req, res) => {
     const studentId = req.params.studentId;
     const db = req.db;
     try {
@@ -24,7 +24,7 @@ studentRoutes.get('/:studentId/courses', async (req, res) => {
     }
 })
 
-studentRoutes.put('/:studentId/enroll/:courseId', async (req, res) => {
+studentRoutes.put('/:studentId/enroll/:courseId', isSignedIn, isVerified, async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
     const db = req.db;
@@ -38,7 +38,7 @@ studentRoutes.put('/:studentId/enroll/:courseId', async (req, res) => {
     }
 })
 
-studentRoutes.delete('/:studentId/drop/:courseId', async (req, res) => {
+studentRoutes.delete('/:studentId/drop/:courseId', isSignedIn, isVerified, async (req, res) => {
     const studentId = req.params.studentId;
     const courseId = req.params.courseId;
     const db = req.db;

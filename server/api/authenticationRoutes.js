@@ -24,7 +24,7 @@ authenticationRoutes.post('/login', async (req, res) => {
 
 });
 
-authenticationRoutes.post('/register', async (req, res) => {
+authenticationRoutes.post('/register', isAdmin, async (req, res) => {
     const db = req.db;
     const cognito = req.cognito;
     const { email, role, dateOfBirth, firstName, lastName, phoneNumber } = req.body;
@@ -55,7 +55,7 @@ authenticationRoutes.post('/verify', async (req, res) => {
     }
 });
 
-authenticationRoutes.post('/logout', async (req, res) => {
+authenticationRoutes.post('/logout', isSignedIn, async (req, res) => {
     req.session.destroy();
     res.status(200).json({ "message": "User logged out successfully" });
     return;
@@ -92,12 +92,13 @@ authenticationRoutes.put('/completeVerification', async (req, res) => {
     const { email } = req.body;
     try {
         const user = await db.getUser(email);
-        if (user.is_verified) {
+        if (user.is_verified === 1) {
             res.status(400).json({ "error": "User already verified" });
             return;
         }
         await db.verifyUser(user.id);
         req.session.userId = user.id;
+        res.status(200).json({ "message": "User verified successfully" });
         return;
     } catch (error) {
         res.status(400).json({ "error": error.message });

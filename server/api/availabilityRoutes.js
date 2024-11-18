@@ -9,10 +9,10 @@ const availabilityRoutes = express.Router();
 
 
 // ROUTES
-availabilityRoutes.post('/add', async (req, res) => {
-    const db = req.db; 
+availabilityRoutes.post('/add', isSignedIn, isVerified, isFaculty, async (req, res) => {
+    const db = req.db;
     const { facultyId, day, startTime, endTime, available } = req.body;
- 
+
     try {
         const newAvailability = await db.addAvailability(facultyId, day, startTime, endTime, available);
         res.status(201).json({ message: 'Availability added successfully', newAvailability });
@@ -23,10 +23,10 @@ availabilityRoutes.post('/add', async (req, res) => {
 });
 
 
-availabilityRoutes.get('/:facultyId', async (req, res) => {
+availabilityRoutes.get('/:facultyId', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const db = req.db;
     const { facultyId } = req.params;
-   
+
 
     try {
         const availabilities = await db.getAvailabilityByFacultyId(facultyId);
@@ -43,7 +43,7 @@ availabilityRoutes.get('/:facultyId', async (req, res) => {
 });
 
 
-availabilityRoutes.delete('/delete/:id', async (req, res) => {
+availabilityRoutes.delete('/delete/:id', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const db = req.db;
     const { id } = req.params;
 
@@ -64,7 +64,7 @@ availabilityRoutes.delete('/delete/:id', async (req, res) => {
 
 
 // PUT
-availabilityRoutes.put('/:facultyId', async (req, res) => {
+availabilityRoutes.put('/:facultyId', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const { facultyId } = req.params;
     const { availability } = req.body; // New availability
     const db = req.db;
@@ -101,7 +101,7 @@ availabilityRoutes.put('/:facultyId', async (req, res) => {
     }
 });
 
-availabilityRoutes.post('/getFacultyAvailableAtTimeSlots', async (req, res) => {
+availabilityRoutes.post('/getFacultyAvailableAtTimeSlots', isSignedIn, isVerified, isFaculty, async (req, res) => {
     const db = req.db;
     const { timeSlots } = req.body;
     try {
