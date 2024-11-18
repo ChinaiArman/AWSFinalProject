@@ -4,8 +4,10 @@ import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import SearchBar from "../../components/SearchBar";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
+import { useNavigate } from "react-router-dom";
 
 const EnrollCourses = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]); // State for all courses
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
@@ -13,10 +15,10 @@ const EnrollCourses = () => {
   const [selectedCourseId, setSelectedCourseId] = useState(null); // Selected course ID for enrollment
 
   const sidebarItems = [
-    { label: "My Courses", path: "/student/my-courses", onClick: () => (window.location.href = "/student/my-courses") },
-    { label: "My Timetable", path: "/student/my-timetable", onClick: () => (window.location.href = "/student/my-timetable") },
-    { label: "Waitlist", path: "/student/waitlist", onClick: () => (window.location.href = "/student/waitlist") },
-    { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
+    { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
+    { label: "My Timetable", path: "/student/my-timetable", onClick: () => navigate("/student/my-timetable") },
+    { label: "Waitlist", path: "/student/waitlist", onClick: () => navigate("/student/waitlist") },
+    { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
   useEffect(() => {

@@ -80,7 +80,7 @@ const UserManagement = () => {
 
         <AddButton
           label="Add User"
-          onClick={() => (window.location.href = "/admin/add-user")}
+          onClick={() => navigate("/admin/add-user")}
           color="gray"
         />
         {users.length > 0 &&

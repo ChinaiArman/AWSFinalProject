@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import Timetable from "../../components/Timetable";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const MyTimetable = () => {
+  const navigate = useNavigate();
   const [timetableData, setTimetableData] = useState([]); // State for timetable data
   const [facultyId, setFacultyId] = useState(null); // State for faculty ID
 
   // Sidebar menu items for faculty
   const sidebarItems = [
-    { label: "My Courses", path: "/faculty/my-courses", onClick: () => (window.location.href = "/faculty/my-courses") },
-    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
-    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => (window.location.href = "/faculty/time-availability") },
+    { label: "My Courses", path: "/faculty/my-courses", onClick: () => navigate("/faculty/my-courses") },
+    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => navigate("/faculty/my-timetable") },
+    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => navigate("/faculty/time-availability") },
   ];
 
   // Array of colors to rotate through

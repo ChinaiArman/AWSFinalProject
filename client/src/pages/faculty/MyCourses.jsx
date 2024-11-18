@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
+import { useNavigate } from "react-router-dom";
 
 function MyCourses() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [facultyId, setFacultyId] = useState(null);
 
   const sidebarItems = [
-    { label: "My Courses", path: "/faculty/my-courses", onClick: () => (window.location.href = "/faculty/my-courses") },
-    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
-    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => (window.location.href = "/faculty/time-availability") },
+    { label: "My Courses", path: "/faculty/my-courses", onClick: () => navigate("/faculty/my-courses") },
+    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => navigate("/faculty/my-timetable") },
+    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => navigate("/faculty/time-availability") },
   ];
 
   // Fetch the facultyId from the user session
