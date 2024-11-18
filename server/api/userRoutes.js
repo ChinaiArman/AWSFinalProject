@@ -9,7 +9,7 @@ const userRoutes = express.Router();
 
 
 // ROUTES
-userRoutes.get('/user/:userId', async (req, res) => {
+userRoutes.get('/user/:userId', isSignedIn, async (req, res) => {
     const userId = req.params.userId;
     const db = req.db;
     try {
@@ -22,7 +22,7 @@ userRoutes.get('/user/:userId', async (req, res) => {
     }
 })
 
-userRoutes.get('/getUserBySession', async (req, res) => {
+userRoutes.get('/getUserBySession', isSignedIn, async (req, res) => {
     const db = req.db;
     try {
         const user = await db.getUserById(req.session.userId);
@@ -34,7 +34,7 @@ userRoutes.get('/getUserBySession', async (req, res) => {
     }
 });
 
-userRoutes.get('/getAllUsers', async (req, res) => {
+userRoutes.get('/getAllUsers', isSignedIn, isVerified, isAdmin, async (req, res) => {
     const db = req.db;
     try {
         const users = await db.getAllUsers();

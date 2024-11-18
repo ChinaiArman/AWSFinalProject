@@ -42,6 +42,7 @@ function PasswordSetup() {
       }
 
       // Step 2: Call the completeVerification API
+      console.log(email);
       const completeVerificationResponse = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/auth/completeVerification`,
         {

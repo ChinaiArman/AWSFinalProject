@@ -20,23 +20,25 @@ class Database {
     }
 
     async getUser(email) {
-        const user = await User.findOne({
-            include: [
-                {
-                    model: Faculty,
-                    as: 'faculty',
-                    where: { email }, // Search Faculty table for email
-                    required: false, // Optional, since the user might not have a faculty profile
-                },
-                {
-                    model: Student,
-                    as: 'student',
-                    where: { email }, // Search Student table for email
-                    required: false, // Optional, since the user might not have a student profile
-                }
-            ]
+        const faculty = await Faculty.findOne({
+            where: { email }
         });
-        return user;
+        if (faculty) {
+            const user = await User.findOne({
+                where: { id: faculty.user_id }
+            });
+            return user;
+        }
+        const student = await Student.findOne({
+            where: { email }
+        });
+        if (student) {
+            const user = await User.findOne({
+                where: { id: student.user_id }
+            });
+            return user;
+        }
+        return null;
     }
 
     async createUser(userId, email, role, dateOfBirth, firstName, lastName, phoneNumber) {
