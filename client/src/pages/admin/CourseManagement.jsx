@@ -105,7 +105,7 @@ const CourseManagement = () => {
 
         <AddButton
           label="Add Course"
-          onClick={() => (window.location.href = "/admin/add-course")}
+          onClick={() => navigate("/admin/add-course")}
           color="gray"
         />
 

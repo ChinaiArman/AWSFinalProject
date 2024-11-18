@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
 import ScheduleTable from "../../components/ScheduleTable";
+import { useNavigate } from "react-router-dom";
 
 function TimeAvailability() {
+  const navigate = useNavigate();
   const [facultyId, setFacultyId] = useState(null);
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
@@ -32,9 +34,9 @@ function TimeAvailability() {
   };
 
   const sidebarItems = [
-    { label: "My Courses", path: "/faculty/my-courses", onClick: () => (window.location.href = "/faculty/my-courses") },
-    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => (window.location.href = "/faculty/my-timetable") },
-    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => (window.location.href = "/faculty/time-availability") },
+    { label: "My Courses", path: "/faculty/my-courses", onClick: () => navigate("/faculty/my-courses") },
+    { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => navigate("/faculty/my-timetable") },
+    { label: "Time Availability", path: "/faculty/time-availability", onClick: () => navigate("/faculty/time-availability") },
   ];
 
   const [availability, setAvailability] = useState(() => {

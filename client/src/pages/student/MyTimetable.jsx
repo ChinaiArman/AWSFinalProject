@@ -3,17 +3,19 @@ import React, { useEffect, useState } from "react";
 import Timetable from "../../components/Timetable";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const MyTimetable = () => {
+  const navigate = useNavigate();
   const [timetableData, setTimetableData] = useState([]); // State for timetable data
   const [studentId, setStudentId] = useState(null); // State for student ID
 
   // Sidebar menu items for students
   const sidebarItems = [
-    { label: "My Courses", path: "/student/my-courses", onClick: () => (window.location.href = "/student/my-courses") },
-    { label: "My Timetable", path: "/student/my-timetable", onClick: () => (window.location.href = "/student/my-timetable") },
-    { label: "Waitlist", path: "/student/waitlist", onClick: () => (window.location.href = "/student/waitlist") },
-    { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
+    { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
+    { label: "My Timetable", path: "/student/my-timetable", onClick: () => navigate("/student/my-timetable") },
+    { label: "Waitlist", path: "/student/waitlist", onClick: () => navigate("/student/waitlist") },
+    { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
   // Fetch student ID from session
