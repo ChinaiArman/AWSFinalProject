@@ -165,6 +165,7 @@ const fetchAvailableInstructors = async (timeSlots) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ timeSlots }),
+          credentials: "include"
       });
 
       if (!response.ok) throw new Error("Failed to fetch available instructors");
