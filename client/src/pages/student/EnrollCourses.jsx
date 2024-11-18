@@ -11,6 +11,7 @@ const EnrollCourses = () => {
   const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null); // Selected course ID for enrollment
+  const [studentId, setStudentId] = useState(null); // State for student ID
 
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => (window.location.href = "/student/my-courses") },
@@ -18,6 +19,30 @@ const EnrollCourses = () => {
     { label: "Waitlist", path: "/student/waitlist", onClick: () => (window.location.href = "/student/waitlist") },
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
   ];
+
+  // Fetch student ID from session
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const studentIdFromProfile = data.user.profile.id; // Assuming this is the studentId
+          setStudentId(studentIdFromProfile);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     // Update filtered courses based on search query
@@ -29,9 +54,17 @@ const EnrollCourses = () => {
 
   // Fetch courses from the API
   useEffect(() => {
+    if (!studentId) {
+      console.error("Student ID not available yet");
+      return;
+    }
+
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`, {
+          credentials: "include", // Include cookies in the request
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -59,20 +92,28 @@ const EnrollCourses = () => {
     };
 
     fetchCourses();
-  }, []); // Runs once when the component loads  
+  }, [studentId]); // Depend on studentId
 
   const handleConfirm = async () => {
     setIsPopupOpen(false);
     if (selectedCourseId) {
       try {
-        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/enroll/${selectedCourseId}`, {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/1/enroll/2`, {
+        console.log('Enrolling:', { studentId, selectedCourseId }); // Debugging
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/enroll/${selectedCourseId}`, {
           method: 'PUT',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json', // Ensure headers are correct
+          },
         });
-        if (!response.ok) {
-          throw new Error(`Failed to enroll: ${response.statusText}`);
-        }
+  
         const data = await response.json();
+        console.log('Enrollment response:', data); // Log response for debugging
+  
+        if (!response.ok) {
+          throw new Error(data.message || `HTTP error! Status: ${response.status}`);
+        }
+  
         alert(data.message || "Enrolled successfully!");
       } catch (error) {
         console.error("Error enrolling in course:", error);
@@ -82,6 +123,7 @@ const EnrollCourses = () => {
       alert("No course selected for enrollment.");
     }
   };
+  
 
   const handleCancel = () => {
     setIsPopupOpen(false);

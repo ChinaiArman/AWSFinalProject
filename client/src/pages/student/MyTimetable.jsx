@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar";
 
 const MyTimetable = () => {
   const [timetableData, setTimetableData] = useState([]); // State for timetable data
-  const colors = ["#FF5733", "#33B5FF", "#FFC300", "#8A2BE2"];
+  const [studentId, setStudentId] = useState(null); // State for student ID
 
   // Sidebar menu items for students
   const sidebarItems = [
@@ -16,12 +16,46 @@ const MyTimetable = () => {
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => (window.location.href = "/student/enroll-courses") },
   ];
 
+  // Fetch student ID from session
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const studentIdFromProfile = data.user.profile.id; // Assuming this is the studentId
+          setStudentId(studentIdFromProfile);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  // Array of colors to rotate through
+  const colors = ["#FF5733", "#33B5FF", "#FFC300", "#8A2BE2"];
+
   // Fetch student timetable data from API
   useEffect(() => {
     const fetchTimetableData = async () => {
+      if (!studentId) {
+        console.error("Student ID not available yet");
+        return;
+      }
+
       try {
-        // const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`);
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}1/api/student/1/courses`);
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`, {
+          credentials: "include", // Include cookies in the request
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -51,7 +85,7 @@ const MyTimetable = () => {
     };
 
     fetchTimetableData();
-  }, []);
+  }, [studentId]); // Depend on studentId
 
   return (
     <div className="flex h-screen">
