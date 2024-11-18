@@ -72,7 +72,12 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
           <ScheduleButton
             label="Apply"
             color="blue"
-            onClick={() => onSave && onSave(availability)}
+            // onClick={() => onSave && onSave(availability)} // old version for TimeAvailablitiy
+            onClick={(e) => {
+              e.preventDefault();
+              onSave && onSave(availability);
+            }}
+            type="button"
           />
         </div>
       </div>

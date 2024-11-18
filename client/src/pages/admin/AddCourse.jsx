@@ -14,7 +14,7 @@ const AddCourse = () => {
     { label: "Course Management", path: "/admin/course-management", onClick: () => (window.location.href = "/admin/course-management") },
   ];
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
     "8:30-9:20",
     "9:30-10:20",
@@ -47,27 +47,28 @@ const AddCourse = () => {
   });
 
   const [instructorOptions, setInstructorOptions] = useState([]);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
 
-  useEffect(() => {
-    const fetchInstructors = async () => {
+  // useEffect(() => {
+  //   const fetchInstructors = async () => {
 
-      // Mock data for now
-      const mockInstructors = [
-        { label: "Instructor 1", value: "instructor1" },
-        { label: "Instructor 2", value: "instructor2" },
-        { label: "Instructor 3", value: "instructor3" },
-      ];
+  //     // Mock data for now
+  //     const mockInstructors = [
+  //       { label: "Instructor 1", value: "instructor1" },
+  //       { label: "Instructor 2", value: "instructor2" },
+  //       { label: "Instructor 3", value: "instructor3" },
+  //     ];
 
-      setInstructorOptions(mockInstructors);
+  //     setInstructorOptions(mockInstructors);
 
-      // For actual fetching from backend, you can use:
-      // const response = await fetch("/api/instructors");
-      // const data = await response.json();
-      // setInstructorOptions(data);
-    };
+  //     // For actual fetching from backend, you can use:
+  //     // const response = await fetch("/api/instructors");
+  //     // const data = await response.json();
+  //     // setInstructorOptions(data);
+  //   };
 
-    fetchInstructors();
-  }, []);
+  //   fetchInstructors();
+  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,8 +103,10 @@ const AddCourse = () => {
       availability: formData.availability,
     };
 
+    console.log('COURSE DATA', courseData)
+
     try {
-      const response = await fetch("/api/course", {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/createCourse`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,6 +130,58 @@ const AddCourse = () => {
       console.error("Error saving course data:", error);
     }
   };
+
+  const handleApply = (newAvailability) => {
+    const timeSlots = [];
+
+    days.forEach((day) => {
+        Object.entries(newAvailability[day]).forEach(([slot, isAvailable]) => {
+            if (isAvailable) {
+                const [startTime, endTime] = slot.split("-").map((time) => {
+                    const [hour, minute] = time.split(":");
+                    return `${hour}:${minute}:00`;
+                });
+
+                timeSlots.push({
+                    day,
+                    startTime,
+                    endTime,
+                });
+            }
+        });
+    });
+
+    console.log("formatted timeslots", timeSlots); 
+    fetchAvailableInstructors(timeSlots);
+};
+
+
+const fetchAvailableInstructors = async (timeSlots) => {
+  try {
+      console.log("timeslots to api:", timeSlots); 
+
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ timeSlots }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch available instructors");
+
+      const data = await response.json();
+      console.log("response:", data); 
+
+      const instructors = data.faculty.map((instr) => ({
+          label: `${instr.first_name} ${instr.last_name}`,
+          value: instr.id,
+      }));
+
+      setInstructorOptions(instructors);
+  } catch (error) {
+      console.error("Error fetching available instructors:", error);
+  }
+};
+
 
   return (
     <div className="flex h-screen">
@@ -181,6 +236,7 @@ const AddCourse = () => {
               timeSlots={timeSlots}
               initialAvailability={formData.availability}
               toggleAvailability={toggleAvailability}
+              onSave={handleApply}
 
             />
           </div>
