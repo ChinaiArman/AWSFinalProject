@@ -425,6 +425,36 @@ class Database {
             available: true
         });
     }
+
+    async getCourseById(courseId) {
+        return await Course.findOne({ where: { id: courseId } });
+    }
+
+    async getCourseRuntimesByCourseId(courseId) {
+        return await CourseRuntime.findAll({ where: { course_id: courseId } });
+    }
+
+    async updateCourse(courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
+        await Course.update(
+          {
+            faculty_id: facultyId,
+            course_name: courseName,
+            course_description: courseDescription,
+            room_number: roomNumber,
+            seats_available: seatsAvailable,
+            total_seats: totalSeats,
+          },
+          { where: { id: courseId } }
+        );
+      }
+
+      async deleteCourseRuntimes(courseId) {
+        await CourseRuntime.destroy({ where: { course_id: courseId } });
+      }
+
+      
+      
+
 }
 
 
