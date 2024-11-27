@@ -63,5 +63,26 @@ courseRoutes.put('/createCourseRuntime/:courseId', isSignedIn, isVerified, isAdm
     }
 });
 
+// Get course details including runtimes (for editing)
+courseRoutes.get("/:courseId", isSignedIn, isVerified, isAdmin, async (req, res) => {
+    const { courseId } = req.params;
+    const db = req.db;
+  
+    try {
+      const course = await db.getCourseById(courseId);
+      if (!course) {
+        return res.status(404).json({ error: "Course not found" });
+      }
+  
+      const runtimes = await db.getCourseRuntimesByCourseId(courseId);
+  
+      res.status(200).json({ course, runtimes });
+    } catch (error) {
+      console.error("Error fetching course details:", error);
+      res.status(500).json({ error: "Failed to fetch course details" });
+    }
+  });
+
+
 // EXPORTS
 export default courseRoutes;
