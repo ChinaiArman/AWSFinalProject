@@ -92,7 +92,7 @@ class Database {
 
     async createCourse(facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
         console.log('Creating course:', facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats);
-        await Course.create({
+        const course = await Course.create({
             faculty_id: facultyId,
             course_name: courseName,
             course_description: courseDescription,
@@ -100,6 +100,7 @@ class Database {
             seats_available: seatsAvailable,
             total_seats: totalSeats
         })
+        return course.id;
 
     }
 
