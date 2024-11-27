@@ -35,6 +35,7 @@ const [courseDescription, setCourseDescription] = useState("");
 const [instructor, setInstructor] = useState("");
 const [roomNumber, setRoomNumber] = useState("");
 const [seatAvailability, setSeatAvailability] = useState(""); // m
+const [startDate, setStartDate] = useState("");
 const [availability, setAvailability] = useState(() => {
   const initialAvailability = {};
   days.forEach((day) => {
@@ -66,6 +67,9 @@ const handleSeatAvailabilityChange = (e) => {
   setSeatAvailability(e.target.value);
 };
 
+const handleStartDateChange = (e) => {
+  setStartDate(e.target.value); // NEW Handler for Start Date
+};
   const [instructorOptions, setInstructorOptions] = useState([]);
 
   const toggleAvailability = (day, slot) => {
@@ -112,6 +116,7 @@ const handleSeatAvailabilityChange = (e) => {
       setInstructor("");
       setRoomNumber("");
       setSeatAvailability("");
+      setStartDate(""); // Reset Start Date
       setAvailability(() => {
         const initialAvailability = {};
         days.forEach((day) => {
@@ -223,6 +228,17 @@ const fetchAvailableInstructors = async (timeSlots) => {
             placeholder="Enter number of seats available"
             required
           />
+          {/* NEW Start Date Field */}
+          <TextField
+            label="Start Date"
+            name="startDate"
+            type="date"
+            value={startDate}
+            onChange={handleStartDateChange}
+            placeholder="Enter start date (YYYY-MM-DD)"
+            required
+          />
+
 
           <div className="mb-4">
             <h2 className="text-md font-semibold">Class Schedule</h2>
