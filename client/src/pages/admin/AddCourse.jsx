@@ -314,7 +314,7 @@ const AddCourse = () => {
               toggleAvailability={toggleAvailability}
               onSave={(updatedAvailability) => {
                 console.log("Updated availability from ScheduleTable:", updatedAvailability);
-                setAvailability(updatedAvailability);
+                handleApply(updatedAvailability); 
               }}
             />
 
