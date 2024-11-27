@@ -67,22 +67,66 @@ courseRoutes.put('/createCourseRuntime/:courseId', isSignedIn, isVerified, isAdm
 courseRoutes.get("/:courseId", isSignedIn, isVerified, isAdmin, async (req, res) => {
     const { courseId } = req.params;
     const db = req.db;
-  
-    try {
-      const course = await db.getCourseById(courseId);
-      if (!course) {
-        return res.status(404).json({ error: "Course not found" });
-      }
-  
-      const runtimes = await db.getCourseRuntimesByCourseId(courseId);
-  
-      res.status(200).json({ course, runtimes });
-    } catch (error) {
-      console.error("Error fetching course details:", error);
-      res.status(500).json({ error: "Failed to fetch course details" });
-    }
-  });
 
+    try {
+        const course = await db.getCourseById(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found" });
+        }
+
+        const runtimes = await db.getCourseRuntimesByCourseId(courseId);
+
+        res.status(200).json({ course, runtimes });
+    } catch (error) {
+        console.error("Error fetching course details:", error);
+        res.status(500).json({ error: "Failed to fetch course details" });
+    }
+});
+
+// Update course by ID
+courseRoutes.put("/updateCourse/:courseId", isSignedIn, isVerified, isAdmin, async (req, res) => {
+    const { courseId } = req.params;
+    const { faculty_id, course_name, course_description, room_number, seats_available, total_seats } = req.body;
+    const db = req.db;
+
+    try {
+        await db.updateCourse(courseId, faculty_id, course_name, course_description, room_number, seats_available, total_seats);
+        res.status(200).json({ message: "Course updated successfully" });
+    } catch (error) {
+        console.error("Error updating course:", error);
+        res.status(500).json({ error: "Failed to update course" });
+    }
+});
+
+// Update course runtimes
+courseRoutes.put("/updateCourseRuntimes/:courseId", isSignedIn, isVerified, isAdmin, async (req, res) => {
+    const { courseId } = req.params;
+    const { runtimes } = req.body; // Array of runtime objects
+    const db = req.db;
+
+    try {
+        // Delete existing runtimes
+        await db.deleteCourseRuntimes(courseId);
+
+        // Add new runtimes
+        for (const runtime of runtimes) {
+            await db.createCourseRuntime(
+                courseId,
+                runtime.start_date,
+                runtime.end_date,
+                runtime.day_of_week,
+                runtime.start_time,
+                runtime.end_time,
+                runtime.location
+            );
+        }
+
+        res.status(200).json({ message: "Course runtimes updated successfully" });
+    } catch (error) {
+        console.error("Error updating course runtimes:", error);
+        res.status(500).json({ error: "Failed to update course runtimes" });
+    }
+});
 
 // EXPORTS
 export default courseRoutes;
