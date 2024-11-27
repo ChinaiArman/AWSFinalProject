@@ -26,8 +26,8 @@ courseRoutes.post('/createCourse', isSignedIn, isVerified, isAdmin, async (req, 
     const db = req.db;
     const { faculty_id, course_name, course_description, room_number, seats_available, total_seats } = req.body;
     try {
-        await db.createCourse(faculty_id, course_name, course_description, room_number, seats_available, total_seats);
-        res.status(200).json({ "message": "Course created successfully" });
+        const courseId = await db.createCourse(faculty_id, course_name, course_description, room_number, seats_available, total_seats);
+        res.status(200).json({ "message": "Course created successfully", courseId });
         return;
     } catch (error) {
         res.status(400).json({ "error": error.message });
