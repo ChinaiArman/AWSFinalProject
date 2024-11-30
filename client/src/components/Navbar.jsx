@@ -18,16 +18,14 @@ function Navbar({ role }) {
     return "/"; // Default route if no role is provided
   };
 
-<<<<<<< HEAD
   // determine profile route based on role
-  const getProfileRoute = () =>{
+  const getProfileRoute = () => {
     if (role === "student") return "/student/profile";
     if (role === "faculty") return "/faculty/profile";
     if (role === "admin") return "/admin/profile";
     return "/";
   };
-  
-=======
+
   const fetchUserProfile = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
@@ -54,7 +52,6 @@ function Navbar({ role }) {
   })
 
 
->>>>>>> 6818b6b447e34095cb5d343b0080a42ff80ec96c
   return (
     <>
       {/* Fixed Navbar */}
@@ -71,17 +68,10 @@ function Navbar({ role }) {
         </div>
 
         {/* Profile Icon */}
-<<<<<<< HEAD
-        <div className="cursor-pointer"
-         onClick={() => navigate(getProfileRoute())}>
-          <AccountCircleIcon />
-        </div>
-=======
         <span>
           <span className="mr-1 text-xs">You are logged in as {name} ({userType})</span>
-          <span className="cursor-pointer"><AccountCircleIcon /></span>
+          <span className="cursor-pointer" onClick={() => navigate(getProfileRoute())}><AccountCircleIcon /></span>
         </span>
->>>>>>> 6818b6b447e34095cb5d343b0080a42ff80ec96c
       </div>
 
       {/* Spacer for Navbar */}
