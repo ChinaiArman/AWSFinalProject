@@ -197,15 +197,15 @@ const AddCourse = () => {
     }
   };
 
-  const handleApply = (newAvailability) => {
+  const handleApply = async () => {
+    // Prepare timeSlots from availability
     const timeSlots = [];
-
     days.forEach((day) => {
-      Object.entries(newAvailability[day]).forEach(([slot, isAvailable]) => {
+      Object.entries(availability[day] || {}).forEach(([slot, isAvailable]) => {
         if (isAvailable) {
           const [startTime, endTime] = slot.split("-").map((time) => {
             const [hour, minute] = time.split(":");
-            return `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+            return `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
           });
 
           timeSlots.push({
@@ -217,7 +217,31 @@ const AddCourse = () => {
       });
     });
 
-    fetchAvailableInstructors(timeSlots);
+    console.log("Sending timeSlots:", timeSlots);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timeSlots }),
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch available instructors");
+
+      const data = await response.json();
+
+      // Populate instructor dropdown with the fetched data
+      const instructors = data.faculty.map((instr) => ({
+        label: `${instr.first_name} ${instr.last_name}`,
+        value: instr.id,
+      }));
+
+      setInstructorOptions(instructors);
+      console.log("Instructor options updated:", instructors);
+    } catch (error) {
+      console.error("Error fetching available instructors:", error);
+    }
   };
 
 
@@ -313,10 +337,9 @@ const AddCourse = () => {
               initialAvailability={availability}
               toggleAvailability={toggleAvailability}
               onSave={(updatedAvailability) => {
-                console.log("Updated availability from ScheduleTable:", updatedAvailability);
+                console.log("Updated availability:", updatedAvailability);
                 setAvailability(updatedAvailability);
-                
-                handleApply(updatedAvailability);
+                handleApply(); // Call Apply after saving the updated availability
               }}
             />
 
