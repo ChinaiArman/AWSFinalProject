@@ -34,7 +34,7 @@ const AddCourse = () => {
   const [courseDescription, setCourseDescription] = useState("");
   const [instructor, setInstructor] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
-  const [seatAvailability, setSeatAvailability] = useState(""); // m
+  const [seatAvailability, setSeatAvailability] = useState("");
   const [startDate, setStartDate] = useState("");
   const [availability, setAvailability] = useState(() => {
     const initialAvailability = {};
@@ -46,6 +46,7 @@ const AddCourse = () => {
     });
     return initialAvailability;
   });
+  const [instructorOptions, setInstructorOptions] = useState([]);
 
   const handleCourseNameChange = (e) => {
     setCourseName(e.target.value);
@@ -68,9 +69,8 @@ const AddCourse = () => {
   };
 
   const handleStartDateChange = (e) => {
-    setStartDate(e.target.value); // NEW Handler for Start Date
+    setStartDate(e.target.value);
   };
-  const [instructorOptions, setInstructorOptions] = useState([]);
 
   const toggleAvailability = (day, slot) => {
     setAvailability((prevAvailability) => {
@@ -86,7 +86,6 @@ const AddCourse = () => {
     });
   };
 
-
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -97,7 +96,7 @@ const AddCourse = () => {
     // Format availability into a list of runtime entries
     const runtimeEntries = [];
     days.forEach((day) => {
-      if (availability[day]) { // Ensure the day exists in availability
+      if (availability[day]) {
         Object.entries(availability[day]).forEach(([slot, isAvailable]) => {
           if (isAvailable) {
             const [startTime, endTime] = slot.split("-").map((time) => {
@@ -106,24 +105,22 @@ const AddCourse = () => {
             });
 
             runtimeEntries.push({
-              start_date: startDate, // Provided by the user
-              end_date: defaultEndDate.toISOString().split("T")[0], // Default to one month later
+              start_date: startDate,
+              end_date: defaultEndDate.toISOString().split("T")[0],
               day_of_week: day,
               start_time: startTime,
-              end_time: endTime || "17:00:00", // Default end time
-              location: roomNumber, // Use room number
+              end_time: endTime || "17:00:00",
+              location: roomNumber,
             });
           }
         });
       }
     });
 
-    console.log("Generated runtime entries:", runtimeEntries); // Debugging
     if (runtimeEntries.length === 0) {
       console.error("No runtime entries were generated.");
       return;
     }
-
 
     const courseData = {
       faculty_id: instructor,
@@ -142,18 +139,16 @@ const AddCourse = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(courseData),
-        credentials: "include"
+        credentials: "include",
       });
 
       if (!response.ok) {
         throw new Error("Failed to save course data");
       }
-      const { courseId } = await response.json(); // Extract course ID
+      const { courseId } = await response.json();
       console.log("Course ID:", courseId);
 
       // Step 2: Create course runtime
-
-
       for (const runtime of runtimeEntries) {
         console.log("Sending runtime data:", runtime);
         const runtimeResponse = await fetch(
@@ -181,7 +176,7 @@ const AddCourse = () => {
       setInstructor("");
       setRoomNumber("");
       setSeatAvailability("");
-      setStartDate(""); // Reset Start Date
+      setStartDate("");
       setAvailability(() => {
         const initialAvailability = {};
         days.forEach((day) => {
@@ -197,18 +192,19 @@ const AddCourse = () => {
     }
   };
 
-  const handleApply = async () => {
-    // Prepare timeSlots from availability
-    const timeSlots = [];
+  // Updated handleApply function
+  const handleApply = async (updatedAvailability) => {
+    // Prepare timeSlots from updatedAvailability
+    const timeSlotsArray = [];
     days.forEach((day) => {
-      Object.entries(availability[day] || {}).forEach(([slot, isAvailable]) => {
+      Object.entries(updatedAvailability[day] || {}).forEach(([slot, isAvailable]) => {
         if (isAvailable) {
           const [startTime, endTime] = slot.split("-").map((time) => {
             const [hour, minute] = time.split(":");
             return `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
           });
 
-          timeSlots.push({
+          timeSlotsArray.push({
             day,
             startTime,
             endTime,
@@ -217,13 +213,13 @@ const AddCourse = () => {
       });
     });
 
-    console.log("Sending timeSlots:", timeSlots);
+    console.log("Sending timeSlots:", timeSlotsArray);
 
     try {
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timeSlots }),
+        body: JSON.stringify({ timeSlots: timeSlotsArray }),
         credentials: "include",
       });
 
@@ -243,34 +239,6 @@ const AddCourse = () => {
       console.error("Error fetching available instructors:", error);
     }
   };
-
-
-
-  const fetchAvailableInstructors = async (timeSlots) => {
-    console.log('timeslots:', timeSlots);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ timeSlots }),
-        credentials: "include"
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch available instructors");
-
-      const data = await response.json();
-
-      const instructors = data.faculty.map((instr) => ({
-        label: `${instr.first_name} ${instr.last_name}`,
-        value: instr.id,
-      }));
-
-      setInstructorOptions(instructors);
-    } catch (error) {
-      console.error("Error fetching available instructors:", error);
-    }
-  };
-
 
   return (
     <div className="flex h-screen">
@@ -328,7 +296,6 @@ const AddCourse = () => {
             required
           />
 
-
           <div className="mb-4">
             <h2 className="text-md font-semibold">Class Schedule</h2>
             <ScheduleTable
@@ -339,10 +306,10 @@ const AddCourse = () => {
               onSave={(updatedAvailability) => {
                 console.log("Updated availability:", updatedAvailability);
                 setAvailability(updatedAvailability);
-                handleApply(); // Call Apply after saving the updated availability
+                handleApply(updatedAvailability); // Pass updatedAvailability directly
               }}
+              hideResetButton={true} // Hide the Reset button
             />
-
           </div>
 
           <DropdownList

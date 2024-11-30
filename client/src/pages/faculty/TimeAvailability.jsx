@@ -8,6 +8,7 @@ function TimeAvailability() {
   const navigate = useNavigate();
   const [facultyId, setFacultyId] = useState(null); // Faculty ID state
   const [availability, setAvailability] = useState({});
+  const [scheduledSlots, setScheduledSlots] = useState({}); // New state for scheduled slots
   const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
@@ -64,9 +65,9 @@ function TimeAvailability() {
     fetchUserProfile();
   }, []);
 
-  // Fetch availability data
+  // Fetch availability data and scheduled courses
   useEffect(() => {
-    const fetchAvailability = async () => {
+    const fetchData = async () => {
       if (!facultyId) {
         return; // Wait until facultyId is available
       }
@@ -74,15 +75,16 @@ function TimeAvailability() {
       try {
         setIsLoading(true); // Start loading
 
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`, {
+        // Fetch availability
+        const availabilityResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`, {
           credentials: "include",
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!availabilityResponse.ok) {
+          throw new Error(`HTTP error! Status: ${availabilityResponse.status}`);
         }
 
-        const data = await response.json();
+        const availabilityData = await availabilityResponse.json();
         const transformedAvailability = {};
 
         // Initialize all slots as false
@@ -93,8 +95,8 @@ function TimeAvailability() {
           });
         });
 
-        // Process API response
-        data.forEach((item) => {
+        // Process availability API response
+        availabilityData.forEach((item) => {
           const { day, start_time, available } = item;
           const availabilityStartMinutes = timeStringToMinutes(start_time);
 
@@ -110,14 +112,51 @@ function TimeAvailability() {
         });
 
         setAvailability(transformedAvailability); // Set availability state
+
+        // Fetch scheduled courses
+        const coursesResponse = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`, {
+          credentials: "include",
+        });
+
+        if (!coursesResponse.ok) {
+          throw new Error(`HTTP error! Status: ${coursesResponse.status}`);
+        }
+
+        const coursesData = await coursesResponse.json();
+
+        // Transform scheduled courses into slots
+        const scheduledSlotsData = {};
+
+        // Initialize all slots as false
+        days.forEach((day) => {
+          scheduledSlotsData[day] = {};
+          timeSlots.forEach((slot) => {
+            scheduledSlotsData[day][slot] = false;
+          });
+        });
+
+        coursesData.courses.forEach((course) => {
+          course.courseRuntimes.forEach((runtime) => {
+            const day = runtime.day_of_week;
+            const startTime = runtime.start_time;
+
+            Object.entries(predefinedTimeSlots).forEach(([slot, [slotStart]]) => {
+              if (startTime === slotStart) {
+                scheduledSlotsData[day][slot] = true;
+              }
+            });
+          });
+        });
+
+        setScheduledSlots(scheduledSlotsData); // Set scheduled slots state
       } catch (error) {
-        console.error("Error fetching availability:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false); // Stop loading
       }
     };
 
-    fetchAvailability();
+    fetchData();
   }, [facultyId]);
 
   // Helper function to convert time to minutes
@@ -140,7 +179,8 @@ function TimeAvailability() {
       days.forEach((day) => {
         timeSlots.forEach((slot) => {
           const isAvailable = newAvailability[day][slot];
-          if (isAvailable) {
+          // Do not include scheduled slots in availability updates
+          if (isAvailable && !scheduledSlots[day][slot]) {
             const [startTime, endTime] = predefinedTimeSlots[slot];
             availabilityList.push({
               day,
@@ -166,6 +206,7 @@ function TimeAvailability() {
 
       if (response.ok) {
         console.log("Availability updated successfully");
+        // Optionally update availability state here if needed
       } else {
         console.error("Failed to update availability");
       }
@@ -189,7 +230,9 @@ function TimeAvailability() {
                 days={days}
                 timeSlots={timeSlots}
                 initialAvailability={availability}
+                scheduledSlots={scheduledSlots} // Pass scheduled slots to ScheduleTable
                 onSave={handleSave}
+                hideResetButton={true} // Hide the Reset button
               />
             </>
           )}
