@@ -7,13 +7,15 @@ function ScheduleTable({
   initialAvailability = {},
   scheduledSlots = {},
   onSave,
-  hideResetButton = false, // New prop to control visibility of Reset button
+  hideResetButton = false, // Controls visibility of Reset button
 }) {
   const [availability, setAvailability] = useState(initialAvailability);
 
   // Sync availability with initialAvailability prop whenever it changes
   useEffect(() => {
-    if (JSON.stringify(availability) !== JSON.stringify(initialAvailability)) {
+    if (
+      JSON.stringify(availability) !== JSON.stringify(initialAvailability)
+    ) {
       setAvailability(initialAvailability);
     }
   }, [initialAvailability]);
@@ -87,10 +89,8 @@ function ScheduleTable({
         </tbody>
       </table>
       <div className="flex justify-center mt-4">
-        <div className="flex w-1/3 justify-between">
-          {!hideResetButton && (
-            <ScheduleButton label="Reset" color="gray" onClick={handleReset} />
-          )}
+        {/* Center the Apply button */}
+        <div className="flex justify-center">
           <ScheduleButton
             label="Apply"
             color="blue"
