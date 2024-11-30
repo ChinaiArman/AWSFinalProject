@@ -51,14 +51,25 @@ const cognito = new Cognito(cognitoClient);
 
 // MIDDLEWARE
 const corsOptions = {
-    origin: process.env.CLIENT_URL,
-    credentials: true,
+    origin: process.env.CLIENT_URL,  
+    credentials: true,               
+    methods: ["GET", "POST", "PUT", "DELETE"],  
+    allowedHeaders: ["Content-Type", "Authorization"], 
     optionsSuccessStatus: 200
 };
-app.use(cors(corsOptions))
+
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(sessionConfig);
+
+app.use((req, res, next) => {
+    console.log('Session ID (from cookie):', req.sessionID); // Logs the session ID
+    console.log('Session Data (from store):', req.session); // Logs the session data
+    next(); // Proceeds to the next middleware or route
+});
+
 app.use((req, res, next) => {
     req.db = db;
     req.cognito = cognito;

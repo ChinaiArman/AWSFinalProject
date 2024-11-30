@@ -43,29 +43,34 @@ function PasswordSetup() {
         return;
       }
 
-      // Step 2: Call the completeVerification API
-      console.log(email);
-      const completeVerificationResponse = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/api/auth/completeVerification`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      if (!completeVerificationResponse.ok) {
-        const errorData = await completeVerificationResponse.json();
-        toast.error(
-          errorData.error || "Password reset successful, but verification failed."
+      // For first-time users, mark the account as verified
+      if (isFirstTime) {
+        const completeVerificationResponse = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/api/auth/completeVerification`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          }
         );
-        return;
+
+        if (!completeVerificationResponse.ok) {
+          const errorData = await completeVerificationResponse.json();
+          toast.error(
+            errorData.error ||
+              "Password reset successful, but verification failed."
+          );
+          return;
+        }
+
+        toast.success(
+          "Password set successfully. Your account is now verified. You can log in."
+        );
+      } else {
+        toast.success("Password reset successfully. You can log in.");
       }
 
-      // Success: Navigate to login
-      toast.success(
-        "Password set successfully. Your account is now verified. You can log in."
-      );
+      // Redirect to login
       navigate("/");
     } catch (err) {
       console.error("Error during password setup:", err);
@@ -75,7 +80,15 @@ function PasswordSetup() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">
           {isFirstTime ? "Complete Your Account" : "Reset Your Password"}
@@ -85,7 +98,9 @@ function PasswordSetup() {
             <div className="mb-4 text-red-500 text-sm font-medium">{error}</div>
           )}
 
-          <label className="block mb-2 text-sm font-medium">Verification Code</label>
+          <label className="block mb-2 text-sm font-medium">
+            Verification Code
+          </label>
           <input
             type="text"
             value={code}

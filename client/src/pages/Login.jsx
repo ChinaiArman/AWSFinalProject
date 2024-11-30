@@ -86,7 +86,7 @@ function Login() {
                 <div className="mt-4 text-sm text-center">
                     <p>
                         Forgot password?{" "}
-                        <a href="/password-setup" className="text-blue-500">
+                        <a href="/forgot-password" className="text-blue-500">
                             Reset Password
                         </a>
                     </p>

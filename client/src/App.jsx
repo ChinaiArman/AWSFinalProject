@@ -20,6 +20,7 @@ import FacultyTimeAvailabilityPage from "./pages/faculty/TimeAvailability"
 import PasswordSetupPage from "./pages/PasswordSetup"
 import "./styles/App.css";
 import ProfileContainer from './pages/ProfileContainer';
+import ForgotPasswordPage from "./pages/ForgotPassword";
 
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
                     <Route path="/" element={<LoginPage />} />
                     <Route path="/verification" element={<VerificationPage />} />
                     <Route path="/password-setup" element={<PasswordSetupPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
                     {/* Admin Routes */}
                     <Route path="/admin/profile" element={

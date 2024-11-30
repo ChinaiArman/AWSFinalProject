@@ -24,6 +24,7 @@ userRoutes.get('/user/:userId', isSignedIn, async (req, res) => {
 
 userRoutes.get('/getUserBySession', isSignedIn, async (req, res) => {
     const db = req.db;
+    console.log(`UserID from getUserBySessions route: ${req.session.userId}`)
     try {
         const user = await db.getUserById(req.session.userId);
         res.status(200).json({ "user": user });
