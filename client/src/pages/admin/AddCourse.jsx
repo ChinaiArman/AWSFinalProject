@@ -132,6 +132,7 @@ const AddCourse = () => {
       room_number: roomNumber,
       seats_available: seatAvailability,
       total_seats: seatAvailability,
+      enable_course: true
     };
 
     try {
