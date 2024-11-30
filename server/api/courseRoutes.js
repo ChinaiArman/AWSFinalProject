@@ -55,6 +55,8 @@ courseRoutes.put('/createCourseRuntime/:courseId', isSignedIn, isVerified, isAdm
     const { start_date, end_date, start_time, end_time, day_of_week, location } = req.body;
     try {
         await db.createCourseRuntime(courseId, start_date, end_date, start_time, end_time, day_of_week, location);
+        // Update faculty availability 
+        await db.updateFacultyAvailabilityForCourse(courseId);
         res.status(200).json({ "message": "Course runtime created successfully" });
         return;
     } catch (error) {
