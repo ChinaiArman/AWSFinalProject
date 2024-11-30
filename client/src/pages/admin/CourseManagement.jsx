@@ -12,6 +12,8 @@ const CourseManagement = () => {
   const [courses, setCourses] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState(null);
+  const [courseToToggle, setCourseToToggle] = useState(null);
+  const [isTogglePopUpOpen, setIsTogglePopUpOpen] = useState(false);
 
   // Sidebar menu items
   const sidebarItems = [
@@ -31,14 +33,15 @@ const CourseManagement = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`,
-          {method: 'GET',
-            credentials: 'include',
+        const response = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`,
+          {
+            method: "GET",
+            credentials: "include",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
-
         );
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
@@ -46,7 +49,7 @@ const CourseManagement = () => {
         const data = await response.json();
 
         setCourses(data.courses);
-        console.log(data.courses)
+        console.log(data.courses);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -59,10 +62,15 @@ const CourseManagement = () => {
   const deleteCourse = async (courseId) => {
     try {
       // Send DELETE request to the backend
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourse/${courseId}`, {
-        method: "DELETE",
-        credentials: 'include', 
-      });
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }/api/course/deleteCourse/${courseId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json(); // Parse error details
@@ -81,11 +89,60 @@ const CourseManagement = () => {
       alert(`Error: ${error.message}`); // Show an error message to the user
     }
   };
+  const toggleCourseStatus = async (courseId, status) => {
+    try {
+      console.log(status, "kdsf");
+      // Send DELETE request to the backend
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }/api/course/toggleCourseStatus/${courseId}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            course_status: !status,
+          }),
+        }
+      );
 
+      if (!response.ok) {
+        const errorData = await response.json(); // Parse error details
+        throw new Error(errorData.error || "Failed to toggle course status");
+      }
+
+      // Update local state to change coure status
+      setCourses((prevCourses) =>
+        prevCourses.map((course) => {
+          if (course.id === courseId) {
+            course.enable_course = !course.enable_course;
+          }
+          return course
+        })
+      );
+      console.log(`Course with ID: ${courseId} has changed status.`);
+      setIsTogglePopUpOpen(false); // Close the confirmation popup
+    } catch (error) {
+      console.error("Error changing status of course:", error);
+      alert(`Error: ${error.message}`); // Show an error message to the user
+    }
+  };
   // Open confirmation popup and set the course to delete
   const openDeleteConfirmation = (course) => {
     setCourseToDelete(course);
-    setIsPopupOpen(true);
+    setIsTogglePopUpOpen(true);
+  };
+
+  const cancelToggle = () => {
+    setIsTogglePopUpOpen(false);
+    setCourseToDelete(null);
+  };
+
+  const openToggleConfirmation = (course) => {
+    setCourseToToggle(course), setIsTogglePopUpOpen(true);
   };
 
   // Close the confirmation popup without deleting
@@ -93,7 +150,7 @@ const CourseManagement = () => {
     setIsPopupOpen(false);
     setCourseToDelete(null);
   };
-
+  console.log(courses);
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -111,7 +168,10 @@ const CourseManagement = () => {
 
         {courses.length > 0 &&
           courses.map((course) => (
-            <BaseDropdownMenu key={course.id} title={`${course.course_name} (ID: ${course.id})`}>
+            <BaseDropdownMenu
+              key={course.id}
+              title={`${course.course_name} (ID: ${course.id})`}
+            >
               <div className="px-6 py-3">
                 {/* Course Information */}
                 <div className="mb-4">
@@ -124,7 +184,11 @@ const CourseManagement = () => {
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Assigned Instructor:</p>
-                  <p>{course.facultyName ? `${course.facultyName} (ID: ${course.faculty_id})` : "TBD"}</p>
+                  <p>
+                    {course.facultyName
+                      ? `${course.facultyName} (ID: ${course.faculty_id})`
+                      : "TBD"}
+                  </p>
                 </div>
                 <div className="mb-4">
                   <p className="font-semibold">Total seats:</p>
@@ -156,8 +220,6 @@ const CourseManagement = () => {
                   </div>
                 </div> */}
 
-
-
                 {/* Buttons */}
                 <div className="flex justify-center gap-12">
                   <DropdownButton
@@ -175,6 +237,19 @@ const CourseManagement = () => {
                     onClick={() => openDeleteConfirmation(course)} // Open confirmation popup
                     color="red"
                   />
+                  {course.enable_course ? (
+                    <DropdownButton
+                      label="Disable Course"
+                      onClick={() => openToggleConfirmation(course)} // Open confirmation popup
+                      color="red"
+                    />
+                  ) : (
+                    <DropdownButton
+                      label="Enable Course"
+                      onClick={() => openToggleConfirmation(course)} // Open confirmation popup
+                      color="blue"
+                    />
+                  )}
                 </div>
               </div>
             </BaseDropdownMenu>
@@ -188,6 +263,16 @@ const CourseManagement = () => {
         message={`Are you sure you want to delete the course "${courseToDelete?.course_name}"?`}
         onConfirm={() => deleteCourse(courseToDelete?.id)}
         onCancel={cancelDelete}
+      />
+
+      <ConfirmationPopup
+        isOpen={isTogglePopUpOpen}
+        title="Toggle Course Status"
+        message={`Are you sure you want to enable/disbale the course "${courseToToggle?.course_name}"?`}
+        onConfirm={() =>
+          toggleCourseStatus(courseToToggle?.id, courseToToggle?.enable_course)
+        }
+        onCancel={cancelToggle}
       />
     </div>
   );

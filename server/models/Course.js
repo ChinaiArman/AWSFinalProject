@@ -33,6 +33,10 @@ const Course = db_config.define('Course', {
     total_seats: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    enable_course:{
+        type: DataTypes.BOOLEAN,
+        allowNull: false
     }
 }, {
     tableName: 'courses',

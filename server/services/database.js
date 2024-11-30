@@ -73,8 +73,18 @@ class Database {
         await User.update({ is_verified: true }, { where: { id: userId } });
     }
 
-    async getAllCourses() {
-        const courses = await Course.findAll();
+    async getAllCourses(isAdmin) {
+        let courses;
+        if(isAdmin){
+             courses = await Course.findAll();
+        } else{
+             courses = await Course.findAll({
+                where: {
+                    enable_course: true,
+                },
+            });
+            
+        }
         // for course in courses, get the course runtimes and the faculty name
         for (let i = 0; i < courses.length; i++) {
             const course = courses[i];
@@ -135,6 +145,23 @@ class Database {
         return courses;
     }
 
+    async toggleCourseStatus(course_id, course_status) {
+        try {
+            const course = await Course.findOne({ where: { id: course_id } });
+            if (!course) {
+                throw new Error(`Course with ID ${course_id} not found.`);
+            }
+    
+            // Update the course status
+            course.enable_course = course_status;
+            await course.save();
+    
+            return { message: "Course status updated successfully", course };
+        } catch (error) {
+            throw new Error("Failed to toggle course status: " + error.message);
+        }
+    }
+    
     async getCoursesByFacultyId(facultyId) {
         const courses = await Course.findAll({
             where: { faculty_id: facultyId }
