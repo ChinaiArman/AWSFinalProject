@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 function MyCourses() {
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const [facultyId, setFacultyId] = useState(null);
+  const [courses, setCourses] = useState([]); // State for courses
+  const [facultyId, setFacultyId] = useState(null); // State for faculty ID
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const sidebarItems = [
     { label: "My Courses", path: "/faculty/my-courses", onClick: () => navigate("/faculty/my-courses") },
@@ -26,8 +27,7 @@ function MyCourses() {
 
         if (response.ok) {
           const data = await response.json();
-          const facultyIdFromProfile = data.user.profile.id; // Extract facultyId from user profile
-          setFacultyId(facultyIdFromProfile);
+          setFacultyId(data.user.profile.id); // Set facultyId from user profile
         } else {
           console.error("Failed to fetch user profile");
         }
@@ -43,18 +43,17 @@ function MyCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       if (!facultyId) {
-        console.error("Faculty ID not available yet");
-        return;
+        return; // Wait until facultyId is available
       }
 
       try {
-        // Fetch the courses for the faculty
+        setIsLoading(true); // Start loading
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`, {
           credentials: "include", // Include cookies in the request
         });
 
         if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -79,7 +78,9 @@ function MyCourses() {
         setCourses(transformedCourses); // Update the courses state
       } catch (error) {
         console.error("Error fetching courses:", error);
-        setCourses([]); // Set to an empty array if an error occurs
+        setCourses([]); // Reset to empty on error
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     };
 
@@ -92,23 +93,29 @@ function MyCourses() {
       <div className="flex-1">
         <Navbar role="faculty" />
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">My Courses</h1>
-          {courses.length === 0 ? (
-            <p>No courses found for this faculty member.</p>
+          {isLoading ? (
+            <p>Loading...</p>
           ) : (
-            courses.map((course) => (
-              <BaseDropdownMenu key={course.id} title={course.name}>
-                <p className="text-gray-700">
-                  <strong>Course Name:</strong> {course.name}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Description:</strong> {course.description}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Schedule:</strong> {course.schedule}
-                </p>
-              </BaseDropdownMenu>
-            ))
+            <>
+              <h1 className="text-2xl font-bold mb-4">My Courses</h1>
+              {courses.length === 0 ? (
+                <p>No courses found for this faculty member.</p>
+              ) : (
+                courses.map((course) => (
+                  <BaseDropdownMenu key={course.id} title={course.name}>
+                    <p className="text-gray-700">
+                      <strong>Course Name:</strong> {course.name}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Description:</strong> {course.description}
+                    </p>
+                    <p className="text-gray-700">
+                      <strong>Schedule:</strong> {course.schedule}
+                    </p>
+                  </BaseDropdownMenu>
+                ))
+              )}
+            </>
           )}
         </div>
       </div>
