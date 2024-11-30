@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 function Navbar({ role }) {
   const navigate = useNavigate();
+  const [name, setName] = useState(null);
+  const [userType, setUserType] = useState(null);
+
+  const userTypes = ["Student", "Faculty", "Admin"];
 
   // Determine the home route based on the role
   const getHomeRoute = () => {
@@ -14,6 +18,7 @@ function Navbar({ role }) {
     return "/"; // Default route if no role is provided
   };
 
+<<<<<<< HEAD
   // determine profile route based on role
   const getProfileRoute = () =>{
     if (role === "student") return "/student/profile";
@@ -22,6 +27,34 @@ function Navbar({ role }) {
     return "/";
   };
   
+=======
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const role = data.user.role;
+        const name = data.user.profile.first_name + " " + data.user.profile.last_name;
+        setUserType(userTypes[role]);
+        setName(name);
+      } else {
+        console.error("Failed to fetch user profile");
+      }
+    } catch {
+      console.error("Error fetching user profile");
+    }
+  }
+
+  useEffect(() => {
+    fetchUserProfile();
+  })
+
+
+>>>>>>> 6818b6b447e34095cb5d343b0080a42ff80ec96c
   return (
     <>
       {/* Fixed Navbar */}
@@ -38,10 +71,17 @@ function Navbar({ role }) {
         </div>
 
         {/* Profile Icon */}
+<<<<<<< HEAD
         <div className="cursor-pointer"
          onClick={() => navigate(getProfileRoute())}>
           <AccountCircleIcon />
         </div>
+=======
+        <span>
+          <span className="mr-1 text-xs">You are logged in as {name} ({userType})</span>
+          <span className="cursor-pointer"><AccountCircleIcon /></span>
+        </span>
+>>>>>>> 6818b6b447e34095cb5d343b0080a42ff80ec96c
       </div>
 
       {/* Spacer for Navbar */}
