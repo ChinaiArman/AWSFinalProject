@@ -4,6 +4,7 @@ import User from '../models/User.js';
 
 // FUNCTIONS
 const isSignedIn = async (req, res, next) => {
+    console.log(`UserID from isSignedIn route: ${req.session.userId}`)
     if (!req.session.userId) {
         res.status(401).json({ "error": "User is not signed in; session" });
         return;
