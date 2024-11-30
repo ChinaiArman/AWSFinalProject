@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 function TimeAvailability() {
   const navigate = useNavigate();
-  const [facultyId, setFacultyId] = useState(null);
+  const [facultyId, setFacultyId] = useState(null); // Faculty ID state
+  const [availability, setAvailability] = useState({});
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
@@ -39,61 +41,51 @@ function TimeAvailability() {
     { label: "Time Availability", path: "/faculty/time-availability", onClick: () => navigate("/faculty/time-availability") },
   ];
 
-  const [availability, setAvailability] = useState(() => {
-    const initialAvailability = {};
-    days.forEach((day) => {
-      initialAvailability[day] = {};
-      timeSlots.forEach((slot) => {
-        initialAvailability[day][slot] = false;
-      });
-    });
-    return initialAvailability;
-  });
-
-  const timeStringToMinutes = (timeString) => {
-    const [hours, minutes, seconds] = timeString.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
-
+  // Fetch user profile to get faculty ID
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
-          method: 'GET',
-          credentials: 'include', // Include cookies in the request
+          method: "GET",
+          credentials: "include", // Include cookies in the request
         });
 
         if (response.ok) {
           const data = await response.json();
-          const facultyIdFromProfile = data.user.profile.id;
-          setFacultyId(facultyIdFromProfile);
+          setFacultyId(data.user?.profile?.id || null);
         } else {
-          console.error('Failed to fetch user profile');
+          console.error("Failed to fetch user profile");
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.error("Error fetching user profile:", error);
       }
     };
 
     fetchUserProfile();
   }, []);
 
+  // Fetch availability data
   useEffect(() => {
     const fetchAvailability = async () => {
       if (!facultyId) {
-        console.error('Faculty ID not available yet');
-        return;
+        return; // Wait until facultyId is available
       }
 
       try {
+        setIsLoading(true); // Start loading
+
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/${facultyId}`, {
-          credentials: 'include', // Include cookies in the request
+          credentials: "include",
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
-
-        console.log("API Response:", data);
-
         const transformedAvailability = {};
+
+        // Initialize all slots as false
         days.forEach((day) => {
           transformedAvailability[day] = {};
           timeSlots.forEach((slot) => {
@@ -101,46 +93,50 @@ function TimeAvailability() {
           });
         });
 
+        // Process API response
         data.forEach((item) => {
-          const { day, start_time, end_time, available } = item;
-
-          console.log(`Processing: day=${day}, start_time=${start_time}, end_time=${end_time}, available=${available}`);
-
+          const { day, start_time, available } = item;
           const availabilityStartMinutes = timeStringToMinutes(start_time);
 
-          for (const [slot, [slotStart, slotEnd]] of Object.entries(predefinedTimeSlots)) {
+          Object.entries(predefinedTimeSlots).forEach(([slot, [slotStart]]) => {
             const slotStartMinutes = timeStringToMinutes(slotStart);
 
             if (slotStartMinutes === availabilityStartMinutes) {
               if (transformedAvailability[day]) {
                 transformedAvailability[day][slot] = available;
-                console.log(`Matched Slot: ${slot} for Day: ${day}`);
               }
             }
-          }
+          });
         });
 
-        console.log("Transformed Availability:", transformedAvailability);
-        setAvailability(transformedAvailability);
+        setAvailability(transformedAvailability); // Set availability state
       } catch (error) {
         console.error("Error fetching availability:", error);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     };
 
     fetchAvailability();
   }, [facultyId]);
 
-  const handleSave = async (newAvailability) => {
-    console.log("Saved Availability:", newAvailability);
+  // Helper function to convert time to minutes
+  const timeStringToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
 
+  // Handle save action
+  const handleSave = async (newAvailability) => {
     if (!facultyId) {
-      console.error('Faculty ID not available');
+      console.error("Faculty ID not available");
       return;
     }
 
     try {
       const availabilityList = [];
 
+      // Transform availability into API format
       days.forEach((day) => {
         timeSlots.forEach((slot) => {
           const isAvailable = newAvailability[day][slot];
@@ -164,7 +160,7 @@ function TimeAvailability() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ availability: availabilityList }),
-          credentials: 'include', // Include cookies in the request
+          credentials: "include",
         }
       );
 
@@ -180,17 +176,23 @@ function TimeAvailability() {
 
   return (
     <div className="flex h-screen">
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Faculty Dashboard" items={sidebarItems} />
       <div className="flex-1">
         <Navbar role="faculty" />
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Time Availability</h1>
-          <ScheduleTable
-            days={days}
-            timeSlots={timeSlots}
-            initialAvailability={availability}
-            onSave={handleSave}
-          />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold mb-4">Time Availability</h1>
+              <ScheduleTable
+                days={days}
+                timeSlots={timeSlots}
+                initialAvailability={availability}
+                onSave={handleSave}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -16,6 +16,7 @@ const EnrollCourses = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null); // Selected course ID for enrollment
   const [studentId, setStudentId] = useState(null); // State for student ID
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
@@ -49,22 +50,12 @@ const EnrollCourses = () => {
   }, []);
 
   useEffect(() => {
-    // Update filtered courses based on search query
-    const filtered = courses.filter((course) =>
-      course.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredCourses(filtered);
-  }, [searchQuery, courses]);
-
-  // Fetch courses from the API
-  useEffect(() => {
-    if (!studentId) {
-      console.error("Student ID not available yet");
-      return;
-    }
+    // Fetch courses only when `studentId` is available
+    if (!studentId) return;
 
     const fetchCourses = async () => {
       try {
+        setIsLoading(true); // Start loading
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`, {
           credentials: "include", // Include cookies in the request
         });
@@ -72,6 +63,7 @@ const EnrollCourses = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const data = await response.json();
         const courses = data.courses.map((course) => ({
           id: course.id,
@@ -86,17 +78,28 @@ const EnrollCourses = () => {
           room: `Room ${course.room_number}`,
           seat: `${course.seats_available} seats available out of ${course.total_seats}`,
         }));
+
         setCourses(courses); // Set courses with fetched data
         setFilteredCourses(courses); // Initialize filtered courses
       } catch (error) {
         console.error("Error fetching courses:", error);
         setCourses([]);
         setFilteredCourses([]);
+      } finally {
+        setIsLoading(false); // End loading
       }
     };
 
     fetchCourses();
-  }, [studentId]); // Depend on studentId
+  }, [studentId]);
+
+  useEffect(() => {
+    // Update filtered courses based on search query
+    const filtered = courses.filter((course) =>
+      course.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  }, [searchQuery, courses]);
 
   const handleConfirm = async () => {
     setIsPopupOpen(false);
@@ -107,10 +110,10 @@ const EnrollCourses = () => {
           method: 'PUT',
           credentials: 'include', // Include cookies in the request
         });
-  
+
         const data = await response.json();
         console.log('Enrollment response:', data); // Log response for debugging
-  
+
         if (!response.ok) {
           throw new Error(data.message || `HTTP error! Status: ${response.status}`);
         }
@@ -124,7 +127,6 @@ const EnrollCourses = () => {
       toast.warning("No course selected for enrollment.");
     }
   };
-  
 
   const handleCancel = () => {
     setIsPopupOpen(false);
@@ -135,8 +137,8 @@ const EnrollCourses = () => {
     <div className="flex h-screen">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
-  
+      <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
+
       {/* Main Content */}
       <div className="flex-1">
         <Navbar role="student" />
@@ -150,7 +152,9 @@ const EnrollCourses = () => {
           />
   
           {/* Display Courses */}
-          {filteredCourses.length === 0 ? (
+          {isLoading ? (
+            <p>Loading courses...</p>
+          ) : filteredCourses.length === 0 ? (
             <p>No courses found.</p>
           ) : (
             filteredCourses.map((course) => (

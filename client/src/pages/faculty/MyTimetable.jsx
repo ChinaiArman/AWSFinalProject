@@ -6,29 +6,27 @@ import { useNavigate } from "react-router-dom";
 
 const MyTimetable = () => {
   const navigate = useNavigate();
-  const [timetableData, setTimetableData] = useState([]); // State for timetable data
-  const [facultyId, setFacultyId] = useState(null); // State for faculty ID
+  const [timetableData, setTimetableData] = useState([]);
+  const [facultyId, setFacultyId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Sidebar menu items for faculty
   const sidebarItems = [
     { label: "My Courses", path: "/faculty/my-courses", onClick: () => navigate("/faculty/my-courses") },
     { label: "My Timetable", path: "/faculty/my-timetable", onClick: () => navigate("/faculty/my-timetable") },
     { label: "Time Availability", path: "/faculty/time-availability", onClick: () => navigate("/faculty/time-availability") },
   ];
 
-  // Fetch faculty ID from session
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/user/getUserBySession`, {
           method: "GET",
-          credentials: "include", // Include cookies in the request
+          credentials: "include",
         });
 
         if (response.ok) {
           const data = await response.json();
-          const facultyIdFromProfile = data.user.profile.id; // Assuming this is the facultyId
-          setFacultyId(facultyIdFromProfile);
+          setFacultyId(data.user?.profile?.id || null);
         } else {
           console.error("Failed to fetch user profile");
         }
@@ -40,7 +38,6 @@ const MyTimetable = () => {
     fetchUserProfile();
   }, []);
 
-  // Fetch faculty timetable data when faculty ID is available
   useEffect(() => {
     const fetchTimetableData = async () => {
       if (!facultyId) {
@@ -49,8 +46,10 @@ const MyTimetable = () => {
       }
 
       try {
+        setIsLoading(true);
+
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/faculty/${facultyId}/courses`, {
-          credentials: "include", // Include cookies in the request
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -59,40 +58,42 @@ const MyTimetable = () => {
 
         const data = await response.json();
 
-        // Transform API data into timetable format
         const timetable = data.courses.flatMap((course) =>
-          course.courseRuntimes.map((runtime) => {
-            return {
-              day: runtime.day_of_week || "N/A", // Use day_of_week
-              courseName: course.course_name, // Course name
-              startTime: runtime.start_time, // Start time
-              endTime: runtime.end_time, // End time
-              color: course.id, // Assign color based on course ID
-            };
-          })
+          course.courseRuntimes.map((runtime) => ({
+            day: runtime.day_of_week || "N/A",
+            courseName: course.course_name,
+            startTime: runtime.start_time,
+            endTime: runtime.end_time,
+            color: course.id,
+          }))
         );
 
-        setTimetableData(timetable); // Set the transformed data
+        setTimetableData(timetable);
       } catch (error) {
         console.error("Error fetching timetable data:", error);
-        setTimetableData([]); // Reset to empty on error
+        setTimetableData([]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchTimetableData();
-  }, [facultyId]); // Depend on facultyId
+    if (facultyId) fetchTimetableData();
+  }, [facultyId]);
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
-
-      {/* Main Content */}
+      <BaseSidebar dashboardName="Faculty Dashboard" items={sidebarItems} />
       <div className="flex-1">
         <Navbar role="faculty" />
         <div className="p-4">
-          <h1 className="text-2xl font-bold text-center mb-6">Faculty My Timetable</h1>
-          <Timetable timetableData={timetableData} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-center mb-6">Faculty My Timetable</h1>
+              <Timetable timetableData={timetableData} />
+            </>
+          )}
         </div>
       </div>
     </div>

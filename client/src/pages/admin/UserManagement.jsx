@@ -72,7 +72,7 @@ const UserManagement = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">

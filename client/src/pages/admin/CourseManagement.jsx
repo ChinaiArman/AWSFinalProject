@@ -101,8 +101,8 @@ const CourseManagement = () => {
     <div className="flex h-screen">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
-  
+      <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
+
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
