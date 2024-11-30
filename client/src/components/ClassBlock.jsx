@@ -21,9 +21,17 @@ const ClassBlock = ({ courseName, startTime, endTime, color }) => {
         top: `${topPosition}px`,
         height: `${height}px`,
         backgroundColor: color || "#4A90E2",
+        overflowY: courseName.length > 30 ? "auto" : "hidden", // scroll for super long names
       }}
     >
-      <div className="font-bold">{courseName}</div>
+      <div
+        className="font-bold"
+        style={{
+          fontSize: courseName.length > 20 ? "0.75rem" : "1rem", // smaller font for long-ish names
+        }}
+      >
+        {courseName}
+      </div>
       <div>{`${startTime} - ${endTime}`}</div>
     </div>
   );
