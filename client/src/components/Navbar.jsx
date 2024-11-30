@@ -14,6 +14,14 @@ function Navbar({ role }) {
     return "/"; // Default route if no role is provided
   };
 
+  // determine profile route based on role
+  const getProfileRoute = () =>{
+    if (role === "student") return "/student/profile";
+    if (role === "faculty") return "/faculty/profile";
+    if (role === "admin") return "/admin/profile";
+    return "/";
+  };
+  
   return (
     <>
       {/* Fixed Navbar */}
@@ -30,7 +38,8 @@ function Navbar({ role }) {
         </div>
 
         {/* Profile Icon */}
-        <div className="cursor-pointer">
+        <div className="cursor-pointer"
+         onClick={() => navigate(getProfileRoute())}>
           <AccountCircleIcon />
         </div>
       </div>
