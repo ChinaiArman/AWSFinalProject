@@ -22,7 +22,6 @@ const EnrollCourses = () => {
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
     { label: "My Timetable", path: "/student/my-timetable", onClick: () => navigate("/student/my-timetable") },
-    { label: "Waitlist", path: "/student/waitlist", onClick: () => navigate("/student/waitlist") },
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
