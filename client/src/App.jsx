@@ -19,6 +19,9 @@ import FacultyMyTimetablePage from "./pages/faculty/MyTimetable"
 import FacultyTimeAvailabilityPage from "./pages/faculty/TimeAvailability"
 import PasswordSetupPage from "./pages/PasswordSetup"
 import "./styles/App.css";
+import ProfileContainer from './pages/ProfileContainer';
+import ForgotPasswordPage from "./pages/ForgotPassword";
+
 
 const App = () => {
   return (
@@ -34,8 +37,12 @@ const App = () => {
                     <Route path="/" element={<LoginPage />} />
                     <Route path="/verification" element={<VerificationPage />} />
                     <Route path="/password-setup" element={<PasswordSetupPage />} />
+                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
                     {/* Admin Routes */}
+                    <Route path="/admin/profile" element={
+                      <PrivateRoute role="admin" element={<ProfileContainer role="admin"/>} />
+                    } />
                     <Route path="/admin/user-management" element={
                       <PrivateRoute role="admin"
                         element={<UserManagement />}
@@ -56,8 +63,11 @@ const App = () => {
                         element={<AdminAddCoursePage />}
                       />
                     } />
-                    
+
                     {/* Student Routes */}
+                    <Route path="/student/profile" element={
+                      <PrivateRoute role="student" element={<ProfileContainer role="student"/>} />
+                    } />
                     <Route path="/student/my-courses" element={
                       <PrivateRoute role="student"
                         element={<StudentMyCoursesPage />}
@@ -75,6 +85,9 @@ const App = () => {
                     } />
 
                     {/* Faculty Routes */}
+                    <Route path="/faculty/profile" element={
+                      <PrivateRoute role="faculty" element={<ProfileContainer role="faculty"/>} />
+                    } />
                     <Route path="/faculty/my-courses" element={
                       <PrivateRoute role="faculty"
                         element={<FacultyMyCoursesPage />}

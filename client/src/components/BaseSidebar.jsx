@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 
-function BaseSidebar({ items, children }) {
+function BaseSidebar({ dashboardName, items, children }) {
   const location = useLocation(); // Get the current route
 
   return (
@@ -11,7 +11,7 @@ function BaseSidebar({ items, children }) {
         className="bg-gray-800 text-white w-64 h-screen fixed top-0 left-0 pt-16"
         style={{ paddingTop: "4rem" }} // Matches the height of the fixed navbar
       >
-        <h1 className="text-lg font-bold p-4">Menu</h1>
+        <h1 className="text-lg font-bold p-4">{dashboardName}</h1>
         <ul>
           {items.map((item) => (
             <li

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Verification() {
   const navigate = useNavigate();
@@ -9,7 +11,6 @@ function Verification() {
   const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
-    // Ensure the element exists before calling focus
     const firstDigitInput = document.getElementById("digit-0");
     if (firstDigitInput) {
       firstDigitInput.focus();
@@ -39,14 +40,14 @@ function Verification() {
     setEmailError(!isValidEmail);
 
     if (!isValidEmail) {
-      alert("Please enter a valid email.");
+      toast.error("Please enter a valid email.");
       return;
     }
 
     const verificationCode = code.join(""); // Combine the code into a single string
 
     if (verificationCode.length !== 6) {
-      alert("Please enter the 6-digit verification code.");
+      toast.error("Please enter the 6-digit verification code.");
       return;
     }
 
@@ -63,11 +64,11 @@ function Verification() {
 
       if (!verifyResponse.ok) {
         const errorData = await verifyResponse.json();
-        alert(`Verification failed: ${errorData.error}`);
+        toast.error(`Verification failed: ${errorData.error}`);
         return;
       }
 
-      alert("Verification successful!");
+      toast.success("Verification successful!");
 
       // Step 2: Request a new code
       const forgotPasswordResponse = await fetch(
@@ -80,17 +81,17 @@ function Verification() {
       );
 
       if (!forgotPasswordResponse.ok) {
-        alert("Failed to request a new code for password setup. Please try again.");
+        toast.error("Failed to request a new code for password setup. Please try again.");
         return;
       }
 
-      alert("A new verification code has been sent to your email for password setup.");
+      toast.success("A new verification code has been sent to your email for password setup.");
 
       // Step 3: Navigate to the password setup page
       navigate("/password-setup", { state: { isFirstTime: true, email } });
     } catch (error) {
       console.error("Error during account completion:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
@@ -99,7 +100,7 @@ function Verification() {
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setEmailError(true);
-      alert("Please enter a valid email.");
+      toast.error("Please enter a valid email.");
       return;
     }
 
@@ -110,17 +111,19 @@ function Verification() {
         body: JSON.stringify({ email }),
       });
       if (response.ok) {
-        alert("A new verification code has been sent to your email.");
+        toast.success("A new verification code has been sent to your email.");
       } else {
-        alert("Failed to request a new code. Please check your email.");
+        toast.error("Failed to request a new code. Please check your email.");
       }
     } catch (error) {
       console.error("Request new code error:", error);
+      toast.error("An error occurred while requesting a new code. Please try again.");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">Verify</h1>
         <form>

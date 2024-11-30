@@ -6,6 +6,8 @@ import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -76,17 +78,18 @@ const CourseManagement = () => {
         const errorData = await response.json(); // Parse error details
         throw new Error(errorData.error || "Failed to delete course");
       }
-
+  
       // Update local state to remove the deleted course
       setCourses((prevCourses) =>
         prevCourses.filter((course) => course.id !== courseId)
       );
-
+  
       console.log(`Course with ID: ${courseId} has been deleted.`);
       setIsPopupOpen(false); // Close the confirmation popup
+      toast.success(`Course with ID: ${courseId} has been successfully deleted.`);
     } catch (error) {
       console.error("Error deleting course:", error);
-      alert(`Error: ${error.message}`); // Show an error message to the user
+      toast.error(`Error: ${error.message}`);
     }
   };
   const toggleCourseStatus = async (courseId, status) => {
@@ -153,19 +156,20 @@ const CourseManagement = () => {
   console.log(courses);
   return (
     <div className="flex h-screen">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
-
+  
         <AddButton
           label="Add Course"
           onClick={() => navigate("/admin/add-course")}
           color="gray"
         />
-
+  
         {courses.length > 0 &&
           courses.map((course) => (
             <BaseDropdownMenu
@@ -255,7 +259,7 @@ const CourseManagement = () => {
             </BaseDropdownMenu>
           ))}
       </div>
-
+  
       {/* Confirmation Popup */}
       <ConfirmationPopup
         isOpen={isPopupOpen}

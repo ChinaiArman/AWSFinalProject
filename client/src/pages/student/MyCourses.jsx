@@ -1,4 +1,3 @@
-//MyCourses.jsx
 import React, { useEffect, useState } from "react";
 import BaseSidebar from "../../components/BaseSidebar";
 import Navbar from "../../components/Navbar";
@@ -6,6 +5,8 @@ import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import SearchBar from "../../components/SearchBar";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MyCourses() {
   const navigate = useNavigate();
@@ -14,14 +15,13 @@ function MyCourses() {
   const [filteredCourses, setFilteredCourses] = useState([]); // State for filtered courses
   const [isPopupOpen, setIsPopupOpen] = useState(false); // State for popup visibility
   const [courseToDrop, setCourseToDrop] = useState(null); // State to track which course is being dropped
-  const [isLoading, setIsLoading] = useState(false); // State for loading status
+  const [isLoading, setIsLoading] = useState(true); // State for loading status
   const [studentId, setStudentId] = useState(null); // State for student ID
 
   // Sidebar menu items for students
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
     { label: "My Timetable", path: "/student/my-timetable", onClick: () => navigate("/student/my-timetable") },
-    { label: "Waitlist", path: "/student/waitlist", onClick: () => navigate("/student/waitlist") },
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
@@ -52,23 +52,25 @@ function MyCourses() {
   // Fetch enrolled courses for the student
   useEffect(() => {
     if (!studentId) {
-      console.error("Student ID not available yet");
+      console.log("Student ID not available yet.");
       return;
     }
 
     const fetchCourses = async () => {
-      setIsLoading(true);
+      setIsLoading(true); // Show loading indicator
       try {
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`, {
           credentials: "include", // Include cookies in the request
         });
 
-
         if (!response.ok) {
           throw new Error(`Failed to fetch courses: ${response.statusText}`);
         }
+
         const data = await response.json();
         console.log("API Response:", data); // Debugging: Log the API response
+
+        // Transform the response data into the required structure
         const formattedCourses = data.courses.map((course) => ({
           id: course.id,
           name: course.course_name,
@@ -83,19 +85,20 @@ function MyCourses() {
           enrollmentDate: course.enrollment?.[0]?.enrollment_date || "N/A",
           status: course.enrollment?.[0]?.status || "N/A",
         }));
-        setCourses(formattedCourses); // Set courses with formatted data
-        setFilteredCourses(formattedCourses); // Initialize filtered courses
+
+        setCourses(formattedCourses); // Update the courses state
+        setFilteredCourses(formattedCourses); // Update the filtered courses state
       } catch (error) {
         console.error("Error fetching courses:", error);
         setCourses([]);
         setFilteredCourses([]);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Hide loading indicator
       }
     };
 
     fetchCourses();
-  }, [studentId]); // Depend on studentId
+  }, [studentId]); // Trigger when studentId changes
 
   // Filter courses based on the search query
   useEffect(() => {
@@ -119,8 +122,8 @@ function MyCourses() {
   const handleConfirmDrop = async () => {
     setIsPopupOpen(false);
     if (!courseToDrop) return;
-  
-    setIsLoading(true);
+
+    setIsLoading(true); // Show loading indicator
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/drop/${courseToDrop.id}`,
@@ -129,27 +132,27 @@ function MyCourses() {
           credentials: "include", // Include cookies in the request
         }
       );
-  
+
       const data = await response.json();
       console.log("Drop Course Response:", data); // Log the API response
-  
+
       if (!response.ok) {
         throw new Error(data.message || `HTTP error! Status: ${response.status}`);
       }
-  
+
+      // Remove the dropped course from the list
       const updatedCourses = courses.filter((course) => course.id !== courseToDrop.id);
       setCourses(updatedCourses);
       setFilteredCourses(updatedCourses);
-      alert(`Dropped course: ${courseToDrop.name}`);
+      toast.success(`Successfully dropped course: ${courseToDrop.name}`);
     } catch (error) {
       console.error("Error dropping course:", error);
-      alert("Failed to drop the course. Please try again.");
+      toast.error("Failed to drop the course. Please try again.");
     } finally {
       setCourseToDrop(null);
-      setIsLoading(false);
+      setIsLoading(false); // Hide loading indicator
     }
   };
-  
 
   // Cancel dropping the course
   const handleCancelDrop = () => {
@@ -159,21 +162,22 @@ function MyCourses() {
 
   return (
     <div className="flex h-screen">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
 
       {/* Main Content */}
       <div className="flex-1">
         <Navbar role="student" />
         <div className="p-4">
           <h1 className="text-2xl font-bold mb-4">My Courses</h1>
-
+  
           {/* Search Bar */}
           <SearchBar
             placeholder="Search for a course..."
             onSearch={setSearchQuery} // Update search query when user types
           />
-
+  
           {/* Display Courses */}
           {isLoading ? (
             <p>Loading courses...</p>
@@ -206,7 +210,7 @@ function MyCourses() {
               </BaseDropdownMenu>
             ))
           )}
-
+  
           {/* Confirmation Popup */}
           <ConfirmationPopup
             isOpen={isPopupOpen}

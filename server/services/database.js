@@ -479,6 +479,38 @@ class Database {
         await CourseRuntime.destroy({ where: { course_id: courseId } });
       }
 
+    
+      async updateFacultyAvailabilityForCourse(courseId) {
+        try {
+            // First, get the course runtimes
+            const courseRuntimes = await this.getCourseRuntimesByCourseId(courseId);
+            
+            // Get the faculty ID for this course
+            const course = await this.getCourseById(courseId);
+            const facultyId = course.faculty_id;
+    
+            // For each course runtime, update the corresponding faculty availability
+            for (const runtime of courseRuntimes) {
+                await FacultyAvailability.update(
+                    { available: false },
+                    {
+                        where: {
+                            faculty_id: facultyId,
+                            day: runtime.day_of_week,
+                            start_time: runtime.start_time,
+                            end_time: runtime.end_time
+                        }
+                    }
+                );
+            }
+    
+            return true;
+        } catch (error) {
+            console.error('Error updating faculty availability:', error);
+            throw new Error('Failed to update faculty availability for course');
+        }
+    }
+
       
       
 

@@ -11,6 +11,7 @@ const DropdownButton = ({ label, onClick, color = 'blue', className = '' }) => {
     orange: 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700',
     yellow: 'bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700',
     gray: 'bg-gray-500 hover:bg-gray-600 active:bg-gray-700',
+    black: 'bg-black hover:bg-gray-800 active:bg-gray-900',
   };
 
   return (

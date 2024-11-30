@@ -5,6 +5,8 @@ import Navbar from "../../components/Navbar";
 import SearchBar from "../../components/SearchBar";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EnrollCourses = () => {
   const navigate = useNavigate();
@@ -14,11 +16,12 @@ const EnrollCourses = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null); // Selected course ID for enrollment
   const [studentId, setStudentId] = useState(null); // State for student ID
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState(new Set()); // Track enrolled course IDs
 
   const sidebarItems = [
     { label: "My Courses", path: "/student/my-courses", onClick: () => navigate("/student/my-courses") },
     { label: "My Timetable", path: "/student/my-timetable", onClick: () => navigate("/student/my-timetable") },
-    { label: "Waitlist", path: "/student/waitlist", onClick: () => navigate("/student/waitlist") },
     { label: "Enroll Course", path: "/student/enroll-courses", onClick: () => navigate("/student/enroll-courses") },
   ];
 
@@ -46,23 +49,37 @@ const EnrollCourses = () => {
     fetchUserProfile();
   }, []);
 
+  // Fetch enrolled courses
   useEffect(() => {
-    // Update filtered courses based on search query
-    const filtered = courses.filter((course) =>
-      course.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredCourses(filtered);
-  }, [searchQuery, courses]);
+    if (!studentId) return;
 
-  // Fetch courses from the API
+    const fetchEnrolledCourses = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/student/${studentId}/courses`, {
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch enrolled courses");
+
+        const data = await response.json();
+        const enrolledIds = new Set(data.courses.map(course => course.id));
+        setEnrolledCourseIds(enrolledIds); // Store enrolled course IDs
+      } catch (error) {
+        console.error("Error fetching enrolled courses:", error);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, [studentId]);
+
+  // Fetch all courses
   useEffect(() => {
-    if (!studentId) {
-      console.error("Student ID not available yet");
-      return;
-    }
+        // Fetch courses only when `studentId` is available
+    if (!studentId) return;
 
     const fetchCourses = async () => {
       try {
+        setIsLoading(true); // Start loading
         const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/getAllCourses`, {
           credentials: "include", // Include cookies in the request
         });
@@ -70,6 +87,7 @@ const EnrollCourses = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const data = await response.json();
         const courses = data.courses.map((course) => ({
           id: course.id,
@@ -84,17 +102,28 @@ const EnrollCourses = () => {
           room: `Room ${course.room_number}`,
           seat: `${course.seats_available} seats available out of ${course.total_seats}`,
         }));
+
         setCourses(courses); // Set courses with fetched data
         setFilteredCourses(courses); // Initialize filtered courses
       } catch (error) {
         console.error("Error fetching courses:", error);
         setCourses([]);
         setFilteredCourses([]);
+      } finally {
+        setIsLoading(false); // End loading
       }
     };
 
     fetchCourses();
-  }, [studentId]); // Depend on studentId
+  }, [studentId]);
+
+  useEffect(() => {
+    // Update filtered courses based on search query
+    const filtered = courses.filter((course) =>
+      course.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  }, [searchQuery, courses]);
 
   const handleConfirm = async () => {
     setIsPopupOpen(false);
@@ -105,54 +134,58 @@ const EnrollCourses = () => {
           method: 'PUT',
           credentials: 'include', // Include cookies in the request
         });
-  
+
         const data = await response.json();
         console.log('Enrollment response:', data); // Log response for debugging
-  
+
         if (!response.ok) {
           throw new Error(data.message || `HTTP error! Status: ${response.status}`);
         }
-  
-        alert(data.message || "Enrolled successfully!");
+
+        toast.success(data.message || "Enrolled successfully!");
+        // Add the newly enrolled course ID to the enrolled courses list
+        setEnrolledCourseIds(new Set([...enrolledCourseIds, selectedCourseId]));
       } catch (error) {
         console.error("Error enrolling in course:", error);
-        alert("Enrollment failed. Please try again.");
+        toast.error("Enrollment failed. Please try again.");
       }
     } else {
-      alert("No course selected for enrollment.");
+      toast.warning("No course selected for enrollment.");
     }
   };
-  
 
   const handleCancel = () => {
     setIsPopupOpen(false);
-    alert("Enrollment canceled."); // Optional action
+    toast.info("Enrollment canceled."); // Optional action
   };
 
   return (
     <div className="flex h-screen">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
 
-      {/* Main Content */}
+      {/* Main Content */}      
       <div className="flex-1">
         <Navbar role="student" />
         <div className="p-4">
           <h1 className="text-2xl font-bold text-center mb-6">Enroll Courses</h1>
-
+            
           {/* Search Bar */}
           <SearchBar
             placeholder="Search for a course..."
             onSearch={setSearchQuery} // Update search query when user types
           />
-
+  
           {/* Display Courses */}
-          {filteredCourses.length === 0 ? (
+          {isLoading ? (
+            <p>Loading courses...</p>
+          ) : filteredCourses.length === 0 ? (
             <p>No courses found.</p>
           ) : (
             filteredCourses.map((course) => (
               <BaseDropdownMenu key={course.id} title={course.name}>
-                <p className="text-gray-700">
+                 <p className="text-gray-700">
                   <strong>Description:</strong> {course.description}
                 </p>
                 <p className="text-gray-700">
@@ -166,20 +199,25 @@ const EnrollCourses = () => {
                 </p>
                 <p className="text-gray-700">
                   <strong>Seat:</strong> {course.seat}
-                </p>
+                </p>                
                 <button
                   onClick={() => {
                     setSelectedCourseId(course.id); // Set selected course ID
                     setIsPopupOpen(true); // Open confirmation popup
                   }}
-                  className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  disabled={enrolledCourseIds.has(course.id)} // Disable button if already enrolled
+                  className={`mt-2 px-4 py-2 rounded ${
+                    enrolledCourseIds.has(course.id)
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
                 >
-                  Enroll
+                  {enrolledCourseIds.has(course.id) ? "Enrolled" : "Enroll"}
                 </button>
               </BaseDropdownMenu>
             ))
           )}
-
+            
           {/* Confirmation Popup */}
           <ConfirmationPopup
             isOpen={isPopupOpen}
