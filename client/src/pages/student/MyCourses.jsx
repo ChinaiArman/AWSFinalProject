@@ -5,6 +5,8 @@ import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import SearchBar from "../../components/SearchBar";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MyCourses() {
   const navigate = useNavigate();
@@ -143,10 +145,10 @@ function MyCourses() {
       const updatedCourses = courses.filter((course) => course.id !== courseToDrop.id);
       setCourses(updatedCourses);
       setFilteredCourses(updatedCourses);
-      alert(`Dropped course: ${courseToDrop.name}`);
+      toast.success(`Successfully dropped course: ${courseToDrop.name}`);
     } catch (error) {
       console.error("Error dropping course:", error);
-      alert("Failed to drop the course. Please try again.");
+      toast.error("Failed to drop the course. Please try again.");
     } finally {
       setCourseToDrop(null);
       setIsLoading(false); // Hide loading indicator
@@ -161,6 +163,7 @@ function MyCourses() {
 
   return (
     <div className="flex h-screen">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
       <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
 
@@ -169,13 +172,13 @@ function MyCourses() {
         <Navbar role="student" />
         <div className="p-4">
           <h1 className="text-2xl font-bold mb-4">My Courses</h1>
-
+  
           {/* Search Bar */}
           <SearchBar
             placeholder="Search for a course..."
             onSearch={setSearchQuery} // Update search query when user types
           />
-
+  
           {/* Display Courses */}
           {isLoading ? (
             <p>Loading courses...</p>
@@ -208,7 +211,7 @@ function MyCourses() {
               </BaseDropdownMenu>
             ))
           )}
-
+  
           {/* Confirmation Popup */}
           <ConfirmationPopup
             isOpen={isPopupOpen}

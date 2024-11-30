@@ -5,6 +5,8 @@ import Navbar from "../../components/Navbar";
 import SearchBar from "../../components/SearchBar";
 import BaseDropdownMenu from "../../components/BaseDropdownMenu";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EnrollCourses = () => {
   const navigate = useNavigate();
@@ -115,24 +117,25 @@ const EnrollCourses = () => {
         if (!response.ok) {
           throw new Error(data.message || `HTTP error! Status: ${response.status}`);
         }
-
-        alert(data.message || "Enrolled successfully!");
+  
+        toast.success(data.message || "Enrolled successfully!");
       } catch (error) {
         console.error("Error enrolling in course:", error);
-        alert("Enrollment failed. Please try again.");
+        toast.error("Enrollment failed. Please try again.");
       }
     } else {
-      alert("No course selected for enrollment.");
+      toast.warning("No course selected for enrollment.");
     }
   };
 
   const handleCancel = () => {
     setIsPopupOpen(false);
-    alert("Enrollment canceled."); // Optional action
+    toast.info("Enrollment canceled."); // Optional action
   };
 
   return (
     <div className="flex h-screen">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       {/* Sidebar */}
       <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
 
@@ -141,13 +144,13 @@ const EnrollCourses = () => {
         <Navbar role="student" />
         <div className="p-4">
           <h1 className="text-2xl font-bold text-center mb-6">Enroll Courses</h1>
-
+  
           {/* Search Bar */}
           <SearchBar
             placeholder="Search for a course..."
             onSearch={setSearchQuery} // Update search query when user types
           />
-
+  
           {/* Display Courses */}
           {isLoading ? (
             <p>Loading courses...</p>
@@ -183,7 +186,7 @@ const EnrollCourses = () => {
               </BaseDropdownMenu>
             ))
           )}
-
+  
           {/* Confirmation Popup */}
           <ConfirmationPopup
             isOpen={isPopupOpen}

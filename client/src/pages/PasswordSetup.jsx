@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AuthenticationButton from "../components/buttons/AuthenticationButton";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function PasswordSetup() {
   const navigate = useNavigate();
@@ -16,11 +18,11 @@ function PasswordSetup() {
 
     // Validate input fields
     if (!code || code.length !== 6) {
-      setError("Please enter a valid 6-digit verification code.");
+      toast.error("Please enter a valid 6-digit verification code.");
       return;
     }
     if (!password || password.length < 8) {
-      setError("Password must be at least 8 characters long.");
+      toast.error("Password must be at least 8 characters long.");
       return;
     }
 
@@ -37,7 +39,7 @@ function PasswordSetup() {
 
       if (!resetPasswordResponse.ok) {
         const errorData = await resetPasswordResponse.json();
-        setError(errorData.error || "Error setting password.");
+        toast.error(errorData.error || "Error setting password.");
         return;
       }
 
@@ -54,23 +56,26 @@ function PasswordSetup() {
 
       if (!completeVerificationResponse.ok) {
         const errorData = await completeVerificationResponse.json();
-        setError(
+        toast.error(
           errorData.error || "Password reset successful, but verification failed."
         );
         return;
       }
 
       // Success: Navigate to login
-      alert("Password set successfully. Your account is now verified. You can log in.");
+      toast.success(
+        "Password set successfully. Your account is now verified. You can log in."
+      );
       navigate("/");
     } catch (err) {
       console.error("Error during password setup:", err);
-      setError("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
       <div className="p-6 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-4 text-center">
           {isFirstTime ? "Complete Your Account" : "Reset Your Password"}
