@@ -90,7 +90,7 @@ const MyTimetable = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Student Dashboard" items={sidebarItems} />
 
       {/* Main Content */}
       <div className="flex-1">

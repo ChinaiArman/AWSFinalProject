@@ -176,7 +176,7 @@ function TimeAvailability() {
 
   return (
     <div className="flex h-screen">
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Faculty Dashboard" items={sidebarItems} />
       <div className="flex-1">
         <Navbar role="faculty" />
         <div className="p-4">

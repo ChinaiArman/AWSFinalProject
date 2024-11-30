@@ -250,7 +250,7 @@ const AddCourse = () => {
 
   return (
     <div className="flex h-screen">
-      <BaseSidebar items={sidebarItems} />
+      <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
       <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
         {/* Form Container */}
