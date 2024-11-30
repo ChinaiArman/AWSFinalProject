@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ScheduleButton from "./buttons/ScheduleButton";
 
-function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
+function ScheduleTable({
+  days,
+  timeSlots,
+  initialAvailability = {},
+  scheduledSlots = {},
+  onSave,
+  hideResetButton = false, // New prop to control visibility of Reset button
+}) {
   const [availability, setAvailability] = useState(initialAvailability);
 
-  // Sync availability with `initialAvailability` prop whenever it changes
+  // Sync availability with initialAvailability prop whenever it changes
   useEffect(() => {
-    // console.log("initialAvailability changed:", initialAvailability);
-    // setAvailability(initialAvailability);
     if (JSON.stringify(availability) !== JSON.stringify(initialAvailability)) {
       setAvailability(initialAvailability);
     }
@@ -18,13 +23,19 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
     days.forEach((day) => {
       resetAvailability[day] = {};
       timeSlots.forEach((slot) => {
-        resetAvailability[day][slot] = false;
+        // Keep scheduled slots as they are, reset others to false
+        resetAvailability[day][slot] = availability[day][slot];
       });
     });
     setAvailability(resetAvailability);
   };
 
   const toggleAvailability = (day, slot) => {
+    // Prevent toggling scheduled slots
+    if (scheduledSlots[day] && scheduledSlots[day][slot]) {
+      return;
+    }
+
     setAvailability((prevAvailability) => ({
       ...prevAvailability,
       [day]: {
@@ -51,28 +62,38 @@ function ScheduleTable({ days, timeSlots, initialAvailability = {}, onSave }) {
           {timeSlots.map((slot) => (
             <tr key={slot}>
               <td className="border border-gray-300 p-2">{slot}</td>
-              {days.map((day) => (
-                <td
-                  key={`${day}-${slot}`}
-                  className={`border border-gray-300 p-2 text-center cursor-pointer ${
-                    availability[day]?.[slot] ? "bg-green-200" : "bg-red-200"
-                  }`}
-                  onClick={() => toggleAvailability(day, slot)}
-                >
-                  {availability[day]?.[slot] ? "✓" : ""}
-                </td>
-              ))}
+              {days.map((day) => {
+                const isScheduled = scheduledSlots[day]?.[slot];
+                const isAvailable = availability[day]?.[slot];
+
+                return (
+                  <td
+                    key={`${day}-${slot}`}
+                    className={`border border-gray-300 p-2 text-center ${
+                      isScheduled
+                        ? "bg-blue-300 cursor-not-allowed" // Different color for scheduled slots
+                        : isAvailable
+                        ? "bg-green-200 cursor-pointer"
+                        : "bg-red-200 cursor-pointer"
+                    }`}
+                    onClick={() => toggleAvailability(day, slot)}
+                  >
+                    {isScheduled ? "Scheduled" : isAvailable ? "✓" : ""}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
       </table>
       <div className="flex justify-center mt-4">
         <div className="flex w-1/3 justify-between">
-          <ScheduleButton label="Reset" color="gray" onClick={handleReset} />
+          {!hideResetButton && (
+            <ScheduleButton label="Reset" color="gray" onClick={handleReset} />
+          )}
           <ScheduleButton
             label="Apply"
             color="blue"
-            // onClick={() => onSave && onSave(availability)} // old version for TimeAvailablitiy
             onClick={(e) => {
               e.preventDefault();
               onSave && onSave(availability);
