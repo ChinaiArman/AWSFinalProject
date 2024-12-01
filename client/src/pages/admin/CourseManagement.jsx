@@ -156,20 +156,28 @@ const CourseManagement = () => {
   console.log(courses);
   return (
     <div className="flex h-screen">
-      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover draggable />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
       {/* Sidebar */}
       <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
         <Navbar role="admin" />
-  
+
         <AddButton
           label="Add Course"
           onClick={() => navigate("/admin/add-course")}
           color="gray"
         />
-  
+
         {courses.length > 0 &&
           courses.map((course) => (
             <BaseDropdownMenu
@@ -228,7 +236,9 @@ const CourseManagement = () => {
                 <div className="flex justify-center gap-12">
                   <DropdownButton
                     label="Edit Information"
-                    onClick={() => console.log("Edit button clicked!")}
+                    onClick={() =>
+                      navigate(`/admin/course-management/edit/${course.id}`)
+                    }
                     color="gray"
                   />
                   <DropdownButton
@@ -259,7 +269,7 @@ const CourseManagement = () => {
             </BaseDropdownMenu>
           ))}
       </div>
-  
+
       {/* Confirmation Popup */}
       <ConfirmationPopup
         isOpen={isPopupOpen}
