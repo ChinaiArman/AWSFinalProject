@@ -31,8 +31,8 @@ function createSessionConfig(dbConfig) {
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure,
-            sameSite,
+            secure: secure,
+            sameSite: sameSite,
             maxAge: 1000 * 60 * 60 * 24 * 7
         }
     });
