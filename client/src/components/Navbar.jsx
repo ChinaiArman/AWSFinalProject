@@ -64,7 +64,12 @@ function Navbar({ role }) {
           >
             <HomeIcon className="mr-2" />
           </div>
-          <div className="text-lg font-bold">Logo</div>
+          <img
+            src="https://comp4968-frontend-assets.s3.us-west-2.amazonaws.com/logo.png"
+            alt="Logo"
+            className="h-8 w-auto"
+          />
+          <div className="text-xl font-bold text-white uppercase">Timetablé</div>
         </div>
 
         {/* Profile Icon */}
