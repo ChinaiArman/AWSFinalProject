@@ -1,12 +1,12 @@
 // IMPORTS
 import { Sequelize } from 'sequelize';
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 
 // ENVIRONMENT VARIABLES
-if (process.env.NODE_ENV !== "production") {
-    dotenv.config();
-}
+// if (process.env.NODE_ENV !== "production") {
+//     dotenv.config();
+// }
 
 
 // SEQUELIZE CONNECTION

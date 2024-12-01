@@ -1,13 +1,13 @@
 // IMPORTS
 import session from 'express-session';
 import SequelizeStoreFactory from 'connect-session-sequelize';
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 
 // ENVIRONMENT VARIABLES
-if (process.env.NODE_ENV !== "production") {
-    dotenv.config();
-}
+// if (process.env.NODE_ENV !== "production") {
+//     dotenv.config();
+// }
 
 
 // CONSTANTS

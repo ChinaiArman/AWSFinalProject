@@ -1,5 +1,5 @@
 // IMPORTS
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
@@ -15,9 +15,12 @@ import router from "./api/index.js";
 
 
 // ENVIRONMENT VARIABLES
-if (process.env.NODE_ENV !== "production") {
-    dotenv.config();
-}
+// if (process.env.NODE_ENV !== "production") {
+//     dotenv.config();
+// }
+
+console.log("ENVIRONMENT VARIABLES")
+console.log(process.env)
 
 
 // CONSTANTS
