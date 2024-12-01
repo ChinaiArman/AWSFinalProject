@@ -13,8 +13,18 @@ const EditCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
+  // Sidebar menu items
   const sidebarItems = [
-    // ... your sidebar items
+    {
+      label: "User Management",
+      path: "/admin/user-management",
+      onClick: () => navigate("/admin/user-management"),
+    },
+    {
+      label: "Course Management",
+      path: "/admin/course-management",
+      onClick: () => navigate("/admin/course-management"),
+    },
   ];
 
   const [courseData, setCourseData] = useState({
