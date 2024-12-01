@@ -25,6 +25,8 @@ if (process.env.NODE_ENV !== "production") {
 const PORT = process.env.PORT || 5001;
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(cookieParser());
 const { dbConfig, syncDatabase } = config;
 const sessionConfig = createSessionConfig(dbConfig);
@@ -60,7 +62,7 @@ const cognito = new Cognito(cognitoClient);
 const corsOptions = {
     origin: process.env.CLIENT_URL,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     optionsSuccessStatus: 200
 };
