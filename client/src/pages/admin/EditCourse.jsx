@@ -10,20 +10,11 @@ import ConfirmationPopup from "../../components/ConfirmationPopup";
 
 const EditCourse = () => {
   const { courseId } = useParams();
-  console.log(courseId, "jhakjfhkajhdkj");
   const navigate = useNavigate();
 
   const sidebarItems = [
-    {
-      label: "User Management",
-      path: "/admin/user-management",
-      onClick: () => navigate("/admin/user-management"),
-    },
-    {
-      label: "Course Management",
-      path: "/admin/course-management",
-      onClick: () => navigate("/admin/course-management"),
-    },
+    { label: "User Management", path: "/admin/user-management", onClick: () => navigate("/admin/user-management") },
+    { label: "Course Management", path: "/admin/course-management", onClick: () => navigate("/admin/course-management") },
   ];
 
   const [courseData, setCourseData] = useState({
@@ -35,6 +26,7 @@ const EditCourse = () => {
     availability: {},
     instructor: "",
   });
+
   const [instructorOptions, setInstructorOptions] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -53,36 +45,28 @@ const EditCourse = () => {
 
   // Fetch course details
   useEffect(() => {
-    if (!courseId) {
-      return;
-    }
     const fetchCourseDetails = async () => {
+      if (!courseId) return;
+
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/api/course/${courseId}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/${courseId}`, {
+          method: "GET",
+          credentials: "include",
+        });
+
         if (!response.ok) throw new Error("Failed to fetch course details");
-        let data = await response.json();
-        console.log(data);
+
+        const data = await response.json();
+
         // Format availability from runtime data
         const availability = {};
         days.forEach((day) => {
           availability[day] = {};
-          timeSlots.forEach((slot) => {
-            availability[day][slot] = false;
-          });
+          timeSlots.forEach((slot) => (availability[day][slot] = false));
         });
 
         data.runtimes.forEach(({ day_of_week, start_time, end_time }) => {
-          console.log(start_time, day_of_week, end_time);
-          const slot = `${start_time
-            .split(":")
-            .slice(0, 2)
-            .join(":")}-${end_time.split(":").slice(0, 2).join(":")}`;
+          const slot = `${start_time.split(":").slice(0, 2).join(":")}-${end_time.split(":").slice(0, 2).join(":")}`;
           if (availability[day_of_week]) {
             availability[day_of_week][slot] = true;
           }
@@ -105,70 +89,81 @@ const EditCourse = () => {
     fetchCourseDetails();
   }, [courseId]);
 
-  // Update instructor options
-  useEffect(() => {
-    const fetchInstructors = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/api/faculty/getAllFaculty`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch instructors");
-        const data = await response.json();
-        console.log(data);
-        setInstructorOptions(
-          data.faculty.map((instructor) => ({
-            label: `${instructor.first_name} ${instructor.last_name}`,
-            value: instructor.id,
-          }))
-        );
-      } catch (error) {
-        console.error("Error fetching instructors:", error);
-      }
-    };
+  const handleApply = async (updatedAvailability) => {
+    // Prepare time slots
+    const timeSlotsArray = [];
+    days.forEach((day) => {
+      Object.entries(updatedAvailability[day] || {}).forEach(([slot, isAvailable]) => {
+        if (isAvailable) {
+          const [startTime, endTime] = slot.split("-").map((time) => {
+            const [hour, minute] = time.split(":");
+            return `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
+          });
 
-    fetchInstructors();
-  }, []);
+          timeSlotsArray.push({
+            day,
+            startTime,
+            endTime,
+          });
+        }
+      });
+    });
+
+    console.log("Sending time slots to API:", timeSlotsArray);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/availability/getFacultyAvailableAtTimeSlots`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ timeSlots: timeSlotsArray }),
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch available instructors");
+
+      const data = await response.json();
+
+      const instructors = data.faculty.map((instr) => ({
+        label: `${instr.first_name} ${instr.last_name}`,
+        value: instr.id,
+      }));
+
+      setInstructorOptions(instructors);
+      console.log("Instructor options updated:", instructors);
+    } catch (error) {
+      console.error("Error fetching available instructors:", error);
+    }
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
 
     const updatedCourse = {
-      faculty_id: courseData.instructor, // Assuming "instructor" maps to "faculty_id"
+      faculty_id: courseData.instructor,
       course_name: courseData.courseName,
       course_description: courseData.courseDescription,
       room_number: courseData.roomNumber,
       seats_available: courseData.seatAvailability,
-      total_seats: courseData.seatAvailability, // Extract totalSeats from availability if needed
-      start_date: courseData.startDate, // If the backend expects a start_date field
+      total_seats: courseData.seatAvailability,
+      start_date: courseData.startDate,
     };
 
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_URL
-        }/api/course/updateCourse/${courseId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedCourse),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/updateCourse/${courseId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCourse),
+        credentials: "include",
+      });
+
       if (!response.ok) throw new Error("Failed to update course");
+
       setIsPopupOpen(true);
     } catch (error) {
       console.error("Error updating course:", error);
     }
   };
 
-  const handleChange = (field, value) => {
-    setCourseData((prev) => ({ ...prev, [field]: value }));
-  };
-  console.log(courseData, "Data");
   return (
     <div className="flex h-screen">
       <BaseSidebar dashboardName="Admin Dashboard" items={sidebarItems} />
@@ -180,28 +175,28 @@ const EditCourse = () => {
             label="Course Name"
             name="courseName"
             value={courseData.courseName}
-            onChange={(e) => handleChange("courseName", e.target.value)}
+            onChange={(e) => setCourseData({ ...courseData, courseName: e.target.value })}
             required
           />
           <TextField
             label="Course Description"
             name="courseDescription"
             value={courseData.courseDescription}
-            onChange={(e) => handleChange("courseDescription", e.target.value)}
+            onChange={(e) => setCourseData({ ...courseData, courseDescription: e.target.value })}
             required
           />
           <TextField
             label="Room Number"
             name="roomNumber"
             value={courseData.roomNumber}
-            onChange={(e) => handleChange("roomNumber", e.target.value)}
+            onChange={(e) => setCourseData({ ...courseData, roomNumber: e.target.value })}
             required
           />
           <TextField
             label="Seats Available"
             name="seatAvailability"
             value={courseData.seatAvailability}
-            onChange={(e) => handleChange("seatAvailability", e.target.value)}
+            onChange={(e) => setCourseData({ ...courseData, seatAvailability: e.target.value })}
             required
           />
           <TextField
@@ -209,35 +204,27 @@ const EditCourse = () => {
             name="startDate"
             type="date"
             value={courseData.startDate}
-            onChange={(e) => handleChange("startDate", e.target.value)}
+            onChange={(e) => setCourseData({ ...courseData, startDate: e.target.value })}
             required
           />
           <ScheduleTable
             days={days}
             timeSlots={timeSlots}
             initialAvailability={courseData.availability}
-            toggleAvailability={(day, slot) =>
-              handleChange("availability", {
-                ...courseData.availability,
-                [day]: {
-                  ...courseData.availability[day],
-                  [slot]: !courseData.availability[day][slot],
-                },
-              })
-            }
+            onSave={(updatedAvailability) => {
+              setCourseData({ ...courseData, availability: updatedAvailability });
+              handleApply(updatedAvailability);
+            }}
+            hideResetButton={true}
           />
           <DropdownList
             label="Instructor"
             options={instructorOptions}
-            value={instructorOptions}
-            selectedValue={courseData.faculty_id}
-            onChange={(value) => handleChange("instructor", value)}
+            selectedValue={courseData.instructor}
+            onChange={(value) => setCourseData({ ...courseData, instructor: value })}
           />
           <div className="flex justify-center gap-4 mt-6">
-            <DropdownButton
-              label="Cancel"
-              onClick={() => navigate("/admin/course-management")}
-            />
+            <DropdownButton label="Cancel" onClick={() => navigate("/admin/course-management")} />
             <DropdownButton label="Save" type="submit" />
           </div>
         </form>
