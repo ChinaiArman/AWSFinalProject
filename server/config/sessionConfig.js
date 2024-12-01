@@ -29,7 +29,7 @@ function createSessionConfig(dbConfig) {
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24 * 7
         }
