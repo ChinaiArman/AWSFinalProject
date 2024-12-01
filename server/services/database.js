@@ -512,6 +512,10 @@ class Database {
         }
     }
 
+    async deleteCourseRuntimes(courseId) {
+        await CourseRuntime.destroy({ where: { course_id: courseId } });
+    }
+
 
 
 

@@ -226,5 +226,18 @@ courseRoutes.put(
   }
 );
 
+courseRoutes.delete("/deleteCourseRuntimes/:courseId", isSignedIn, isVerified, isAdmin, async (req, res) => {
+  const { courseId } = req.params;
+  const db = req.db;
+
+  try {
+    await db.deleteCourseRuntimes(courseId);
+    res.status(200).json({ message: "Course runtimes deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting course runtimes:", error);
+    res.status(500).json({ error: "Failed to delete course runtimes" });
+  }
+});
+
 // EXPORTS
 export default courseRoutes;
