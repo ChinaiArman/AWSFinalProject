@@ -156,94 +156,111 @@ const EditCourse = () => {
     // Format availability into runtime entries
     const runtimeEntries = [];
     days.forEach((day) => {
-      if (courseData.availability[day]) {
-        Object.entries(courseData.availability[day]).forEach(([slot, isAvailable]) => {
-          if (isAvailable) {
-            const [startTime, endTime] = slot.split("-").map((time) => {
-              const [hour, minute] = time.split(":").map(Number);
-              return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
-            });
+        if (courseData.availability[day]) {
+            Object.entries(courseData.availability[day]).forEach(([slot, isAvailable]) => {
+                if (isAvailable) {
+                    const [startTime, endTime] = slot.split("-").map((time) => {
+                        const [hour, minute] = time.split(":").map(Number);
+                        return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
+                    });
 
-            runtimeEntries.push({
-              start_date: courseData.startDate,
-              end_date: defaultEndDate.toISOString().split("T")[0],
-              start_time: startTime,
-              end_time: endTime || "17:00:00",
-              day_of_week: day,
-              location: courseData.roomNumber,
+                    runtimeEntries.push({
+                        start_date: courseData.startDate,
+                        end_date: defaultEndDate.toISOString().split("T")[0],
+                        start_time: startTime,
+                        end_time: endTime || "17:00:00",
+                        day_of_week: day,
+                        location: courseData.roomNumber,
+                    });
+                }
             });
-          }
-        });
-      }
+        }
     });
 
     if (runtimeEntries.length === 0) {
-      console.error("No runtime entries were generated.");
-      toast.error("Please select at least one time slot.");
-      return;
+        console.error("No runtime entries were generated.");
+        toast.error("Please select at least one time slot.");
+        return;
     }
 
     const updatedCourse = {
-      faculty_id: courseData.instructor,
-      course_name: courseData.courseName,
-      course_description: courseData.courseDescription,
-      room_number: courseData.roomNumber,
-      seats_available: courseData.seatAvailability,
-      total_seats: courseData.seatAvailability,
-      enable_course: true,
+        faculty_id: courseData.instructor,
+        course_name: courseData.courseName,
+        course_description: courseData.courseDescription,
+        room_number: courseData.roomNumber,
+        seats_available: courseData.seatAvailability,
+        total_seats: courseData.seatAvailability,
+        enable_course: true,
     };
 
     try {
-      // Step 1: Update course details
-      const courseResponse = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/api/course/updateCourse/${courseId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedCourse),
-          credentials: "include",
-        }
-      );
-
-      if (!courseResponse.ok) {
-        const errorData = await courseResponse.json();
-        throw new Error(errorData.error || "Failed to update course details.");
-      }
-      console.log("Course details updated successfully.");
-
-      // Step 2: Create new runtimes
-      for (const runtime of runtimeEntries) {
-        console.log("Sending runtime data:", runtime);
-        const runtimeResponse = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/api/course/createCourseRuntime/${courseId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(runtime),
-            credentials: "include",
-          }
+        // Step 1: Update course details
+        const courseResponse = await fetch(
+            `${import.meta.env.VITE_SERVER_URL}/api/course/updateCourse/${courseId}`,
+            {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedCourse),
+                credentials: "include",
+            }
         );
 
-        if (!runtimeResponse.ok) {
-          const errorData = await runtimeResponse.json();
-          if (errorData.error && errorData.error.includes("Course runtime already exists")) {
-            console.warn(`Runtime already exists: ${runtime.day_of_week} ${runtime.start_time}-${runtime.end_time}`);
-            continue; // Skip to the next runtime
-          } else {
-            throw new Error(errorData.error || "Failed to save course runtime");
-          }
+        if (!courseResponse.ok) {
+            const errorData = await courseResponse.json();
+            throw new Error(errorData.error || "Failed to update course details.");
         }
-        console.log("Course runtime saved successfully");
-      }
+        console.log("Course details updated successfully.");
 
-      // Show success confirmation popup
-      setIsPopupOpen(true);
-      toast.success("Course updated successfully!");
+        // Step 2: Delete existing runtimes
+        const deleteResponse = await fetch(
+            `${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourseRuntimes/${courseId}`,
+            {
+                method: "DELETE",
+                credentials: "include",
+            }
+        );
+
+        if (!deleteResponse.ok) {
+            const errorData = await deleteResponse.json();
+            throw new Error(errorData.error || "Failed to delete existing course runtimes.");
+        }
+        console.log("Previous course runtimes deleted successfully.");
+
+        // Step 3: Add new runtimes
+        for (const runtime of runtimeEntries) {
+            console.log("Sending runtime data:", runtime);
+            const runtimeResponse = await fetch(
+                `${import.meta.env.VITE_SERVER_URL}/api/course/createCourseRuntime/${courseId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(runtime),
+                    credentials: "include",
+                }
+            );
+
+            if (!runtimeResponse.ok) {
+                const errorData = await runtimeResponse.json();
+                if (errorData.error && errorData.error.includes("Course runtime already exists")) {
+                    console.warn(
+                        `Runtime already exists: ${runtime.day_of_week} ${runtime.start_time}-${runtime.end_time}`
+                    );
+                    continue; // Skip to the next runtime
+                } else {
+                    throw new Error(errorData.error || "Failed to save course runtime");
+                }
+            }
+            console.log("Course runtime saved successfully.");
+        }
+
+        // Show success confirmation popup
+        setIsPopupOpen(true);
+        toast.success("Course updated successfully!");
     } catch (error) {
-      console.error("Error updating course data:", error);
-      toast.error(`Error: ${error.message}`);
+        console.error("Error updating course data:", error);
+        toast.error(`Error: ${error.message}`);
     }
   };
 
