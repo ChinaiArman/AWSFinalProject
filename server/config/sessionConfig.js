@@ -24,6 +24,9 @@ function createSessionConfig(dbConfig) {
 
     const sameSite = process.env.NODE_ENV === 'production' ? 'none' : 'lax';
     const secure = process.env.NODE_ENV === 'production';
+    console.log(process.env.NODE_ENV);
+    console.log('Secure:', secure);
+    console.log('SameSite:', sameSite);
     return session({
         secret: process.env.SESSION_SECRET,
         store: sessionStore,
@@ -31,8 +34,8 @@ function createSessionConfig(dbConfig) {
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure: secure,
-            sameSite: sameSite,
+            secure: true,
+            sameSite: "none",
             maxAge: 1000 * 60 * 60 * 24 * 7
         }
     });
