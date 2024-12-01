@@ -13,9 +13,7 @@ function ScheduleTable({
 
   // Sync availability with initialAvailability prop whenever it changes
   useEffect(() => {
-    if (
-      JSON.stringify(availability) !== JSON.stringify(initialAvailability)
-    ) {
+    if (JSON.stringify(availability) !== JSON.stringify(initialAvailability)) {
       setAvailability(initialAvailability);
     }
   }, [initialAvailability]);
@@ -46,7 +44,7 @@ function ScheduleTable({
       },
     }));
   };
-
+  console.log(availability);
   return (
     <div className="overflow-auto">
       <table className="table-auto w-full border-collapse border border-gray-300">
@@ -67,7 +65,8 @@ function ScheduleTable({
               {days.map((day) => {
                 const isScheduled = scheduledSlots[day]?.[slot];
                 const isAvailable = availability[day]?.[slot];
-
+                  console.log(isScheduled, isAvailable);
+                
                 return (
                   <td
                     key={`${day}-${slot}`}

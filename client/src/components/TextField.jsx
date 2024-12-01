@@ -1,6 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const TextField = ({ label, onChange, placeholder, type = "text" }) => {
+const TextField = ({
+  label,
+  onChange,
+  placeholder,
+  type = "text",
+  value = "",
+}) => {
   return (
     <div className="mb-1">
       <div className="flex items-center">
@@ -9,6 +15,7 @@ const TextField = ({ label, onChange, placeholder, type = "text" }) => {
           type={type}
           onChange={onChange}
           placeholder={placeholder}
+          value={value}
           className="mt-1 ml-12 mr-12 p-2 w-3/4 border rounded"
         />
       </div>
