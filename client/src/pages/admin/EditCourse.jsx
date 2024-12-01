@@ -167,9 +167,9 @@ const EditCourse = () => {
             runtimeEntries.push({
               start_date: courseData.startDate,
               end_date: defaultEndDate.toISOString().split("T")[0],
-              day_of_week: day,
               start_time: startTime,
               end_time: endTime || "17:00:00",
+              day_of_week: day,
               location: courseData.roomNumber,
             });
           }
@@ -211,22 +211,7 @@ const EditCourse = () => {
       }
       console.log("Course details updated successfully.");
 
-      // Step 2: Delete existing runtimes
-      const deleteResponse = await fetch(
-        `${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourseRuntimes/${courseId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
-
-      if (!deleteResponse.ok) {
-        const errorData = await deleteResponse.json();
-        throw new Error(errorData.error || "Failed to delete course runtimes.");
-      }
-      console.log("Existing course runtimes deleted successfully.");
-
-      // Step 3: Create new runtimes
+      // Step 2: Create new runtimes
       for (const runtime of runtimeEntries) {
         console.log("Sending runtime data:", runtime);
         const runtimeResponse = await fetch(
@@ -242,7 +227,13 @@ const EditCourse = () => {
         );
 
         if (!runtimeResponse.ok) {
-          throw new Error("Failed to save course runtime");
+          const errorData = await runtimeResponse.json();
+          if (errorData.error && errorData.error.includes("Course runtime already exists")) {
+            console.warn(`Runtime already exists: ${runtime.day_of_week} ${runtime.start_time}-${runtime.end_time}`);
+            continue; // Skip to the next runtime
+          } else {
+            throw new Error(errorData.error || "Failed to save course runtime");
+          }
         }
         console.log("Course runtime saved successfully");
       }
