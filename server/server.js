@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser';
 import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
 import { SESClient } from "@aws-sdk/client-ses";
 
@@ -23,6 +24,8 @@ if (process.env.NODE_ENV !== "production") {
 // CONSTANTS
 const PORT = process.env.PORT || 5001;
 const app = express();
+
+app.use(cookieParser());
 const { dbConfig, syncDatabase } = config;
 const sessionConfig = createSessionConfig(dbConfig);
 
