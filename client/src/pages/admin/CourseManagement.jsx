@@ -136,7 +136,7 @@ const CourseManagement = () => {
   // Open confirmation popup and set the course to delete
   const openDeleteConfirmation = (course) => {
     setCourseToDelete(course);
-    setIsTogglePopUpOpen(true);
+    setIsPopupOpen(true);
   };
 
   const cancelToggle = () => {
@@ -241,11 +241,11 @@ const CourseManagement = () => {
                     }
                     color="gray"
                   />
-                  <DropdownButton
+                  {/* <DropdownButton
                     label="Create Waitlist"
                     onClick={() => console.log("Waitlist button clicked!")}
                     color="orange"
-                  />
+                  /> */}
                   <DropdownButton
                     label="Delete Course"
                     onClick={() => openDeleteConfirmation(course)} // Open confirmation popup
@@ -282,7 +282,7 @@ const CourseManagement = () => {
       <ConfirmationPopup
         isOpen={isTogglePopUpOpen}
         title="Toggle Course Status"
-        message={`Are you sure you want to enable/disbale the course "${courseToToggle?.course_name}"?`}
+        message={`Are you sure you want to enable/disable the course "${courseToToggle?.course_name}"?`}
         onConfirm={() =>
           toggleCourseStatus(courseToToggle?.id, courseToToggle?.enable_course)
         }
