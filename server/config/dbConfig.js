@@ -3,8 +3,10 @@ import { Sequelize } from 'sequelize';
 import dotenv from "dotenv";
 
 
-// DOTENV CONFIG
-dotenv.config();
+// ENVIRONMENT VARIABLES
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 
 
 // SEQUELIZE CONNECTION

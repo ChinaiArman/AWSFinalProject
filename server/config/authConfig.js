@@ -1,7 +1,3 @@
-//IMPORTS
-import User from '../models/User.js';
-
-
 // FUNCTIONS
 const isSignedIn = async (req, res, next) => {
     console.log(req.session)
