@@ -1,6 +1,6 @@
 // FUNCTIONS
 const isSignedIn = async (req, res, next) => {
-    console.log(`In isSignedIn: ${req.session}`)
+    console.log(`In isSignedIn: ${JSON.stringify(req.session)}`)
     if (!req.session.userId) {
         res.status(401).json({ "error": "User is not signed in; session" });
         return;
