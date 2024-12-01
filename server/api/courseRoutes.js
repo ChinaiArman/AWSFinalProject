@@ -17,12 +17,12 @@ courseRoutes.get("/getAllCourses", isSignedIn, isVerified, async (req, res) => {
   let courses;
   const db = req.db;
   const user = await db.getUserById(req.session.userId);
-  
+
   try {
-    if(user.role === 2){
-         courses = await db.getAllCourses(true);
-    } else{
-         courses = await db.getAllCourses();
+    if (user.role === 2) {
+      courses = await db.getAllCourses(true);
+    } else {
+      courses = await db.getAllCourses();
     }
     res.status(200).json({ courses: courses });
     return;
@@ -33,43 +33,19 @@ courseRoutes.get("/getAllCourses", isSignedIn, isVerified, async (req, res) => {
 });
 
 // Create new course
-courseRoutes.post(
-  "/createCourse",
-  isSignedIn,
-  isVerified,
-  isAdmin,
-  async (req, res) => {
-    const db = req.db;
+courseRoutes.post("/createCourse", isSignedIn, isVerified, isAdmin, async (req, res) => {
+  const db = req.db;
 
-    const {
-      faculty_id,
-      course_name,
-      course_description,
-      room_number,
-      seats_available,
-      total_seats,
-      enable_course,
-    } = req.body;
-    try {
-      const courseId = await db.createCourse(
-        faculty_id,
-        course_name,
-        course_description,
-        room_number,
-        seats_available,
-        total_seats,
-        enable_course
-      );
-      res
-        .status(200)
-        .json({ message: "Course created successfully", courseId });
-      return;
-    } catch (error) {
-      res.status(400).json({ error: error.message });
-      return;
-    }
+  const { faculty_id, course_name, course_description, room_number, seats_available, total_seats, enable_course } = req.body;
+  try {
+    const courseId = await db.createCourse(faculty_id, course_name, course_description, room_number, seats_available, total_seats, enable_course);
+    res.status(200).json({ message: "Course created successfully", courseId });
+    return;
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+    return;
   }
-);
+});
 
 // Delete course by ID
 courseRoutes.delete(
