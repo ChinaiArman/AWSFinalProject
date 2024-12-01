@@ -51,10 +51,8 @@ const cognito = new Cognito(cognitoClient);
 
 // MIDDLEWARE
 const corsOptions = {
-    origin: process.env.CLIENT_URL,  
-    credentials: true,               
-    methods: ["GET", "POST", "PUT", "DELETE"],  
-    allowedHeaders: ["Content-Type", "Authorization"], 
+    origin: process.env.CLIENT_URL,
+    credentials: true,
     optionsSuccessStatus: 200
 };
 
