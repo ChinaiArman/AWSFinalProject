@@ -7,14 +7,14 @@ import ScheduleTable from "../../components/ScheduleTable";
 import DropdownList from "../../components/DropdownList";
 import DropdownButton from "../../components/buttons/DropdownButton";
 import ConfirmationPopup from "../../components/ConfirmationPopup";
+import { toast } from 'react-toastify';
 
 const EditCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
   const sidebarItems = [
-    { label: "User Management", path: "/admin/user-management", onClick: () => navigate("/admin/user-management") },
-    { label: "Course Management", path: "/admin/course-management", onClick: () => navigate("/admin/course-management") },
+    // ... your sidebar items
   ];
 
   const [courseData, setCourseData] = useState({
@@ -32,8 +32,8 @@ const EditCourse = () => {
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const timeSlots = [
-    "8:30-9:20",
-    "9:30-10:20",
+    "08:30-09:20",
+    "09:30-10:20",
     "10:30-11:20",
     "11:30-12:20",
     "12:30-13:20",
@@ -66,7 +66,16 @@ const EditCourse = () => {
         });
 
         data.runtimes.forEach(({ day_of_week, start_time, end_time }) => {
-          const slot = `${start_time.split(":").slice(0, 2).join(":")}-${end_time.split(":").slice(0, 2).join(":")}`;
+          // Ensure times have leading zeros
+          const formatTime = (timeStr) => {
+            const [hour, minute] = timeStr.split(":").map(Number);
+            return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+          };
+
+          const startTimeFormatted = formatTime(start_time);
+          const endTimeFormatted = formatTime(end_time);
+
+          const slot = `${startTimeFormatted}-${endTimeFormatted}`;
           if (availability[day_of_week]) {
             availability[day_of_week][slot] = true;
           }
@@ -77,12 +86,13 @@ const EditCourse = () => {
           courseDescription: data.course.course_description,
           roomNumber: data.course.room_number,
           seatAvailability: data.course.seats_available,
-          startDate: data.runtimes[0].start_date.split("T")[0],
+          startDate: data.runtimes[0]?.start_date.split("T")[0] || "",
           availability,
           instructor: data.course.faculty_id,
         });
       } catch (error) {
         console.error("Error fetching course details:", error);
+        toast.error(`Error: ${error.message}`);
       }
     };
 
@@ -96,8 +106,8 @@ const EditCourse = () => {
       Object.entries(updatedAvailability[day] || {}).forEach(([slot, isAvailable]) => {
         if (isAvailable) {
           const [startTime, endTime] = slot.split("-").map((time) => {
-            const [hour, minute] = time.split(":");
-            return `${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`;
+            const [hour, minute] = time.split(":").map(Number);
+            return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
           });
 
           timeSlotsArray.push({
@@ -132,11 +142,46 @@ const EditCourse = () => {
       console.log("Instructor options updated:", instructors);
     } catch (error) {
       console.error("Error fetching available instructors:", error);
+      toast.error(`Error: ${error.message}`);
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    // Calculate default end date based on start date
+    const defaultEndDate = new Date(courseData.startDate);
+    defaultEndDate.setMonth(defaultEndDate.getMonth() + 1);
+
+    // Format availability into runtime entries
+    const runtimeEntries = [];
+    days.forEach((day) => {
+      if (courseData.availability[day]) {
+        Object.entries(courseData.availability[day]).forEach(([slot, isAvailable]) => {
+          if (isAvailable) {
+            const [startTime, endTime] = slot.split("-").map((time) => {
+              const [hour, minute] = time.split(":").map(Number);
+              return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
+            });
+
+            runtimeEntries.push({
+              start_date: courseData.startDate,
+              end_date: defaultEndDate.toISOString().split("T")[0],
+              day_of_week: day,
+              start_time: startTime,
+              end_time: endTime || "17:00:00",
+              location: courseData.roomNumber,
+            });
+          }
+        });
+      }
+    });
+
+    if (runtimeEntries.length === 0) {
+      console.error("No runtime entries were generated.");
+      toast.error("Please select at least one time slot.");
+      return;
+    }
 
     const updatedCourse = {
       faculty_id: courseData.instructor,
@@ -145,22 +190,69 @@ const EditCourse = () => {
       room_number: courseData.roomNumber,
       seats_available: courseData.seatAvailability,
       total_seats: courseData.seatAvailability,
-      start_date: courseData.startDate,
+      enable_course: true,
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/updateCourse/${courseId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedCourse),
-        credentials: "include",
-      });
+      // Step 1: Update course details
+      const courseResponse = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/course/updateCourse/${courseId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedCourse),
+          credentials: "include",
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to update course");
+      if (!courseResponse.ok) {
+        const errorData = await courseResponse.json();
+        throw new Error(errorData.error || "Failed to update course details.");
+      }
+      console.log("Course details updated successfully.");
 
+      // Step 2: Delete existing runtimes
+      const deleteResponse = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/course/deleteCourseRuntimes/${courseId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        const errorData = await deleteResponse.json();
+        throw new Error(errorData.error || "Failed to delete course runtimes.");
+      }
+      console.log("Existing course runtimes deleted successfully.");
+
+      // Step 3: Create new runtimes
+      for (const runtime of runtimeEntries) {
+        console.log("Sending runtime data:", runtime);
+        const runtimeResponse = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/api/course/createCourseRuntime/${courseId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(runtime),
+            credentials: "include",
+          }
+        );
+
+        if (!runtimeResponse.ok) {
+          throw new Error("Failed to save course runtime");
+        }
+        console.log("Course runtime saved successfully");
+      }
+
+      // Show success confirmation popup
       setIsPopupOpen(true);
+      toast.success("Course updated successfully!");
     } catch (error) {
-      console.error("Error updating course:", error);
+      console.error("Error updating course data:", error);
+      toast.error(`Error: ${error.message}`);
     }
   };
 
