@@ -1,7 +1,5 @@
 // IMPORTS
 import dotenv from "dotenv";
-dotenv.config();
-
 import express from "express";
 import cors from 'cors'
 import bodyParser from "body-parser";
@@ -14,6 +12,12 @@ import Cognito from "./services/Cognito.js";
 import config from "./models/index.js";
 import createSessionConfig from "./config/sessionConfig.js";
 import router from "./api/index.js";
+
+
+// ENVIRONMENT VARIABLES
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 
 
 // CONSTANTS

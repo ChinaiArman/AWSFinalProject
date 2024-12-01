@@ -4,8 +4,10 @@ import SequelizeStoreFactory from 'connect-session-sequelize';
 import dotenv from "dotenv";
 
 
-// DOTENV CONFIG
-dotenv.config();
+// ENVIRONMENT VARIABLES
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 
 
 // CONSTANTS
@@ -34,8 +36,8 @@ function createSessionConfig(dbConfig) {
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            secure: secure,
+            sameSite: sameSite,
             maxAge: 1000 * 60 * 60 * 24 * 7
         }
     });

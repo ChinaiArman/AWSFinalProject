@@ -75,15 +75,15 @@ class Database {
 
     async getAllCourses(isAdmin) {
         let courses;
-        if(isAdmin){
-             courses = await Course.findAll();
-        } else{
-             courses = await Course.findAll({
+        if (isAdmin) {
+            courses = await Course.findAll();
+        } else {
+            courses = await Course.findAll({
                 where: {
                     enable_course: true,
                 },
             });
-            
+
         }
         // for course in courses, get the course runtimes and the faculty name
         for (let i = 0; i < courses.length; i++) {
@@ -100,15 +100,16 @@ class Database {
         return courses;
     }
 
-    async createCourse(facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
-        console.log('Creating course:', facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats);
+    async createCourse(facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats, enableCourse) {
+        console.log('Creating course:', facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats, enableCourse);
         const course = await Course.create({
             faculty_id: facultyId,
             course_name: courseName,
             course_description: courseDescription,
             room_number: roomNumber,
             seats_available: seatsAvailable,
-            total_seats: totalSeats
+            total_seats: totalSeats,
+            enable_course: enableCourse
         })
         return course.id;
 
@@ -151,17 +152,17 @@ class Database {
             if (!course) {
                 throw new Error(`Course with ID ${course_id} not found.`);
             }
-    
+
             // Update the course status
             course.enable_course = course_status;
             await course.save();
-    
+
             return { message: "Course status updated successfully", course };
         } catch (error) {
             throw new Error("Failed to toggle course status: " + error.message);
         }
     }
-    
+
     async getCoursesByFacultyId(facultyId) {
         const courses = await Course.findAll({
             where: { faculty_id: facultyId }
@@ -463,32 +464,32 @@ class Database {
 
     async updateCourse(courseId, facultyId, courseName, courseDescription, roomNumber, seatsAvailable, totalSeats) {
         await Course.update(
-          {
-            faculty_id: facultyId,
-            course_name: courseName,
-            course_description: courseDescription,
-            room_number: roomNumber,
-            seats_available: seatsAvailable,
-            total_seats: totalSeats,
-          },
-          { where: { id: courseId } }
+            {
+                faculty_id: facultyId,
+                course_name: courseName,
+                course_description: courseDescription,
+                room_number: roomNumber,
+                seats_available: seatsAvailable,
+                total_seats: totalSeats,
+            },
+            { where: { id: courseId } }
         );
-      }
+    }
 
-      async deleteCourseRuntimes(courseId) {
+    async deleteCourseRuntimes(courseId) {
         await CourseRuntime.destroy({ where: { course_id: courseId } });
-      }
+    }
 
-    
-      async updateFacultyAvailabilityForCourse(courseId) {
+
+    async updateFacultyAvailabilityForCourse(courseId) {
         try {
             // First, get the course runtimes
             const courseRuntimes = await this.getCourseRuntimesByCourseId(courseId);
-            
+
             // Get the faculty ID for this course
             const course = await this.getCourseById(courseId);
             const facultyId = course.faculty_id;
-    
+
             // For each course runtime, update the corresponding faculty availability
             for (const runtime of courseRuntimes) {
                 await FacultyAvailability.update(
@@ -503,7 +504,7 @@ class Database {
                     }
                 );
             }
-    
+
             return true;
         } catch (error) {
             console.error('Error updating faculty availability:', error);
@@ -511,8 +512,12 @@ class Database {
         }
     }
 
-      
-      
+    async deleteCourseRuntimes(courseId) {
+        await CourseRuntime.destroy({ where: { course_id: courseId } });
+    }
+
+
+
 
 }
 
