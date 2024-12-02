@@ -33,7 +33,7 @@ function createSessionConfig(dbConfig) {
         secret: process.env.SESSION_SECRET,
         store: sessionStore,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: {
             httpOnly: true,
             secure: secure,

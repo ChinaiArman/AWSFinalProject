@@ -15,6 +15,7 @@ authenticationRoutes.post('/login', async (req, res) => {
     try {
         const userId = await cognito.signIn(email, password)
         req.session.userId = userId;
+        console.log(`This is after login path: ${JSON.stringify(req.session)}`)
         res.status(200).json({ "message": "User logged in successfully" });
         return;
     } catch (error) {
