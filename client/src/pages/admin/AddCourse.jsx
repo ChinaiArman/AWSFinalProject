@@ -131,7 +131,7 @@ const AddCourse = () => {
       total_seats: seatAvailability,
       enable_course: true
     };
-
+    console.log(courseData)
     try {
       // Step 1: Create course
       const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/course/createCourse`, {

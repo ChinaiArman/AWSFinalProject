@@ -37,11 +37,6 @@ const ProfileContainer = ({ role }) => {
       onClick: () => navigate("/student/my-timetable"),
     },
     {
-      label: "Waitlist",
-      path: "/student/waitlist",
-      onClick: () => navigate("/student/waitlist"),
-    },
-    {
       label: "Enroll Course",
       path: "/student/enroll-courses",
       onClick: () => navigate("/student/enroll-courses"),
